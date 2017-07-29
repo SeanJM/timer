@@ -1,0 +1,46 @@
+.input {
+  width         : 100%;
+  border-bottom : 1px solid #000;
+
+  input {
+    width     : 100%;
+    height    : $input-size;
+    padding   : 0 $u2;
+    border    : none;
+    font-size : $font-size;
+  }
+
+  input:focus {
+    outline : none;
+  }
+}
+
+.input--is-focus {
+  border-color : $red;
+
+  .icon {
+    fill : $red;
+  }
+
+  .button {
+    border-color : $red;
+  }
+}
+
+.input--has-icon {
+  position : relative;
+
+  input {
+    padding-left : $icon-size + $u4;
+    font-size    : $font-size;
+  }
+}
+
+.input_icon {
+  position   : absolute;
+  top        : 50%;
+  left       : $u2;
+  width      : $icon-size;
+  height     : $icon-size;
+  margin-top : -$icon-size/2;
+}

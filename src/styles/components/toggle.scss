@@ -1,0 +1,17 @@
+.toggle {
+  position: relative;
+  height : $input-size;
+  padding-left : $input-size + $u2;
+  .checkbox {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+
+.toggle_text {
+  font-size: $font-size;
+  line-height: $input-size - $u2;
+  padding-top: $u;
+  padding-bottom: $u;
+}

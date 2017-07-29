@@ -1,0 +1,32 @@
+{
+  "name": "timer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "babel-core": "^6.25.0",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.1.1",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.5.2",
+    "body-parser": "^1.17.2",
+    "colors": "^1.1.2",
+    "eslint": "^4.3.0",
+    "express": "^4.15.3",
+    "flatman-client": "^1.6.4",
+    "flatman-server": "^0.10.2",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.1",
+    "webpack": "^3.4.1"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "NODE_ENV='development' webpack --watch & sass --watch src/index.scss:dist/index.css & node build/index.js",
+    "build": "NODE_ENV='production' webpack & sass src/index.scss:dist/index.css"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

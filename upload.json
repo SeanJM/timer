@@ -1,0 +1,6 @@
+{
+  "server": "ssh.phx.nearlyfreespeech.net",
+  "username": "seanjm_seanjm",
+  "dir": "/home/public/todo/",
+  "files": [ "index.html", "dist/*" ]
+}
