@@ -5,27 +5,26 @@ import moment from "moment";
 Component.create("Todo", {
   constructor(props) {
     this.on("estimate", props.onDifficulty);
-    store.on("*", (e) => {
-      if (/^todos\./.test(e.path)) {
+
+    store.on(/^todos\.([a-zA-Z0-9]+)/, e => {
+      if (e.match[1] === this.props.id) {
         this.onTodo(e);
-      } else if (e.path === "projects." + this.props.projectId + ".hideTodoDone") {
+      }
+    });
+
+    store.on(/^projects\.([a-zA-Z0-9]+)\.hideTodoDone$/, e => {
+      if (e.match[1] === this.props.projectId) {
         this.hideDone();
       }
     });
   },
 
   onTodo(e) {
-    const id = e.path.match(/^todos\.([a-zA-Z0-9]+)/)[1];
-    if (id === this.props.id) {
-      if (
-        /isDone$/.test(e.path) &&
-        e.parent().id === this.props.id
-      ) {
-        this.isDone(e.value);
-      } else if (/estimate$/.test(e.path)) {
-        this.names.estimateText.text(e.value);
-        this.names.estimatePopout.close();
-      }
+    if (/isDone$/.test(e.path)) {
+      this.isDone(e.value);
+    } else if (/estimate$/.test(e.path)) {
+      this.names.estimateText.text(e.value);
+      this.names.estimatePopout.close();
     }
   },
 
