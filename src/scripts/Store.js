@@ -44,21 +44,45 @@ function Store(props) {
 
   this.__deferred = false;
   this.__subsribers = {};
+  this.__regExpSubscribers = [];
   this.save();
 }
 
-Store.prototype.set = function (path, value) {
+Store.prototype.set = function (maybePathString, value) {
+  let match;
+  let path = [].concat(maybePathString).join(".");
+
   if (typeof this[path] === "function") {
     throw new Error(
       "[Store] Cannot set value \"" + path + "\", it is a reserved name."
     );
-  } else if (!Array.isArray(path) && typeof path === "object") {
+  } else if (
+    !Array.isArray(maybePathString) &&
+    typeof maybePathString === "object"
+  ) {
     throw new Error(
       "[Store] Cannot use an object to set a value."
     );
   } else {
     _.set(this, path, value);
     this.trigger(path, value);
+
+    for (var i = this.__regExpSubscribers.length - 1; i >= 0; i--) {
+      match = path
+        .match(
+          this.__regExpSubscribers[i].match
+        );
+
+      if (match) {
+        this.__regExpSubscribers[i]
+          .callback({
+            match: match,
+            path: path,
+            value: value
+          });
+      }
+    }
+
     this.trigger("*", new StoreEvent({
       path: [].concat(path).join("."),
       value: value,
@@ -78,49 +102,6 @@ Store.prototype.assign = function (path, value) {
 
 Store.prototype.get = function (path) {
   return _.get(this, [].concat(path).join("."));
-};
-
-Store.prototype.partial = function (path) {
-  const partial = [].concat(path);
-  const self = this;
-
-  const _self = {
-    trigger: function ($path, value) {
-      self.trigger(partial.concat($path), value);
-      return this;
-    },
-
-    on: function ($path, callback) {
-      self.on(partial.concat($path).join("."), callback);
-      return this;
-    },
-
-    set: function ($path, value) {
-      self.set(
-        partial.concat($path).join("."),
-        value
-      );
-      return this;
-    },
-
-    get: function ($path, value) {
-      return self.get(
-        partial.concat($path).join("."),
-        value
-      );
-    },
-
-    push: function ($path, value) {
-      self.push(
-        partial.concat($path).join("."),
-        value
-      );
-      return this;
-    }
-  };
-
-  _self.partial = partial.join(".");
-  return _self;
 };
 
 Store.prototype.push = function (path, value) {
@@ -144,24 +125,42 @@ Store.prototype.push = function (path, value) {
 };
 
 Store.prototype.on = function (path, callback) {
-  if (!this.__subsribers[path]) {
-    this.__subsribers[path] = [];
-  }
+  if (path instanceof RegExp) {
+    this.__regExpSubscribers.push({
+      match: path,
+      callback: callback
+    });
+  } else {
+    if (!this.__subsribers[path]) {
+      this.__subsribers[path] = [];
+    }
 
-  this.__subsribers[path].push(callback);
-  return this;
+    this.__subsribers[path].push(callback);
+    return this;
+  }
 };
 
 Store.prototype.off = function (path, callback) {
   const s = this.__subsribers[path];
 
-  if (callback) {
-    s.splice(
-      s.indexOf(callback),
-      1
+  if (path instanceof RegExp) {
+    this.__regExpSubscribers = (
+      this.__regExpSubscribers
+        .filter(group => {
+          return (
+            group.path.toString() !== path.toString()
+          );
+        })
     );
   } else {
-    delete this.__subsribers[path];
+    if (callback) {
+      s.splice(
+        s.indexOf(callback),
+        1
+      );
+    } else {
+      delete this.__subsribers[path];
+    }
   }
 
   return this;
