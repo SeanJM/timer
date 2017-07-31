@@ -6,7 +6,7 @@ Component.create("TodoList", {
     this.todos = {};
 
     store.on("projectId", () => {
-      this.names.items.html("");
+      this.names.items.clear();
       this.todos = {};
       this.update();
     });
@@ -19,20 +19,26 @@ Component.create("TodoList", {
   },
 
   update() {
-    for (var id in store.todos) {
-      if (store.todos[id].projectId === store.projectId) {
-        if (!this.todos[id]) {
-          this.todos[id] = el("Todo",
-            store.todos[id],
-            [ store.todos[id].text ]
+    const keys = Object.keys(store.todos);
+    for (var i = 0, n = keys.length; i < n; i++) {
+      if (store.todos[keys[i]].projectId === store.projectId) {
+        if (!this.todos[keys[i]]) {
+          this.todos[keys[i]] = el("Todo",
+            store.todos[keys[i]],
+            [ store.todos[keys[i]].text ]
           );
           this.names.items.append([
-            this.todos[id]
+            this.todos[keys[i]]
           ]);
+        }
+
+        if (i === n - 1) {
+          this.todos[keys[i]].addClass("todo--is-last");
+        } else {
+          this.todos[keys[i]].removeClass("todo--is-last");
         }
       }
     }
-
   },
 
   addTodo() {
@@ -77,74 +83,79 @@ Component.create("TodoList", {
       el("div", {
         className: "todo-list_content"
       }, [
-        el("Estimate"),
         el("div", {
-          name: "create",
-          className: "todo-list_create"
+          className: "todo-list_content_container"
         }, [
-          el("Input", {
-            type: "text",
-            className: "todo-list_input",
-            name: "text",
-            onKeydown: e => this.onKeydown(e),
-          }, [
-            el("Button", {
-              onClick: e => this.addTodo(e),
-              className: "todo-list_button-add",
-              name: "add"
-            }, [
-              el("Icon", { name: "add" })
-            ])
-          ]),
-        ]),
-        el("div", {
-          className: "todo-list_header"
-        }, [
+          el("Estimate"),
           el("div", {
-            className: "todo-list_header_filters",
-            onClick: () => this.onFilter()
+            name: "create",
+            className: "todo-list_create"
           }, [
-            el("Dropdown", {
-              name: "filterDropdown"
+            el("Input", {
+              type: "text",
+              className: "todo-list_input",
+              name: "text",
+              onKeydown: e => this.onKeydown(e),
             }, [
-              el("DropdownItem", [
-                el("Toggle", {
-                  onMount: function () {
-                    const hideTodoDone = store.get([
-                      "projects", store.projectId, "hideTodoDone"
-                    ]);
-
-                    if (hideTodoDone) {
-                      this.check();
-                    } else {
-                      this.uncheck();
-                    }
-                  },
-                  onClick: (e) => this.toggleDone(e)
-                }, [
-                  "Hide done"
-                ])
+              el("Button", {
+                onClick: e => this.addTodo(e),
+                className: "todo-list_button-add",
+                name: "add"
+              }, [
+                el("Icon", { name: "add" })
               ])
             ]),
-            el("Icon", {
-              name: "filter"
-            })
           ]),
           el("div", {
-            className: "todo-list_header_estimate"
+            className: "todo-list_header"
           }, [
-            "Est."
+            el("div", {
+              className: "todo-list_header_filters",
+              onClick: () => this.onFilter()
+            }, [
+              el("Dropdown", {
+                name: "filterDropdown"
+              }, [
+                el("DropdownItem", [
+                  el("Toggle", {
+                    onMount: function () {
+                      const hideTodoDone = store.get([
+                        "projects", store.projectId, "hideTodoDone"
+                      ]);
+
+                      if (hideTodoDone) {
+                        this.check();
+                      } else {
+                        this.uncheck();
+                      }
+                    },
+                    onClick: (e) => this.toggleDone(e)
+                  }, [
+                    "Hide done"
+                  ])
+                ])
+              ]),
+              el("Icon", {
+                name: "filter"
+              })
+            ]),
+            el("div", {
+              className: "todo-list_header_estimate"
+            }, [
+              "Est."
+            ]),
+            el("div", {
+              className: "todo-list_header_title"
+            }, [
+              "Title"
+            ])
           ]),
-          el("div", {
-            className: "todo-list_header_title"
-          }, [
-            "Title"
-          ])
+          el("Scroll", {
+            name: "items",
+            className: "todo-list_items"
+          }),
+          el("TodoFooter")
         ]),
-        el("div", {
-          name: "items",
-          className: "todo-list_items"
-        })
       ])
     ]);
   }
