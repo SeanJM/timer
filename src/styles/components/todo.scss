@@ -7,6 +7,10 @@
   border-bottom  : 1px solid #000;
 }
 
+.todo--is-last {
+  border-bottom : 0;
+}
+
 .todo_done {
   position : absolute;
   top      : $u4;
