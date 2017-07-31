@@ -1,0 +1,32 @@
+.scroll {
+	overflow: hidden;
+}
+
+.scroll_content {
+	padding-right: $input-size;
+}
+
+.scroll_bar {
+	z-index: 1;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: $input-size;
+}
+
+.scroll_thumb {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: $input-size;
+	text-align: right;
+	padding: 2px 0 3px;
+}
+
+.scroll_thumb_button {
+	background : $red;
+	width : 1px;
+	height: 100%;
+	display: inline-block;
+}
