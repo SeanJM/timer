@@ -18,11 +18,20 @@
   top      : 0;
   bottom   : 0;
   left     : $u70;
-  width    : $u110;
+  right: 0;
 }
 
 .todo-list_content {
   padding : $u10;
+  height: 100%;
+  width: 100%;
+  padding-right: 0;
+}
+
+.todo-list_content_container {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .todo-list_header {
