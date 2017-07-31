@@ -3,10 +3,8 @@ import store from "../store";
 
 Component.create("Projects", {
   constructor() {
-    store.on("*", e => {
-      if (/^projects/.test(e.path)) {
-        this.update();
-      }
+    store.on(/^projects/, () => {
+      this.update();
     });
   },
 

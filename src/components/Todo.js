@@ -13,7 +13,10 @@ Component.create("Todo", {
     });
 
     store.on(/^projects\.([a-zA-Z0-9]+)\.hideTodoDone$/, e => {
-      if (e.match[1] === this.props.projectId) {
+      if (
+        e.match[1] === this.props.projectId &&
+        store.todos[this.props.id]
+      ) {
         this.hideDone();
       }
     });
