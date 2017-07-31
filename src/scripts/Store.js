@@ -43,8 +43,9 @@ function Store(props) {
   );
 
   this.__deferred = false;
+  this.__subscribersRegExp = [];
   this.__subsribers = {};
-  this.__regExpSubscribers = [];
+
   this.save();
 }
 
@@ -67,14 +68,14 @@ Store.prototype.set = function (maybePathString, value) {
     _.set(this, path, value);
     this.trigger(path, value);
 
-    for (var i = this.__regExpSubscribers.length - 1; i >= 0; i--) {
+    for (var i = this.__subscribersRegExp.length - 1; i >= 0; i--) {
       match = path
         .match(
-          this.__regExpSubscribers[i].match
+          this.__subscribersRegExp[i].match
         );
 
       if (match) {
-        this.__regExpSubscribers[i]
+        this.__subscribersRegExp[i]
           .callback({
             match: match,
             path: path,
@@ -126,7 +127,7 @@ Store.prototype.push = function (path, value) {
 
 Store.prototype.on = function (path, callback) {
   if (path instanceof RegExp) {
-    this.__regExpSubscribers.push({
+    this.__subscribersRegExp.push({
       match: path,
       callback: callback
     });
@@ -144,12 +145,16 @@ Store.prototype.off = function (path, callback) {
   const s = this.__subsribers[path];
 
   if (path instanceof RegExp) {
-    this.__regExpSubscribers = (
-      this.__regExpSubscribers
+    this.__subscribersRegExp = (
+      this.__subscribersRegExp
         .filter(group => {
-          return (
-            group.path.toString() !== path.toString()
-          );
+          return callback
+            ? (
+              group.path.toString() !== path.toString() &&
+              group.callback !== callback
+            ) : (
+              group.path.toString() !== path.toString()
+            );
         })
     );
   } else {
