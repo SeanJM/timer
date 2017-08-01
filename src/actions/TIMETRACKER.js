@@ -8,31 +8,46 @@ store.on("PUNCH_IN", ({ projectId }) => {
   const today = moment().format("YYYY_MM_DD");
   const path = [ "projects", projectId, "timeTracker", today ];
 
-  console.log(path);
-
   function update() {
     const clockedInTime = getClockedInTime(store.get(path));
+    const timeOffset = store.get(path.concat("timeOffset"));
+
     if (store.get(path.concat("punchedIn"))) {
-      store.set(path.concat("clockedInTime"), clockedInTime);
+      store.set(
+        path.concat("clockedInTime"),
+        clockedInTime + (timeOffset.type === "add" ? timeOffset.value : -timeOffset.value)
+      );
       TIMERS[path.join(".")] = setTimeout(update, 1000);
     }
   }
 
   if (typeof store.get(path) === "undefined") {
-    console.log("path is undefined");
     store.set(path, {
       break: false,
       punchedIn: false,
 
       clockedInTime: 0,
 
+      timeOffset: {
+        type: "add",
+        value: 0
+      },
+
       clockIn: [],
       clockOut: [],
     });
   }
 
-  store.set(path.concat("punchedIn"), true);
-  store.push(path.concat("clockIn"), new Date().getTime());
+  store.set(
+    path.concat("punchedIn"),
+    true
+  );
+
+  store.push(
+    path.concat("clockIn"),
+    new Date().getTime()
+  );
+
   update();
 });
 
@@ -47,17 +62,31 @@ store.on("PUNCH_OUT", ({ projectId }) => {
 store.on("RESET_TIMETRACKER", ({ projectId }) => {
   const today = moment().format("YYYY_MM_DD");
   const path = [ "projects", projectId, "timeTracker", today ];
-  store.set(path.concat("clockedInTime"), 0);
-  store.set(path.concat("clockIn"), []);
-  store.set(path.concat("clockOut"), []);
-  store.set(path.concat("punchedIn"), false);
+
+  store.assign(path, {
+    timeOffset: {
+      type: store.get(path.concat("timeOffset", "type")),
+      value: 0,
+    },
+    clockedInTime: 0,
+    clockIn: [],
+    clockOut: [],
+    punchedIn: false
+  });
 });
 
-store.on("SET_TIME", ({ projectId, value }) => {
-  // const today = moment().format("YYYY_MM_DD");
-  // const path = [ "projects", projectId, "timeTracker", today ];
-  // const punchedIn = store.get(path.concat("punchedIn"));
+store.on("OFFSET_TIME", ({ projectId, value, type }) => {
+  const today = moment().format("YYYY_MM_DD");
 
-  // store.set(path.concat("punchedIn"), punchedIn[0] - value);
-  // store.set(path.concat("punchedOut"), punchedIn[0] - 1);
+  const path = [
+    "projects",
+    projectId,
+    "timeTracker",
+    today
+  ];
+
+  store.set(path.concat("timeOffset"), {
+    type: type,
+    value : value
+  });
 });
