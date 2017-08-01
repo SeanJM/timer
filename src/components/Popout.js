@@ -25,6 +25,7 @@ Component.create("Popout", {
 
   open() {
     this.popout.appendTo(this.document);
+    this.popout.childNodes.forEach(child => child.trigger("open"));
   },
 
   render(props) {
