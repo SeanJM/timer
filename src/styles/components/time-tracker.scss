@@ -11,14 +11,15 @@
     margin-top : $u;
   }
 
-  .control {
-    .button_face {
-      border-bottom : 0;
-    }
+}
 
-    .button + .button .button_face {
-      border-left : 0;
-    }
+.time-tracker_control {
+  .button_face {
+    border-bottom : 0;
+  }
+
+  .button + .button .button_face {
+    border-left : 0;
   }
 }
 

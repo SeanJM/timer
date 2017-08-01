@@ -2,27 +2,30 @@
   z-index             : 2;
   position            : absolute;
   width               : $u50;
-  padding             : $u2 $u4;
   border              : 1px solid #000;
   border-bottom-width : 2px;
   background          : #fff;
+
+  .content_body {
+    padding: 0 $u4 $u4;
+  }
+
+  .control {
+    margin-top: $u2;
+
+    .button {
+      width: $u22;
+      & + .button .button_face {
+        border-left: 0;
+      }
+    }
+
+    .button_face {
+      border-bottom: 1px solid #000;
+    }
+  }
 }
 
 .popout-editTime {
-  width : $u70;
-
-  .control {
-    width : $u40;
-
-    .button {
-      min-width : $u15;
-    }
-  }
-
-  .input-hours,
-  .input-minutes,
-  .input-seconds {
-    display : inline-block;
-    width   : $u12;
-  }
+  width: $u70;
 }

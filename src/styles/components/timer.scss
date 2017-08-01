@@ -1,5 +1,7 @@
 .timer {
   width : 100%;
+  user-select: none;
+  cursor: default;
 }
 
 .timer_hours,
