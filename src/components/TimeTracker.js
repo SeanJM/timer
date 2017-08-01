@@ -1,5 +1,4 @@
 import { Component, el } from "flatman-client";
-import _ from "lodash";
 import store from "../store";
 import moment from "moment";
 
@@ -77,13 +76,11 @@ Component.create("TimeTracker", {
 
   editTime() {
     this.names.editTime.open();
-    // store.trigger("TIMETRACKER_EDIT", {
-    //   projectId: store.projectId
-    // });
   },
 
   render() {
     const self = this;
+    const today = moment().format("YYYY_MM_DD");
     return el("div", {
       className: "time-tracker"
     }, [
@@ -102,68 +99,28 @@ Component.create("TimeTracker", {
         el("Popout", {
           name: "editTime"
         }, [
-          el("Input", {
-            className: "input-hours",
-            name: "editTimeHours",
-            type: "text"
-          }),
-          el("Input", {
-            className: "input-minutes",
-            name: "editTimeMinutes",
-            type: "text"
-          }),
-          el("Input", {
-            className: "input-seconds",
-            name: "editTimeSeconds",
-            type: "text"
-          }),
-          el("Control", [
-            el("Button", {
-              onClick: () => {
-                const today = moment().format("YYYY_MM_DD");
-                const path = [ "projects", store.projectId, "timeTracker", today ];
-
-                const value = {
-                  hours: this.names.editTimeHours.value(),
-                  minutes: this.names.editTimeHours.value(),
-                  seconds: this.names.editTimeHours.value()
-                };
-
-                let time = store.get(path.concat("clockedInTime"));
-
-                if (/^\+/.test(value.hours)) {
-                  time += Number(
-                    value.hours.match(/[0-9]+/)[0] * (1000 * 60 * 60)
-                  );
-                }
-
-                if (/^\+/.test(value.minutes)) {
-                  time += Number(
-                    value.minutes.match(/[0-9]+/)[0] * (1000 * 60)
-                  );
-                }
-
-                if (/^\+/.test(value.seconds)) {
-                  time += Number(
-                    value.seconds.match(/[0-9]+/)[0] * 1000
-                  );
-                }
-
-                store.trigger("SET_TIME", {
-                  projectId: store.projectId,
-                  value: time
-                });
-
-                this.names.editTime.close();
-              }
-            }, [ "OK" ]),
-            el("Button", {
-              onClick: () => {
-                this.names.editTime.close();
-              }
+          el("Content.EditTime", {
+            onOpen: function () {
+              const value = (
+                store.get([ "projects", store.projectId, "timeTracker", today, "timeOffset", "value" ]) ||
+                0
+              );
+              this.value(value);
             },
-            [ "Cancel" ])
-          ])
+            onCancel: () => {
+              this.names.editTime.close();
+            },
+            onSubmit: ({ time, type }) => {
+              store.trigger("OFFSET_TIME", {
+                projectId: store.projectId,
+                value: time,
+                type: type
+              });
+
+              this.names.editTime.close();
+            },
+            type: store.get([ "projects", store.projectId, "timeTracker", today, "timeOffset", "type" ])
+          })
         ])
       ]),
       el("Control", {
