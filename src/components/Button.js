@@ -19,6 +19,10 @@ Component.create("Button", {
     });
   },
 
+  value() {
+    return this.props.value;
+  },
+
   text(value) {
     this.names.text.text(value);
   },
