@@ -8,7 +8,7 @@ Component.create("TodoFooter", {
 
   render() {
     return el("div", {
-      onMount: e => this.onMount(),
+      onMount: () => this.onMount(),
       name: "todoFooter",
       className: "todo-footer"
     });
