@@ -46,6 +46,21 @@
   border: 1px solid #000;
   border-top: 0; }
 
+.button-group {
+  width: 100%;
+  display: inline-block; }
+  .button-group .button_face {
+    border-left: 0;
+    border-right: 0;
+    border-bottom-width: 2px; }
+  .button-group .button_text {
+    font-weight: bold; }
+
+.button-group_button--is-selected .button_face {
+  border-color: #fc000b; }
+.button-group_button--is-selected .button_text {
+  color: #fc000b; }
+
 .checkbox {
   width: 36px;
   height: 36px;
@@ -87,6 +102,40 @@
   position: absolute;
   border: 1px solid #000;
   border-bottom-width: 3px; }
+
+.input {
+  width: 100%;
+  border-bottom: 1px solid #000; }
+  .input input {
+    width: 100%;
+    height: 36px;
+    padding: 0 8px;
+    border: none;
+    font-size: 14px;
+    background: none; }
+  .input input:focus {
+    outline: none; }
+
+.input--is-focus {
+  border-color: #fc000b; }
+  .input--is-focus .icon {
+    fill: #fc000b; }
+  .input--is-focus .button {
+    border-color: #fc000b; }
+
+.input--has-icon {
+  position: relative; }
+  .input--has-icon input {
+    padding-left: 36px;
+    font-size: 14px; }
+
+.input_icon {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px; }
 
 .input-slider {
   display: inline-block;
@@ -139,38 +188,29 @@
 .input-slider_marker--is-last {
   border-right: 1px solid #000; }
 
-.input {
+.input-time {
   width: 100%;
-  border-bottom: 1px solid #000; }
-  .input input {
-    width: 100%;
-    height: 36px;
-    padding: 0 8px;
-    border: none;
-    font-size: 14px; }
-  .input input:focus {
-    outline: none; }
-
-.input--is-focus {
-  border-color: #fc000b; }
-  .input--is-focus .icon {
-    fill: #fc000b; }
-  .input--is-focus .button {
-    border-color: #fc000b; }
-
-.input--has-icon {
   position: relative; }
-  .input--has-icon input {
-    padding-left: 36px;
-    font-size: 14px; }
 
-.input_icon {
+.input-hours,
+.input-minutes,
+.input-seconds {
+  display: inline-block;
+  width: 33.3333%;
+  position: relative; }
+
+.input-time_separator {
+  z-index: -1;
+  top: 0;
   position: absolute;
-  top: 50%;
-  left: 8px;
-  width: 20px;
-  height: 20px;
-  margin-top: -10px; }
+  font-size: 14px;
+  line-height: 36px;
+  height: 36px;
+  left: 33.33333%;
+  width: 16px;
+  margin-left: -8px; }
+  .input-time_separator ~ .input-time_separator {
+    left: 66.66666%; }
 
 .log_time + .log_time {
   margin-top: 12px; }
@@ -189,22 +229,22 @@
   z-index: 2;
   position: absolute;
   width: 200px;
-  padding: 8px 16px;
   border: 1px solid #000;
   border-bottom-width: 2px;
   background: #fff; }
+  .popout .content_body {
+    padding: 0 16px 16px; }
+  .popout .control {
+    margin-top: 8px; }
+    .popout .control .button {
+      width: 88px; }
+      .popout .control .button + .button .button_face {
+        border-left: 0; }
+    .popout .control .button_face {
+      border-bottom: 1px solid #000; }
 
 .popout-editTime {
   width: 280px; }
-  .popout-editTime .control {
-    width: 160px; }
-    .popout-editTime .control .button {
-      min-width: 60px; }
-  .popout-editTime .input-hours,
-  .popout-editTime .input-minutes,
-  .popout-editTime .input-seconds {
-    display: inline-block;
-    width: 48px; }
 
 .projects {
   position: absolute;
@@ -276,10 +316,11 @@
   border-bottom: 1px solid #000; }
   .time-tracker .timer {
     margin-top: 4px; }
-  .time-tracker .control .button_face {
-    border-bottom: 0; }
-  .time-tracker .control .button + .button .button_face {
-    border-left: 0; }
+
+.time-tracker_control .button_face {
+  border-bottom: 0; }
+.time-tracker_control .button + .button .button_face {
+  border-left: 0; }
 
 .time-tracker_control {
   position: absolute;
@@ -289,7 +330,9 @@
   text-align: right; }
 
 .timer {
-  width: 100%; }
+  width: 100%;
+  user-select: none;
+  cursor: default; }
 
 .timer_hours,
 .timer_minutes,
