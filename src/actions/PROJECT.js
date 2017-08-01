@@ -35,7 +35,11 @@ store.on("ADD_PROJECT", ({ name }) => {
     name: name,
     date: new Date().getTime(),
     id: id,
-    hideTodoDone: false
+    hideTodoDone: false,
+    timeOffset: {
+      value: 0,
+      type: "add"
+    }
   });
 
   store.set("projectId", id);
