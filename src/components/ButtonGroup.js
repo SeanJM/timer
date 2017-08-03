@@ -2,11 +2,14 @@ import { Component, el } from "flatman-client";
 
 Component.create("ButtonGroup", {
   select(child) {
+    this.props.value = child.props.value;
+
     this.document.childNodes.forEach(c => {
       if (child !== c) {
         c.removeClass("button-group_button--is-selected");
       }
     });
+
     child.addClass("button-group_button--is-selected");
   },
 

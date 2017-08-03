@@ -6,6 +6,8 @@ console.log(store);
 
 Component.create("TimeTracker", {
   constructor(props) {
+    const today = moment().format("YYYY_MM_DD");
+
     props.path = [ "projects", store.projectId, "timeTracker", moment().format("YYYY_MM_DD") ];
     this.sound = el("Sound");
 
@@ -13,16 +15,15 @@ Component.create("TimeTracker", {
       props.path.splice(1, 1, id);
     });
 
-    store.on("*", e => {
-      const p = props.path.join(".");
-      if (e.path.indexOf(p) === 0) {
-        if (e.path === p + ".punchedIn") {
+    store.on(new RegExp("projects\\.([a-zA-Z0-9]+)\\.timeTracker\\." + today + "\\.([a-zA-Z0-9]+)"), e => {
+      if (e.match[1] === store.projectId) {
+        if (e.match[2] === "punchedIn") {
           if (e.value) {
             this.onPunchedIn();
           } else {
             this.onPunchedOut();
           }
-        } else if (e.path === p + ".clockedInTime") {
+        } else if (e.match[2] === "clockedInTime") {
           this.names.clock.value(e.value);
         }
       }
@@ -82,18 +83,17 @@ Component.create("TimeTracker", {
     const self = this;
     const today = moment().format("YYYY_MM_DD");
     return el("div", {
-      className: "time-tracker"
+      className: "time-tracker",
+      onMount: () => {
+        this.names.clock.value(
+          store.get([ self.props.path, "clockedInTime" ])
+        );
+      }
     }, [
       el("Clock", {
         name: "clock",
         onDoubleclick: function () {
           self.editTime();
-        },
-        onMount: function () {
-          const clockedInTime = store.get([ self.props.path, "clockedInTime" ]);
-          this.value(
-            clockedInTime
-          );
         }
       }, [
         el("Popout", {
@@ -128,15 +128,16 @@ Component.create("TimeTracker", {
       }, [
         el("Button", {
           name: "punchButton",
-          onMount: function () {
-            this.on("click", () => {
-              const punchedIn = store.get(self.props.path.concat("punchedIn"));
-              if (punchedIn) {
-                self.punchOut();
-              } else {
-                self.punchIn();
-              }
-            });
+          onClick: () => {
+            const punchedIn = store.get(
+              this.props.path.concat("punchedIn")
+            );
+
+            if (punchedIn) {
+              this.punchOut();
+            } else {
+              this.punchIn();
+            }
           }
         }, [ "Punch in" ]),
         el("Button", {

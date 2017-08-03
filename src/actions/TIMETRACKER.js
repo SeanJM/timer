@@ -17,6 +17,7 @@ store.on("PUNCH_IN", ({ projectId }) => {
         path.concat("clockedInTime"),
         clockedInTime + (timeOffset.type === "add" ? timeOffset.value : -timeOffset.value)
       );
+
       TIMERS[path.join(".")] = setTimeout(update, 1000);
     }
   }

@@ -11,10 +11,8 @@ Component.create("TodoList", {
       this.update();
     });
 
-    store.on("*", (e) => {
-      if (/^todos\.[a-zA-Z0-9]+$/.test(e.path)) {
-        this.update();
-      }
+    store.on(/^todos\.[a-zA-Z0-9]+$/, (e) => {
+      this.update();
     });
   },
 
