@@ -14,8 +14,8 @@
     "colors": "^1.1.2",
     "eslint": "^4.3.0",
     "express": "^4.15.3",
-    "flatman-client": "^1.6.4",
-    "flatman-server": "^0.10.2",
+    "flatman-client": "^1.7.2",
+    "flatman-server": "^0.10.3",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "webpack": "^3.4.1"
