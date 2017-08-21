@@ -6,16 +6,29 @@ console.log(store);
 
 Component.create("TimeTracker", {
   constructor(props) {
-    const today = moment().format("YYYY_MM_DD");
-
-    props.path = [ "projects", store.projectId, "timeTracker", moment().format("YYYY_MM_DD") ];
     this.sound = el("Sound");
+
+    props.path = [
+      "projects", store.projectId, "timeTracker", moment().format("YYYY_MM_DD")
+    ];
 
     store.on("projectId", id => {
       props.path.splice(1, 1, id);
     });
 
-    store.on(new RegExp("projects\\.([a-zA-Z0-9]+)\\.timeTracker\\." + today + "\\.([a-zA-Z0-9]+)"), e => {
+    if (store.get(props.path) && store.get(props.path.concat("punchedIn"))) {
+      this.punchIn();
+    }
+  },
+
+  onMount() {
+    const self = this;
+    const today = moment().format("YYYY_MM_DD");
+    const match = new RegExp(
+      "projects\\.([a-zA-Z0-9]+)\\.timeTracker\\." + today + "\\.([a-zA-Z0-9]+)"
+    );
+
+    store.on(match, e => {
       if (e.match[1] === store.projectId) {
         if (e.match[2] === "punchedIn") {
           if (e.value) {
@@ -28,6 +41,10 @@ Component.create("TimeTracker", {
         }
       }
     });
+
+    this.names.clock.value(
+      store.get([ self.props.path, "clockedInTime" ])
+    );
   },
 
   onPunchedOut() {
@@ -35,6 +52,7 @@ Component.create("TimeTracker", {
   },
 
   onPunchedIn() {
+    console.log(this);
     this.names.punchButton.text("Punch out");
   },
 
@@ -85,9 +103,7 @@ Component.create("TimeTracker", {
     return el("div", {
       className: "time-tracker",
       onMount: () => {
-        this.names.clock.value(
-          store.get([ self.props.path, "clockedInTime" ])
-        );
+        this.onMount();
       }
     }, [
       el("Clock", {
