@@ -78,13 +78,7 @@ store.on("RESET_TIMETRACKER", ({ projectId }) => {
 
 store.on("OFFSET_TIME", ({ projectId, value, type }) => {
   const today = moment().format("YYYY_MM_DD");
-
-  const path = [
-    "projects",
-    projectId,
-    "timeTracker",
-    today
-  ];
+  const path = [ "projects", projectId, "timeTracker", today ];
 
   store.set(path.concat("timeOffset"), {
     type: type,
