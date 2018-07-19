@@ -1,0 +1,33 @@
+.menu {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: $u70;
+  background: $black;
+  bottom: 0;
+  padding-top: $titlebar-size;
+  h6 {
+    color: #fff;
+    line-height: $input-size;
+  }
+}
+
+.menu_titlebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: $titlebar-size;
+  padding: $u2;
+  border-bottom: 1px solid $black-light;
+  .button {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+.menu_titlebar_content {
+  position: relative;
+}
