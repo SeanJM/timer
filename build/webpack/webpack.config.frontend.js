@@ -1,10 +1,9 @@
 const { HotModuleReplacementPlugin, DefinePlugin } = require("webpack");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const path = require("path");
 
 module.exports = function (__root) {
-  const resolve = require("./webpack.resolve")(__root);
-
   return {
     mode: process.env.NODE_ENV === "production"
       ? "production"
@@ -34,20 +33,28 @@ module.exports = function (__root) {
 
     entry: "./frontend/src/index.tsx",
     output: {
-      path: path.join(__root, "frontend/public"),
+      path: path.join(__root, "frontend", "public"),
       filename: "bundle.js",
     },
 
     resolve: {
-      ...resolve,
-      extensions: [".ts", ".tsx", ".js"]
+      extensions: [".ts", ".js", ".tsx"],
+      plugins: [
+        new TsconfigPathsPlugin({
+          configFile: path.join(__root, "frontend", "tsconfig.json"),
+          extensions: [".ts", ".js", ".tsx"],
+        }),
+      ],
     },
 
     module: {
       rules: [{
         test: /\.ts(x|)$/,
         exclude: /node_modules/,
-        use: "ts-loader",
+        loader: "ts-loader",
+        options: {
+          configFile: path.join(__root, "frontend", "tsconfig.json"),
+        },
       }],
     },
 
