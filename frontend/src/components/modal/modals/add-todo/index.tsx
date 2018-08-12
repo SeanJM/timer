@@ -7,7 +7,7 @@ import Button from "@components/button";
 import Control from "@components/control";
 import { ModalWindow } from "@components/modal/modal-window";
 import { dispatch } from "@action";
-import { withStore, StoreState, FormElement } from "@store";
+import { withStore, StoreState } from "@store";
 
 interface Props extends Pick<
   StoreState["todo"],
@@ -19,12 +19,8 @@ interface Props extends Pick<
 interface State { }
 
 function mapStateToProps(state: StoreState) {
-  const form =
-    state.form.find((form) => form.id === "add-category") || { inputs: [] };
-    
-  const category =
-    (form as FormElement).inputs.find((a) => a.name === "category") || { value: "" };
-    
+  const form = state.form["add-todo"] || { inputs: [] };
+  const category = form.inputs.find(a => a.name === "category") || { value: "" };
   return {
     name: category.value,
     isRequest: state.todo.isRequest,
@@ -32,23 +28,23 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
-export class AddCategory extends Component<Props, State> {
+export class AddTodo extends Component<Props, State> {
   onClick() {
-    dispatch("ADD_CATEGORY", {
+    dispatch("ADD_TODO", {
       name: this.props.name,
     });
   }
 
   onCancel() {
     dispatch("MODAL_CLOSE", {
-      id: "ADD_CATEGORY"
+      name: "ADD_TODO"
     });
   }
 
   componentWillReceiveProps(nextProps: Props) {
     if (this.props.isRequest && !nextProps.isRequest && nextProps.isSuccess) {
       dispatch("MODAL_CLOSE", {
-        id: "ADD_CATEGORY"
+        name: "ADD_TODO"
       });
     }
   }
@@ -58,17 +54,22 @@ export class AddCategory extends Component<Props, State> {
       <ModalWindow
         head={
           <Titlebar
-            left={<h6>Add category</h6>}
+            left={<h6>Add todo</h6>}
           />
         }
         body={
           <div>
-            <FormConnect id="add-category">
+            <FormConnect id="add-todo">
               <InputLabel
-                formID="add-category"
+                formID="add-todo"
                 type="text"
                 label="Name"
                 name="category" />
+              <InputLabel
+                formID="add-todo"
+                type="switch"
+                label="Has a due date"
+                name="dueDate" />
             </FormConnect>
           </div>
         }
@@ -88,4 +89,4 @@ export class AddCategory extends Component<Props, State> {
   }
 }
 
-export const AddCategoryConnect = withStore(AddCategory, mapStateToProps)();
+export const AddTodoConnect = withStore(AddTodo, mapStateToProps)();

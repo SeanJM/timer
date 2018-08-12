@@ -6,28 +6,45 @@
   background: $black;
   bottom: 0;
   padding-top: $titlebar-size;
+
   h6 {
     color: #fff;
-    line-height: $input-size;
+  }
+
+  .titlebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-color: $black-light;
   }
 }
 
-.menu_titlebar {
+.menu-item {
+  position: relative;
+  font-size: $font-size;
+  line-height: $line-height;
+  color: $grey-light;
+  padding: $u3 $u3;
+  border-bottom: 1px solid $black-light;
+}
+
+.menu-item-control {
+  .menu-item_click-target {
+    right: $u15;
+  }
+}
+
+.menu-item_click-target {
   position: absolute;
-  top: 0;
   left: 0;
   right: 0;
-  width: 100%;
-  height: $titlebar-size;
-  padding: $u2;
-  border-bottom: 1px solid $black-light;
-  .button {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
+  top: 0;
+  bottom: 0;
 }
 
-.menu_titlebar_content {
-  position: relative;
+.menu-item_control {
+  position: absolute;
+  right: 0;
+  top: 0;
 }

@@ -1,0 +1,63 @@
+.input-wrapper {
+  position: relative;
+
+  .button {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  input {
+    height: $input-size;
+    width: 100%;
+    border: 0;
+  }
+
+  input[type=text] {
+    padding: 0 $u2;
+    font-size: $font-size;
+    border-radius: 2px;
+  }
+
+  input:active,
+  input:focus {
+    outline: none;
+  }
+}
+
+.input-wrapper_input {
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4);
+  background: #fff;
+}
+
+.input-wrapper-switch {
+  label {
+    line-height: $input-size - $u2;
+    padding: $u 0;
+  }
+
+  .switch {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+.input-wrapper-button {
+  .input-wrapper_input {
+    padding-right: $u11;
+  }
+
+  .button_face {
+    top: 2px;
+    right: 2px;
+    bottom: 2px;
+    left: 2px;
+  }
+}
+
+.titlebar_left {
+  .input-wrapper {
+    width: 100%;
+  }
+}

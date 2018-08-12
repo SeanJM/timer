@@ -1,0 +1,34 @@
+.switch {
+  position: relative;
+  height: $input-size;
+  width: $input-size + $u;
+
+  &_chrome {
+    background: $grey-light;
+    border-radius: ($input-size - $u2) * 0.5;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: $u2;
+    bottom: $u2;
+  }
+
+  &_thumb {
+    $h: $input-size - $u5;
+
+    transition: transform 0.15s;
+    position: absolute;
+    left: $u / 2;
+    top: 50%;
+    margin-top: $h / -2;
+    width: $h;
+    height: $h;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  &-checked &_thumb {
+    transform: translateX($u5);
+  }
+}

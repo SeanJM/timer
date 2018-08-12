@@ -1,0 +1,40 @@
+.titlebar {
+  height: $titlebar-size;
+  padding: $u2;
+  border-bottom: 1px solid $grey-light;
+}
+
+.titlebar_content {
+  position: relative;
+  height: $titlebar-size - $u4;
+  display: inline-block;
+  width: 100%;
+
+  h6 {
+    padding-top: $u;
+    padding-bottom: $u;
+    line-height: $input-size - $u2;
+  }
+}
+
+.titlebar_left {
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  h6 {
+    margin-left: $u2;
+  }
+}
+
+.titlebar_right {
+  text-align: right;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.titlebar_center {
+  text-align: center;
+  width: 100%;
+}

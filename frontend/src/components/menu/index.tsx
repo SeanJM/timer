@@ -1,36 +1,17 @@
-import * as React from "react";
-import { withStore, StoreState } from "@store";
-import { Button } from "@components";
-import { dispatch } from "@action";
+import React, { Component } from "react";
 
-interface Props {
-  categories: StoreState["categories"]
+interface Props extends JSX.ElementChildrenAttribute {
+  className?: string;
 }
 
-function mapStateToProps(state: StoreState, props) {
-  return {
-    categories: state.categories
-  };
-}
+export * from "@components/menu/menu-item";
 
-export class MenuView extends React.Component<Props, {}> {
+export class Menu extends Component<Props, {}> {
   render() {
     return (
       <div className="menu">
-        <div className="menu_titlebar">
-          <div className="menu_titlebar_content">
-            <h6>Category</h6>
-            <Button type="primary" onClick={() => dispatch("MODAL_OPEN", {
-              name: "ADD_CATEGORY",
-            })}>Add</Button>
-          </div>
-        </div>
-        <div className="main-menu-list">
-
-        </div>
+        {this.props.children}
       </div>
     );
   }
 }
-
-export const MenuConnect = withStore(MenuView, mapStateToProps)();

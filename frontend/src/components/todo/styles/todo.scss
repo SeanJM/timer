@@ -1,0 +1,14 @@
+.todo {
+  padding: $u4;
+  border-bottom: 1px solid $grey-light;
+}
+
+.todo_container {
+  position: relative;
+}
+
+.todo_control {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
