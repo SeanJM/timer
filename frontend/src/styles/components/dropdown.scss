@@ -1,0 +1,13 @@
+.dropdown {
+  position: relative;
+  z-index: 1;
+}
+
+.dropdown_container {
+  background : #fff;
+  width: $u50;
+  left: $u;
+  position: absolute;
+  border: 1px solid #000;
+  border-bottom-width: 3px;
+}

@@ -1,0 +1,35 @@
+.checkbox {
+  width : $input-size;
+  height : $input-size;
+  position: relative;
+}
+
+.checkbox_background,
+.checkbox_indicator {
+  position: absolute;
+  left : 50%;
+  top: 50%;
+}
+
+.checkbox_background {
+  width: $u4;
+  height: $u4;
+  border: 2px solid $red;
+  margin-left: -$u4/2;
+  margin-top: -$u4/2;
+  .checkbox--is-checked & {
+    background: $red;
+  }
+}
+
+.checkbox_indicator {
+  width: $u4;
+  height: $u4;
+  margin-left: -$u4/2;
+  margin-top: -$u4/2;
+  opacity: 0;
+  fill: #fff;
+  .checkbox--is-checked & {
+    opacity: 1;
+  }
+}
