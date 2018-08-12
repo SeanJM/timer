@@ -68,7 +68,7 @@ export default class PersiStore<T> {
   saveLocalStorageDebounced: () => void;
 
   constructor(initialState: T, settings?: Settings) {
-    let persistentState = {};
+    let persistentState = Object.assign({}, initialState);
     const n = localStorage.length;
     let i = -1;
 

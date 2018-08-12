@@ -75,12 +75,14 @@ export default class Store<T> {
       let setValue = paths[i][paths[i].length - 1];
       let x = 0;
       let y = setPath.length + 1;
+
       while (++x < y) {
         let setPathString = setPath.slice(0, x).join(".");
         if (emitPathList.indexOf(setPathString) === -1) {
           emitPathList.push(setPathString);
         }
       }
+
       set(this.value, setPath, setValue);
     }
 
