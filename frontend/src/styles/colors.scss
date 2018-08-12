@@ -1,0 +1,18 @@
+$red: #bb2248;
+$red-light: lighten($red, 15%);
+$blue: adjust-hue($red, 200deg);
+$blue-light: lighten(adjust-hue($red, 200deg), 15%);
+$green: adjust-hue($red, 175deg);
+$green-light: lighten($green, 15%);
+$black: darken(desaturate($blue, 5%), 36%);
+$black-light: desaturate(darken($blue, 26%), 30%);
+$black-lightest: desaturate(darken($blue, 20%), 30%);
+$grey: desaturate($blue, 50%);
+$grey-light: desaturate(lighten($grey, 22%), 10%);
+$grey-lightest: desaturate(lighten($grey, 38%), 10%);
+$primary: $blue;
+$primary-light: $blue-light;
+$danger: $red;
+$danger-light: $red-light;
+$positive: $green;
+$positive-light: $green-light;
