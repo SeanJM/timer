@@ -12,13 +12,19 @@ const BY_TYPE: {
 };
 
 
-interface Props extends
+interface ServiceProps extends
   Partial<StoreState["slideOut"]>,
   Pick<RouterProps, "history" | "location"> {
   history: RouterProps["history"]
 }
 
-function mapStateToProps(state: StoreState, props: RouterProps): Props {
+interface Props {
+  head: JSX.Element;
+  body: JSX.Element;
+  feet: JSX.Element;
+}
+
+function mapStateToProps(state: StoreState, props: RouterProps): ServiceProps {
   return {
     type: state.slideOut.type,
     value: state.slideOut.value,
@@ -27,7 +33,17 @@ function mapStateToProps(state: StoreState, props: RouterProps): Props {
   };
 }
 
-export class SlideOut extends React.Component<Props, {}> {
+export function SlideOut(props: Props) {
+  return (
+    <div className="slide-out">
+      <div className="slide-out_head">{props.head}</div>
+      <div className="slide-out_body">{props.body}</div>
+      <div className="slide-out_feet">{props.feet}</div>
+    </div>
+  );
+}
+
+export class SlideOutView extends React.Component<ServiceProps, {}> {
   shadowbox: HTMLDivElement;
   chrome: HTMLDivElement;
 
@@ -51,15 +67,15 @@ export class SlideOut extends React.Component<Props, {}> {
     const history = this.props.history;
     const location = this.props.location;
     return (
-      <div className="slide-out">
+      <div className="slide-out-container">
         <div
           ref={(node) => { this.shadowbox = node; }}
-          className="slide-out_shadowbox"
+          className="slide-out-container_shadowbox"
           onClick={() => history.push(path.pop(location.pathname))}
         />
         <div
           ref={(node) => { this.chrome = node; }}
-          className="slide-out_chrome"
+          className="slide-out-container_chrome"
         >
           {this.props.children}
         </div>
@@ -68,19 +84,19 @@ export class SlideOut extends React.Component<Props, {}> {
   }
 }
 
-export function SlideOutContainerView(props: Props) {
+export function SlideOutServiceView(props: ServiceProps) {
   const SlideOutElement = BY_TYPE[props.type];
   return (
     <Fragment>
       {SlideOutElement
         ? (
-          <SlideOut {...props}>
+          <SlideOutView {...props}>
             {<SlideOutElement {...props.value} />}
-          </SlideOut>)
+          </SlideOutView>)
         : null}
     </Fragment>
   );
 }
 
 export const SlideOutContainerConnect =
-  withStore(SlideOutContainerView as React.ComponentType, mapStateToProps)(withRouter);
+  withStore(SlideOutServiceView as React.ComponentType, mapStateToProps)(withRouter);
