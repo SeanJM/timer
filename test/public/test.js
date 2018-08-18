@@ -461,6 +461,15 @@ exports.default = getParams;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = {};
+function parse(pathname) {
+    const p = path.normalize(pathname);
+    const chunks = p.split("/");
+    return {
+        chunks,
+        isRelative: pathname[0] !== "/",
+        root: pathname[0] === "/" ? "/" : "",
+    };
+}
 path.normalize = function (pathname) {
     let i = -1;
     const p = pathname.split("/");
@@ -475,33 +484,38 @@ path.normalize = function (pathname) {
 };
 path.join = function (...pathname) {
     let i = -1;
+    const p = parse(pathname[0]);
     const n = pathname.length;
     const res = [];
-    let s = pathname[0][0] === "/" ? "/" : "";
     while (++i < n) {
         res.push(this.normalize(pathname[i]));
     }
-    return s + res.join("/") + "/";
+    return p.root + res.join("/") + "/";
 };
 path.pop = function (pathname, times = 1) {
-    const s = pathname[0][0] === "/" ? "/" : "";
-    const p = this.normalize(pathname).split("/");
+    const p = parse(pathname);
     let i = -1;
     while (++i < times) {
-        p.pop();
+        p.chunks.pop();
     }
-    return s + p.join("/") + "/";
+    return p.root + p.chunks.join("/") + "/";
 };
 path.splice = function (pathname, member, index, length) {
-    const s = pathname[0][0] === "/" ? "/" : "";
-    const p = this.normalize(pathname).split("/");
+    const p = parse(pathname);
     const m = this.normalize(member);
     if (index < 0 && typeof length === "undefined") {
-        p.splice(p.length + index, p.length, m);
-        return s + p.join("/") + "/";
+        p.chunks.splice(p.chunks.length + index, p.chunks.length, m);
     }
-    p.splice(index, length || index, m);
-    return s + p.join("/") + "/";
+    else {
+        p.chunks.splice(index, length || index, m);
+    }
+    return p.root + p.chunks.join("/") + "/";
+};
+path.push = function (pathname, ...members) {
+    const p = parse(pathname);
+    const m = members.map((member) => this.normalize(member));
+    Array.prototype.push.apply(p.chunks, m);
+    return p.root + p.chunks.join("/") + "/";
 };
 exports.default = path;
 
@@ -778,10 +792,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const _path_1 = __importDefault(__webpack_require__(/*! @path */ "./packages/path.ts"));
 function default_1(test) {
-    test("path", _path_1.default.splice("/a/b/c/", "d", 1)).isEqual("/a/d/c/");
-    test("path", _path_1.default.splice("/a/b/c/", "d", -1)).isEqual("/a/b/d/");
-    test("path", _path_1.default.splice("/a/b/c/", "d", -2)).isEqual("/a/d/");
-    test("path", _path_1.default.splice("/a/b/c/", "d", -2, 1)).isEqual("/a/d/c/");
+    test("path.splice", _path_1.default.splice("/a/b/c/", "d", 1)).isEqual("/a/d/c/");
+    test("path.splice", _path_1.default.splice("/a/b/c/", "d", -1)).isEqual("/a/b/d/");
+    test("path.splice", _path_1.default.splice("/a/b/c/", "d", -2)).isEqual("/a/d/");
+    test("path.splice", _path_1.default.splice("/a/b/c/", "d", -2, 1)).isEqual("/a/d/c/");
+    test("path.pop", _path_1.default.pop("/a/b/c/")).isEqual("/a/b/");
+    test("path.pop", _path_1.default.pop("/a/b/c/d/", 2)).isEqual("/a/b/");
+    test("path.push", _path_1.default.push("/a/b/c/", "d")).isEqual("/a/b/c/d/");
+    test("path.push (multiple arguments)", _path_1.default.push("/a/b/c/", "d", "e")).isEqual("/a/b/c/d/e/");
 }
 exports.default = default_1;
 
