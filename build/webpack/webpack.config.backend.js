@@ -41,7 +41,7 @@ module.exports = {
 
   devtool: process.env.NODE_ENV === "production"
     ? ""
-    : "cheap-eval-source-map",
+    : "source-map",
 
   resolve: {
     extensions: [".ts", ".js", ".tsx"],
