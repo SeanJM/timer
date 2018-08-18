@@ -34,7 +34,7 @@ function nodeToElement(element) {
 
 export default function SvgIcon({ prefix, src }) {
   const str = fs.readFileSync(src, "utf8");
-  const id = prefix + "_" + path.basename(src, ".svg");
+  const id = prefix + "-" + path.basename(src, ".svg");
   const parsed = parseSvg(str);
   return (
     <symbol viewBox={parsed.attributes.viewBox} id={id}>
