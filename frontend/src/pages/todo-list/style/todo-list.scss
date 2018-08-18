@@ -1,0 +1,21 @@
+.todo-list {
+  position: absolute;
+  left: $u70;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  padding-top: $u26;
+}
+
+.todo-list_content {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.todo-titlebar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+}
