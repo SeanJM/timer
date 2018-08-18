@@ -1,3 +1,5 @@
+import path from "@path";
+
 function isMatch(query: any, url: any) {
   return query === url || (query && url && query[0] === ":");
 }
@@ -5,16 +7,20 @@ function isMatch(query: any, url: any) {
 export interface Params {
   __exact: boolean;
   __match: boolean;
-  [key: string]: boolean | string;
+  __pathname: string[];
+  __schema: string[];
+  [key: string]: any;
 }
 
 export default function getParams(pathname: string, schema?: string) {
-  const urlPathname = pathname.split("/");
-  const queryPathname = schema ? schema.split("/") : null;
+  const urlPathname = path.normalize(path.join(pathname)).split("/");
+  const queryPathname = schema ? path.normalize(schema).split("/") : null;
 
   const params: Params = {
     __exact: true,
     __match: true,
+    __pathname: urlPathname,
+    __schema: queryPathname,
   };
 
   if (queryPathname) {
