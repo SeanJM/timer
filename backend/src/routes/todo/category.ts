@@ -10,7 +10,7 @@ export default function (router, database: Database) {
     });
 
     const element = database.createElement("category", {
-      id: generateHash(16),
+      id: generateHash(6),
       name: req.query.name,
     });
 

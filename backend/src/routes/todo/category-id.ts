@@ -6,7 +6,7 @@ import generateHash from "@generate-hash";
 function createTodo(req: Request, res: Response, database: Database) {
   const todoElement =
     database.createElement("todo", {
-      id: generateHash(16),
+      id: generateHash(6),
       name: req.query.name,
       state: "incomplete",
       created: new Date().getTime(),
