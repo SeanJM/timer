@@ -1,6 +1,6 @@
 import * as React from "react";
 
-interface Props extends JSX.ElementChildrenAttribute {
+interface Props extends Partial<JSX.ElementChildrenAttribute> {
   className?: string;
 }
 
