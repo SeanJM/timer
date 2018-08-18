@@ -1,22 +1,24 @@
 const ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const alpha = "abcdefghijklmnopqrstuvwxyz";
 const number = "0987654321";
-const symbol = "$%.~_+-";
+const symbol = "$._-";
 
 const byType = {
   A: ALPHA,
   a: alpha,
   N: number,
   "$": symbol,
-  "*": ALPHA + alpha + number + symbol,
 };
+
+const typeKeys = Object.keys(byType);
 
 function generateByLength(index) {
   var id = "";
-  const n = byType["*"].length - 1;
 
   while (index-- > 0) {
-    id += byType["*"][Math.round(Math.random() * n)];
+    let target = typeKeys[Math.round(Math.random() * (typeKeys.length - 1))];
+    let type = byType[target];
+    id += type[Math.round(Math.random() * (type.length - 1))];
   }
 
   return id;
