@@ -26,6 +26,7 @@ export function InputWrapper(props: InputWrapperProps) {
     <div className={className.join(" ")}>
       {props.label ? <label>{props.label}</label> : null}
       <div className="input-wrapper_input">
+        <div className="input-wrapper_face"></div>
         {props.children}
         {props.button}
       </div>
