@@ -1,4 +1,4 @@
-import Service from "./service";
+import Service from "@action/todo/service";
 
 export default function (subscribe) {
   const service = new Service();
