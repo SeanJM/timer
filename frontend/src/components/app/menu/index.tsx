@@ -39,18 +39,18 @@ export class AppMenuView extends React.Component<Props, {}> {
         <div className="main-menu-list">
           {todo.categories.map((a) => (
             <MenuItem
-              key={a.id}
-              title={a.name}
+              key={a.attributes.id}
+              title={a.attributes.name}
               onClick={() => {
                 const url = new URL(this.props.location);
-                url.location.pathname = "/todo/category/" + a.id;
+                url.location.pathname = "/todo/category/" + a.attributes.id;
                 this.props.history.push(url.toString());
               }}
               control={
                 <Button
                   icon="close"
                   onClick={() => dispatch("TODO_DELETE_CATEGORY", {
-                    id: a.id
+                    id: a.attributes.id
                   })}
                 />
               }
