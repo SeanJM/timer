@@ -12,7 +12,7 @@ export interface Params {
   [key: string]: any;
 }
 
-export default function getParams(pathname: string, schema?: string) {
+export default function getParams(pathname: string = "", schema?: string) {
   const urlPathname = path.normalize(path.join(pathname)).split("/");
   const queryPathname = schema ? path.normalize(schema).split("/") : null;
 
