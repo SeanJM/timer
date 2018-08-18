@@ -1,0 +1,73 @@
+import { Request, Response } from "express";
+import Validate from "verified";
+import Database from "@class/database";
+import generateHash from "@generate-hash";
+
+function createTodo(req: Request, res: Response, database: Database) {
+  const todoElement =
+    database.createElement("todo", {
+      id: generateHash(16),
+      name: req.query.name,
+      state: "incomplete",
+      created: new Date().getTime(),
+    });
+
+  let categoryElement =
+    database.getElementById(req.params.categoryId);
+
+  categoryElement.appendChild(todoElement);
+  res.send(todoElement);
+  database.save();
+}
+
+function deleteTodo(req: Request, res: Response, database) {
+  let categoryElement =
+    database.getElementById(req.params.categoryId);
+
+  let todoElement =
+    database.getElementById(req.query.id);
+
+  if (categoryElement && todoElement) {
+    categoryElement.removeChild(todoElement);
+    res.send();
+    database.save();
+  } else if (!categoryElement) {
+    res.status(404).send("CATEGORY_ID_DOES_NOT_EXIST")
+  } else {
+    res.status(404).send("TODO_ID_DOES_NOT_EXIST")
+  }
+}
+
+function completeTodo(req, res, database) {
+  let todoElement =
+    database.getElementById(req.query.id);
+
+  todoElement.setAttributes({
+    state: "complete"
+  });
+
+  res.send(todoElement);
+  database.save();
+}
+
+export default function (router, database: Database) {
+  router.post("/category/:categoryId", function (req: Request, res) {
+    const v = new Validate({
+      "name?": "string",
+      "id?": "string",
+      action: "create|delete|complete",
+    });
+
+    if (v.validate(req.query).isValid) {
+      if (req.query.action === "create") {
+        createTodo(req, res, database);
+      } else if (req.query.action === "delete") {
+        deleteTodo(req, res, database)
+      } else if (req.query.action === "complete") {
+        completeTodo(req, res, database);
+      }
+    } else {
+      res.status(500).send("TODO__INVALID_REQUEST");
+    }
+  });
+}
