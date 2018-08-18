@@ -9,6 +9,7 @@ function routeIsMatch(props) {
   const { exact } = props;
   const pathname = getPathname(window.location.hash.substring(1));
   const params = getParams(pathname, props.pathname);
+  console.log(params);
   return exact ? params.__exact : params.__match;
 }
 
