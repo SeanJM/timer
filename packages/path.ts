@@ -2,6 +2,7 @@ const path: {
   join?(...path: string[]): string;
   normalize?(pathname: string): string;
   pop?(pathname: string): string;
+  splice?(pathname: string, member: string, index: number, length?): string;
 } = {};
 
 path.normalize = function (pathname: string) {
@@ -37,6 +38,18 @@ path.pop = function (pathname: string, times: number = 1) {
   while (++i < times) {
     p.pop();
   }
+  return s + p.join("/") + "/";
+};
+
+path.splice = function (pathname: string, member: string, index: number, length?) {
+  const s = pathname[0][0] === "/" ? "/" : "";
+  const p = this.normalize(pathname).split("/");
+  const m = this.normalize(member);
+  if (index < 0 && typeof length === "undefined") {
+    p.splice(p.length + index, p.length, m);
+    return s + p.join("/") + "/"
+  }
+  p.splice(index, length || index, m);
   return s + p.join("/") + "/";
 };
 
