@@ -50,12 +50,24 @@ function completeTodo(req, res, database) {
   database.save();
 }
 
+
+function incompleteTodo(req, res, database) {
+  let todoElement =
+    database.getElementById(req.query.id);
+
+  todoElement.setAttributes({
+    state: "incomplete"
+  });
+
+  res.send(todoElement);
+  database.save();
+}
 export default function (router, database: Database) {
   router.post("/category/:categoryId", function (req: Request, res) {
     const v = new Validate({
       "name?": "string",
       "id?": "string",
-      action: "create|delete|complete",
+      action: "create|delete|complete|incomplete",
     });
 
     if (v.validate(req.query).isValid) {
@@ -65,6 +77,8 @@ export default function (router, database: Database) {
         deleteTodo(req, res, database)
       } else if (req.query.action === "complete") {
         completeTodo(req, res, database);
+      } else if (req.query.action === "incomplete") {
+        incompleteTodo(req, res, database);
       }
     } else {
       res.status(500).send("TODO__INVALID_REQUEST");

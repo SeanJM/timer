@@ -15,6 +15,10 @@ export default function (subscribe) {
     service.addTodo(e);
   });
 
+  subscribe("INCOMPLETE_TODO", function (e) {
+    service.incomplete(e);
+  });
+
   subscribe("COMPLETE_TODO", function (e) {
     service.complete(e);
   });

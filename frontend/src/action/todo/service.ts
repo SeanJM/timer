@@ -66,23 +66,45 @@ export default class Service {
       });
   }
 
-  complete(e) {
+  mergeTodo(categoryID: string, todoElement: TodoNode) {
+    const categories = _.merge([], store.value.todo.categories);
+    const category: Category = categories.find(a => a.attributes.id === categoryID);
+    const todo = category.children.find((child: TodoNode) => child.attributes.id === todoElement.attributes.id);
+    Object.assign(todo, todoElement);
+    store.set({
+      todo: {
+        categories,
+      }
+    });
+  }
+
+  getTodo(categoryID: string, todoID: string) {
+    const categories = store.value.todo.categories;
+    const category: Category = categories.find(a => a.attributes.id === categoryID);
+    return _.merge({}, category.children.find((child: TodoNode) => child.attributes.id === todoID));
+  }
+
+  incomplete(e) {
     ajax.post("/todo/category/" + e.categoryID, {
       data: {
         id: e.id,
-        action: "complete",
+        action: "incomplete",
       }
     })
       .then((todoResponse: TodoNode) => {
-        const categories = _.merge([], store.value.todo.categories);
-        const category: Category = categories.find(a => a.attributes.id === e.categoryID);
-        const todo = category.children.find((child: TodoNode) => child.attributes.id === todoResponse.attributes.id);
-        todo.attributes.state = todoResponse.attributes.state;
-        store.set({
-          todo: {
-            categories,
-          }
-        });
+        this.mergeTodo(e.categoryID, todoResponse);
+      });
+    }
+    
+    complete(e) {
+      ajax.post("/todo/category/" + e.categoryID, {
+        data: {
+          id: e.id,
+          action: "complete",
+        }
+      })
+      .then((todoResponse: TodoNode) => {
+        this.mergeTodo(e.categoryID, todoResponse);
       });
   }
 
