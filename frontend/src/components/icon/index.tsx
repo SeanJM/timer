@@ -2,11 +2,14 @@ import React from "react";
 
 export type IconType =
   | "add"
+  | "book"
   | "check"
   | "close"
   | "filter"
   | "folder-add"
-  | "folder";
+  | "folder"
+  | "history-back"
+  | "tag";
 
 interface IconProps {
   className?: string;
