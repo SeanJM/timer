@@ -17,15 +17,16 @@ export type InputEvents = {
   onChange?: (e: React.ChangeEvent | any) => void;
   onKeyDown?: (e: React.FormEvent) => void;
   onValue?: (value: any) => void;
+  onRef?: (node: HTMLElement) => void;
 }
 
 interface InputProps extends InputEvents {
   type: InputType;
   defaultValue?: string;
   label?: string;
-  formID?: string,
-  name?: string,
-  button?: JSX.Element,
+  formID?: string;
+  name?: string;
+  button?: JSX.Element;
 }
 
 export function Input(props: InputProps) {

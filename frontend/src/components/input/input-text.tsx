@@ -29,6 +29,7 @@ export class InputText extends Component<InputTextProps, InputTextState> {
       onInput,
       onKeyDown,
       onValue,
+      onRef,
     } = this.props;
 
     return (
@@ -40,6 +41,10 @@ export class InputText extends Component<InputTextProps, InputTextState> {
         <input
           type="text"
           defaultValue={this.props.defaultValue}
+          ref={(node) => {
+            console.log(node);
+            onRef && onRef(node);
+          }}
           onInput={(e) => {
             const value = (e.target as HTMLInputElement).value.trim();
             onInput && onInput(e);
