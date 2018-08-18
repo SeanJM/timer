@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { promisify } from "util";
 import { readFileSync } from "fs";
-import Element, { ElementChild, ElementAttributes } from "@class/element";
+import Element, { ElementChild, ElementAttributes } from "./element";
 import querySelectorToObject from "@query-selector-to-object";
 
 const writeFile = promisify(fs.writeFile);

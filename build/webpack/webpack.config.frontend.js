@@ -41,7 +41,6 @@ module.exports = function (__root) {
       extensions: [".ts", ".js", ".tsx"],
       plugins: [
         new TsconfigPathsPlugin({
-          configFile: path.join(__root, "frontend", "tsconfig.json"),
           extensions: [".ts", ".js", ".tsx"],
         }),
       ],
@@ -52,9 +51,6 @@ module.exports = function (__root) {
         test: /\.ts(x|)$/,
         exclude: /node_modules/,
         loader: "ts-loader",
-        options: {
-          configFile: path.join(__root, "frontend", "tsconfig.json"),
-        },
       }],
     },
 

@@ -1,4 +1,4 @@
-import getParams from "@frontend/src/components/router/get-params";
+import getParams from "@components/router/get-params";
 
 export default function (test) {
   test("getParams", function () {
