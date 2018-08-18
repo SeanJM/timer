@@ -9,15 +9,31 @@
   label {
     color: $black;
   }
+
+  .titlebar {
+    height: auto;
+    border-bottom: 0;
+  }
+
+  .titlebar_content {
+    height: $u4;
+
+    h6 {
+      line-height: $u4;
+      padding-top: 0;
+      padding-bottom: 0;
+      color: $grey-light;
+    }
+  }
 }
 
 .modal-window_head {
-  background: $grey-lightest;
+  background: $black;
 }
 
 .modal-window_body {
   padding: $u6;
-  background: $grey-lightest;
+  background: #fff;
 }
 
 .modal-window_feet {
@@ -25,7 +41,7 @@
 }
 
 .modal-window_feet {
-  background: $grey-lightest;
+  background: #fff;
 
   .button + .button {
     margin-left: $u2;
