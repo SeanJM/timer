@@ -1,11 +1,13 @@
 import tinyTest from "tiny-test";
 import url from "./url";
-import database from "./database";
 import components from "./components";
+import database from "./database";
+import path from "./path";
 
 tinyTest(function (test, load) {
-  url(test);
-  database(test);
   components(test);
+  database(test);
+  path(test);
+  url(test);
   load();
 });

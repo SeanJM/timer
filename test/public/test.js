@@ -419,18 +419,9 @@ const _path_1 = __importDefault(__webpack_require__(/*! @path */ "./packages/pat
 function isMatch(query, url) {
     return query === url || (query && url && query[0] === ":");
 }
-function normalize(pathname) {
-    while (pathname[0] === "/") {
-        pathname = pathname.substring(1);
-    }
-    while (pathname.slice(-1) === "/") {
-        pathname = pathname.substring(0, pathname.length - 1);
-    }
-    return pathname;
-}
-function getParams(pathname, schema) {
-    const urlPathname = normalize(_path_1.default.join(pathname)).split("/");
-    const queryPathname = schema ? normalize(schema).split("/") : null;
+function getParams(pathname = "", schema) {
+    const urlPathname = _path_1.default.normalize(_path_1.default.join(pathname)).split("/");
+    const queryPathname = schema ? _path_1.default.normalize(schema).split("/") : null;
     const params = {
         __exact: true,
         __match: true,
@@ -499,6 +490,17 @@ path.pop = function (pathname, times = 1) {
     while (++i < times) {
         p.pop();
     }
+    return s + p.join("/") + "/";
+};
+path.splice = function (pathname, member, index, length) {
+    const s = pathname[0][0] === "/" ? "/" : "";
+    const p = this.normalize(pathname).split("/");
+    const m = this.normalize(member);
+    if (index < 0 && typeof length === "undefined") {
+        p.splice(p.length + index, p.length, m);
+        return s + p.join("/") + "/";
+    }
+    p.splice(index, length || index, m);
     return s + p.join("/") + "/";
 };
 exports.default = path;
@@ -575,7 +577,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const get_params_1 = __importDefault(__webpack_require__(/*! @frontend/src/components/router/get-params */ "./frontend/src/components/router/get-params.tsx"));
+const get_params_1 = __importDefault(__webpack_require__(/*! @components/router/get-params */ "./frontend/src/components/router/get-params.tsx"));
 function default_1(test) {
     test("getParams", function () {
         return get_params_1.default("/a/b/c/", "/a/b/").__match;
@@ -747,14 +749,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const tiny_test_1 = __importDefault(__webpack_require__(/*! tiny-test */ "tiny-test"));
 const url_1 = __importDefault(__webpack_require__(/*! ./url */ "./test/url.ts"));
-const database_1 = __importDefault(__webpack_require__(/*! ./database */ "./test/database.ts"));
 const components_1 = __importDefault(__webpack_require__(/*! ./components */ "./test/components/index.ts"));
+const database_1 = __importDefault(__webpack_require__(/*! ./database */ "./test/database.ts"));
+const path_1 = __importDefault(__webpack_require__(/*! ./path */ "./test/path/index.ts"));
 tiny_test_1.default(function (test, load) {
-    url_1.default(test);
-    database_1.default(test);
     components_1.default(test);
+    database_1.default(test);
+    path_1.default(test);
+    url_1.default(test);
     load();
 });
+
+
+/***/ }),
+
+/***/ "./test/path/index.ts":
+/*!****************************!*\
+  !*** ./test/path/index.ts ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _path_1 = __importDefault(__webpack_require__(/*! @path */ "./packages/path.ts"));
+function default_1(test) {
+    test("path", _path_1.default.splice("/a/b/c/", "d", 1)).isEqual("/a/d/c/");
+    test("path", _path_1.default.splice("/a/b/c/", "d", -1)).isEqual("/a/b/d/");
+    test("path", _path_1.default.splice("/a/b/c/", "d", -2)).isEqual("/a/d/");
+    test("path", _path_1.default.splice("/a/b/c/", "d", -2, 1)).isEqual("/a/d/c/");
+}
+exports.default = default_1;
 
 
 /***/ }),
