@@ -9,15 +9,16 @@ body {
   h#{$index} {
     font-size: $base;
     line-height: $base * 1.215;
+    letter-spacing: $base * -0.045;
   }
 }
 
-@include header($font-size * 1.05, $font-size * 3.5, 1);
-@include header($font-size * 1.05, $font-size * 3.5, 2);
-@include header($font-size * 1.05, $font-size * 3.5, 3);
-@include header($font-size * 1.05, $font-size * 3.5, 4);
-@include header($font-size * 1.05, $font-size * 3.5, 5);
-@include header($font-size * 1.05, $font-size * 3.5, 6);
+@include header($font-size, $font-size * 3.5, 1);
+@include header($font-size, $font-size * 3.5, 2);
+@include header($font-size, $font-size * 3.5, 3);
+@include header($font-size, $font-size * 3.5, 4);
+@include header($font-size, $font-size * 3.5, 5);
+@include header($font-size, $font-size * 3.5, 6);
 
 p {
   font-size: $font-size;
