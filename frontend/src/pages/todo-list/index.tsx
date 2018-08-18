@@ -67,6 +67,8 @@ function mapStateToProps(state: StoreState, props: RouterProps): TodoProps {
 }
 
 class TodoList extends Component<TodoProps, State> {
+  node: HTMLInputElement;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -77,6 +79,7 @@ class TodoList extends Component<TodoProps, State> {
   addTodo() {
     const { input } = this.props;
     if (input.value) {
+      this.node.value = "";
       dispatch("ADD_TODO", {
         categoryID: this.props.categoryID,
         value: input.value,
@@ -116,8 +119,9 @@ class TodoList extends Component<TodoProps, State> {
         <div className="todo-titlebar">
           <Titlebar left={<h6>{this.props.name}</h6>} />
           <Titlebar center={
-            <FormConnect id={FORM_ID}>
+            <FormConnect id={FORM_ID} onSubmit={() => this.addTodo()}>
               <Input
+                onRef={(node) => { this.node = node as HTMLInputElement;}}
                 type="text"
                 formID={FORM_ID}
                 name="todo_value"
