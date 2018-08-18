@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Component, StatelessComponent } from "react";
+import { Component } from "react";
 import { store, StoreState } from "@store";
 
 function defaultMapStateToProps(state, props) {
@@ -13,7 +13,7 @@ type HigherOrderFactory = (component: typeof Component) => typeof Component;
 type MapStateToProps = (state: StoreState, props?: object) => object;
 
 export function withStore(
-  WrappedComponent: typeof Component | StatelessComponent,
+  WrappedComponent: React.ComponentType,
   mapStateToProps?: MapStateToProps): (...args: HigherOrderFactory[]) => typeof Component {
   class C extends Component<object, StoreState> {
     handleChange: () => void;
