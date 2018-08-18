@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import React, { Fragment } from "react";
 import ReactDOM from "react-dom/server";
-import SpriteLoad from "@components/sprite-load";
+import SpriteLoad, { spriteTracker } from "@components/sprite-load";
 import * as path from "path";
 
 const Page = (
@@ -24,10 +24,11 @@ function render(Component: JSX.Element, pathname) {
 
   return fs.writeFileSync(
     pathname,
-    str.replace(/\{\{(\w+)\}\}/g, (a, b) => options[b] || b)
+    str.replace(/\{\{(\w+)\}\}/g, (a, b) => options[b] || "")
   );
 }
 
 export default function (__root: string) {
   render(Page, path.join(__root, "frontend/public/index.html"));
+  spriteTracker.log();
 }
