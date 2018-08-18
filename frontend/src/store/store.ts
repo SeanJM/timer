@@ -16,9 +16,12 @@ export interface FormElement {
 }
 
 export interface TodoNode {
-  id: string;
-  name: string;
-  created: number;
+  attributes: {
+    state: string;
+    id: string;
+    name: string;
+    created: number;
+  };
   children: any[];
 }
 
@@ -34,6 +37,11 @@ export interface StoreState {
     categories?: Category[];
     isRequest?: null | boolean;
     isSuccess?: null | boolean;
+  };
+
+  slideOut: {
+    type: string | null;
+    value: any | null;
   };
 
   modal: {
@@ -61,9 +69,14 @@ export const store = new Persistore<StoreState>(
       value: {}
     },
 
+    slideOut: {
+      type: null,
+      value: {}
+    },
+
     form: []
   } as StoreState,
   {
-    ignore: [/^form\./]
+    ignore: [/^form\./, /^slideOut\./]
   }
 );
