@@ -2,6 +2,7 @@ import * as React from "react";
 import AppMenuConnect from "@components/app/menu";
 import { Router, Route } from "@components/router";
 import { ModalConnect } from "@components/modal";
+import { SlideOutContainerConnect } from "@containers/slide-out";
 import { dispatch } from "@action";
 import TodoList from "@pages/todo-list";
 
@@ -28,7 +29,7 @@ export default class App extends React.Component {
         <AppMenuConnect />
         <div className="app-content">
           <Router>
-            <Route exact
+            <Route
               pathname="/todo/category/:categoryID"
               component={TodoList} />
             <Route pathname="/">
@@ -37,6 +38,7 @@ export default class App extends React.Component {
           </Router>
         </div>
         <ModalConnect />
+        <SlideOutContainerConnect />
       </div>
     );
   }
