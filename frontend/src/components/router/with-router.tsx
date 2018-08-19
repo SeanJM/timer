@@ -1,7 +1,7 @@
 import React from "react";
 import history, { History } from "@components/router/history";
 import getLocation from "@components/router/get-location";
-import getParams, { Params } from "@components/router/get-params";
+import path, { Params } from "@path";
 import { RouterLocation } from "@components/router/types";
 
 interface WithRouterProps {
@@ -35,7 +35,7 @@ export function withRouter<P extends WithRouterComponentProps>(C: React.Componen
     componentDidMount() {
       this.update = () => {
         const location = getLocation(window.location.hash.substring(1));
-        let params = getParams(location.pathname, this.props.pathname);
+        let params = path.params(location.pathname, this.props.pathname);
         this.setState({
           params,
           location,

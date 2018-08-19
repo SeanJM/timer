@@ -3,11 +3,12 @@ import Button from "@components/button";
 import { dispatch } from "@action";
 import { Input } from "@components/input";
 import { FormConnect } from "@components/form";
-import { RouterProps, getParams } from "@components/router";
+import { RouterProps } from "@components/router";
 import Titlebar from "@components/titlebar";
 import generateId from "@generate-id";
 import { withStore, StoreState, FormElement, TodoNode, FormElementInput } from "@store";
 import Todo from "@components/todo";
+import path from "@path";
 
 const FORM_ID = generateId();
 
@@ -52,7 +53,7 @@ function mapStateToProps(state: StoreState, props: RouterProps): TodoProps {
       .find((category) => category.attributes.id === categoryID);
 
   const todoParams =
-    getParams(props.location.pathname, TODO_URL);
+    path.params(props.location.pathname, TODO_URL);
 
   return {
     categoryID,

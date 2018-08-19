@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import history, { History } from "@components/router/history";
-import getParams, { Params } from "@components/router/get-params";
+import path, { Params } from "@path";
 import { RouterLocation } from "@components/router";
 
 type AnyComponent = React.ComponentClass;
@@ -21,7 +21,7 @@ export interface RouterProps {
 export function Route(props: RouteProps) {
   const C = props.component;
   const location = history.last();
-  const params = getParams(location.pathname, props.pathname);
+  const params = path.params(location.pathname, props.pathname);
   return (
     <Fragment>
       {C

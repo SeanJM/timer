@@ -1,15 +1,14 @@
 import React, { Fragment } from "react";
 import { Route } from "@components/router/route";
 import { withRouter } from "@components/router/with-router";
-import getParams from "@components/router/get-params";
+import path from "@path";
 import getPathname from "@components/router/get-pathname";
 import { WithRouterComponentProps } from "@components/router";
 
 function routeIsMatch(props) {
   const { exact } = props;
   const pathname = getPathname(window.location.hash.substring(1));
-  const params = getParams(pathname, props.pathname);
-  console.log(params);
+  const params = path.params(pathname, props.pathname);
   return exact ? params.__exact : params.__match;
 }
 
