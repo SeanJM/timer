@@ -48,13 +48,15 @@ export default function (router, database: Database) {
   });
 
   router.get("/category/all", function (req: Request, res) {
-    console.log({
-      props: {
-        id: "category"
-      }
-    });
     res.send(
-      database.getElementById("categories").children
+      database.body
+        .querySelectorAll("#categories category")
+        .map((category) => {
+          return {
+            ...category,
+            children: category.querySelectorAll("todo"),
+          };
+        })
     );
   });
 }
