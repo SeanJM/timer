@@ -5,6 +5,8 @@ import { ModalConnect } from "@components/modal";
 import { SlideOutContainerConnect } from "@containers/slide-out";
 import { dispatch } from "@action";
 import TodoList from "@pages/todo-list";
+import TodoTags from "@pages/todo-tags";
+import * as routes from "./routes";
 
 export default class App extends React.Component {
   componentDidMount() {
@@ -28,14 +30,19 @@ export default class App extends React.Component {
       <div className="app">
         <AppMenuConnect />
         <div className="app-content">
-          <Router>
-            <Route
-              pathname="/todo/category/:categoryID"
-              component={TodoList} />
-            <Route pathname="/">
-              <div></div>
-            </Route>
-          </Router>
+          <div className="app-content_container">
+            <Router>
+              <Route
+                pathname={routes.actions}
+                component={TodoList} />
+              <Route
+                pathname={routes.tags}
+                component={TodoTags} />
+              <Route pathname="/">
+                <div></div>
+              </Route>
+            </Router>
+          </div>
         </div>
         <ModalConnect />
         <SlideOutContainerConnect />
@@ -43,3 +50,5 @@ export default class App extends React.Component {
     );
   }
 }
+
+export { routes };

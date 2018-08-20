@@ -3,6 +3,7 @@ import modal from "@action/modal";
 import form from "@action/form";
 import slideOut from "@action/slide-out";
 import todo from "@action/todo";
+import todoTags from "@action/todo-tags";
 import keydown from "@action/keydown";
 
 const action = new Action();
@@ -17,5 +18,6 @@ export const subscribe = (name, callback) => action.subscribe(name, callback);
 modal(subscribe);
 form(subscribe);
 todo(subscribe);
+todoTags(subscribe);
 slideOut(subscribe);
 keydown(subscribe);
