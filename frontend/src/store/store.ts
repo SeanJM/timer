@@ -3,7 +3,7 @@ import Persistore from "@class/persistore";
 export interface FormElementInput {
   name: string;
   type: string;
-  value: object;
+  value: any;
   isValid: boolean;
   errorMessage: string | null;
 }
@@ -28,6 +28,12 @@ export interface TodoNode {
 export interface Category extends TodoNode {
 }
 
+export interface TodoTag {
+  name: string;
+  id: string;
+  colorID: number;
+}
+
 export interface StoreState {
   keys: {
     control: boolean;
@@ -38,6 +44,8 @@ export interface StoreState {
     isRequest?: null | boolean;
     isSuccess?: null | boolean;
   };
+
+  tags: TodoTag[];
 
   slideOut: {
     type: string | null;
