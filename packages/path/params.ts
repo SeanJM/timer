@@ -1,5 +1,5 @@
-import normalize from "./normalize";
-import join from "./join";
+import normalize from "@path/normalize";
+import join from "@path/join";
 
 function isMatch(query: any, url: any) {
   return query === url || (query && url && query[0] === ":");

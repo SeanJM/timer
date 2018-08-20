@@ -1,5 +1,5 @@
-import parse from "./parse";
-import normalize from "./normalize";
+import parse from "@path/parse";
+import normalize from "@path/normalize";
 export default function join(...pathname: string[]) {
   let i = -1;
   const p = parse(pathname[0]);

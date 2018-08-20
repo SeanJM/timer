@@ -1,24 +1,29 @@
-import normalize from "./normalize";
 import join from "./join";
-import pop from "./pop";
-import splice from "./splice";
-import push from "./push";
+import normalize from "./normalize";
 import params from "./params";
+import pop from "./pop";
+import push from "./push";
+import replace from "./replace";
+import splice from "./splice";
 
-const path: {
+type Path = {
   join: typeof join,
   normalize: typeof normalize,
   params: typeof params,
   pop: typeof pop,
-  splice: typeof splice,
   push: typeof push,
-} = {
+  replace: typeof replace,
+  splice: typeof splice,
+};
+
+const path: Path = {
   join,
   normalize,
   params,
   pop,
-  splice,
   push,
+  replace,
+  splice,
 };
 
 export default path;

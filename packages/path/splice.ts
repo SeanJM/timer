@@ -1,5 +1,5 @@
-import parse from "./parse";
-import normalize from "./normalize";
+import parse from "@path/parse";
+import normalize from "@path/normalize";
 export default function splice(pathname: string, member: string, index: number, length?) {
   const p = parse(pathname);
   const m = normalize(member);
