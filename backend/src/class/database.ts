@@ -2,29 +2,11 @@ import * as fs from "fs";
 import { promisify } from "util";
 import { readFileSync } from "fs";
 import Element, { ElementChild, ElementAttributes } from "./element";
-import querySelectorToObject from "@query-selector-to-object";
 
 const writeFile = promisify(fs.writeFile);
 
 interface IDList {
   [key: string]: Element;
-}
-
-function queryIsMatch(query: Partial<Element>, data: ElementChild) {
-  if (typeof data === "object") {
-    if (query.type && query.type !== data.type) {
-      return false;
-    }
-
-    for (var k in query.attributes) {
-      if (query.attributes[k] !== data.attributes[k]) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-  return false;
 }
 
 function toElement(node: ElementChild, idList: IDList) {
@@ -58,6 +40,7 @@ export default class Database {
       : this.createElement({ id: "body" });
   }
 
+  createElement(): Element;
   createElement(tagName: string): Element;
   createElement(props: ElementAttributes): Element;
   createElement(props: ElementAttributes, children: ElementChild[]): Element;
@@ -102,34 +85,5 @@ export default class Database {
 
   getElementById(id: string) {
     return this.idList[id];
-  }
-
-  find(query: Partial<Element> | string): null | Element {
-    const queryObject = typeof query === "string"
-      ? querySelectorToObject(query)
-      : query;
-
-    function findChild(node: Element) {
-      let i = -1;
-
-      const n = node.children
-        ? node.children.length
-        : 0;
-
-      while (++i < n) {
-        if (queryIsMatch(queryObject, node.children[i])) {
-          return node.children[i];
-        } else if (typeof node.children[i] === "object") {
-          let c = findChild(node.children[i] as Element);
-          if (c) {
-            return c;
-          }
-        }
-      }
-
-      return null;
-    }
-
-    return findChild(this.body);
   }
 }
