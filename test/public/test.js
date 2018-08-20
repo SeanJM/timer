@@ -110,22 +110,7 @@ const fs = __importStar(__webpack_require__(/*! fs */ "fs"));
 const util_1 = __webpack_require__(/*! util */ "util");
 const fs_1 = __webpack_require__(/*! fs */ "fs");
 const element_1 = __importDefault(__webpack_require__(/*! ./element */ "./backend/src/class/element.ts"));
-const _query_selector_to_object_1 = __importDefault(__webpack_require__(/*! @query-selector-to-object */ "./packages/query-selector-to-object.ts"));
 const writeFile = util_1.promisify(fs.writeFile);
-function queryIsMatch(query, data) {
-    if (typeof data === "object") {
-        if (query.type && query.type !== data.type) {
-            return false;
-        }
-        for (var k in query.attributes) {
-            if (query.attributes[k] !== data.attributes[k]) {
-                return false;
-            }
-        }
-        return true;
-    }
-    return false;
-}
 function toElement(node, idList) {
     if (node.children) {
         let element = new element_1.default(node.type, node.attributes, node.children.map((child) => toElement(child, idList)));
@@ -179,30 +164,6 @@ class Database {
     getElementById(id) {
         return this.idList[id];
     }
-    find(query) {
-        const queryObject = typeof query === "string"
-            ? _query_selector_to_object_1.default(query)
-            : query;
-        function findChild(node) {
-            let i = -1;
-            const n = node.children
-                ? node.children.length
-                : 0;
-            while (++i < n) {
-                if (queryIsMatch(queryObject, node.children[i])) {
-                    return node.children[i];
-                }
-                else if (typeof node.children[i] === "object") {
-                    let c = findChild(node.children[i]);
-                    if (c) {
-                        return c;
-                    }
-                }
-            }
-            return null;
-        }
-        return findChild(this.body);
-    }
 }
 exports.default = Database;
 
@@ -218,7 +179,60 @@ exports.default = Database;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const _query_selector_to_object_1 = __importDefault(__webpack_require__(/*! @query-selector-to-object */ "./packages/query-selector-to-object.ts"));
+function findElementFromQuery(node, index, queryObject) {
+    let i = -1;
+    const query = queryObject[index];
+    const n = node.children
+        ? node.children.length
+        : 0;
+    while (++i < n) {
+        if (node.children[i] instanceof Element) {
+            let child = node.children[i];
+            if (child.is(query)) {
+                if (index === queryObject.length - 1) {
+                    return child;
+                }
+                else {
+                    let c = findElementFromQuery(child, index + 1, queryObject);
+                    if (c) {
+                        return c;
+                    }
+                }
+            }
+            else {
+                let c = findElementFromQuery(child, index, queryObject);
+                if (c) {
+                    return c;
+                }
+            }
+        }
+    }
+    return null;
+}
+function findElementsFromQuery(node, index, queryObject) {
+    const n = node.children ? node.children.length : 0;
+    const children = [];
+    const query = queryObject[index];
+    let i = -1;
+    while (++i < n) {
+        let child = node.children[i];
+        if (child instanceof Element) {
+            if (child.is(query)) {
+                children.push(child);
+            }
+            [].push.apply(children, findElementsFromQuery(child, index, queryObject));
+            if (queryObject[index + 1]) {
+                [].push.apply(children, findElementsFromQuery(child, index + 1, queryObject));
+            }
+        }
+    }
+    return children;
+}
 class Element {
     constructor(type, attributes, children) {
         let i = -1;
@@ -240,6 +254,46 @@ class Element {
             this.attributes[arguments[0]] = arguments[1];
         }
         return this;
+    }
+    is(query) {
+        if (query.type && query.type !== this.type) {
+            return false;
+        }
+        for (var k in query.attributes) {
+            if (query.attributes[k] instanceof RegExp) {
+                if (!query.attributes[k].test(this.attributes[k])) {
+                    return false;
+                }
+            }
+            else if (k === "className") {
+                if (this.attributes[k]) {
+                    let i = -1;
+                    const queryClassList = query.attributes[k].split(" ");
+                    const elementClassList = this.attributes[k].split(" ");
+                    const n = queryClassList.length;
+                    while (++i < n) {
+                        if (elementClassList.indexOf(queryClassList[i]) === -1) {
+                            return false;
+                        }
+                    }
+                }
+                else {
+                    return false;
+                }
+            }
+            else if (query.attributes[k] !== this.attributes[k]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    querySelectorAll(selector) {
+        const queryObjectList = _query_selector_to_object_1.default(selector);
+        return findElementsFromQuery(this, 0, queryObjectList);
+    }
+    querySelector(selector) {
+        const queryObjectList = _query_selector_to_object_1.default(selector);
+        return findElementFromQuery(this, 0, queryObjectList);
     }
     toJSON() {
         return {
@@ -402,10 +456,48 @@ exports.default = URL;
 
 /***/ }),
 
-/***/ "./frontend/src/components/router/get-params.tsx":
-/*!*******************************************************!*\
-  !*** ./frontend/src/components/router/get-params.tsx ***!
-  \*******************************************************/
+/***/ "./packages/path/index.ts":
+/*!********************************!*\
+  !*** ./packages/path/index.ts ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const join_1 = __importDefault(__webpack_require__(/*! ./join */ "./packages/path/join.ts"));
+const normalize_1 = __importDefault(__webpack_require__(/*! ./normalize */ "./packages/path/normalize.ts"));
+const params_1 = __importDefault(__webpack_require__(/*! ./params */ "./packages/path/params.ts"));
+const pop_1 = __importDefault(__webpack_require__(/*! ./pop */ "./packages/path/pop.ts"));
+const push_1 = __importDefault(__webpack_require__(/*! ./push */ "./packages/path/push.ts"));
+const replace_1 = __importDefault(__webpack_require__(/*! ./replace */ "./packages/path/replace.ts"));
+const splice_1 = __importDefault(__webpack_require__(/*! ./splice */ "./packages/path/splice.ts"));
+const path = {
+    join: join_1.default,
+    normalize: normalize_1.default,
+    params: params_1.default,
+    pop: pop_1.default,
+    push: push_1.default,
+    replace: replace_1.default,
+    splice: splice_1.default,
+};
+exports.default = path;
+__export(__webpack_require__(/*! ./params */ "./packages/path/params.ts"));
+
+
+/***/ }),
+
+/***/ "./packages/path/join.ts":
+/*!*******************************!*\
+  !*** ./packages/path/join.ts ***!
+  \*******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -415,13 +507,72 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const _path_1 = __importDefault(__webpack_require__(/*! @path */ "./packages/path.ts"));
+const parse_1 = __importDefault(__webpack_require__(/*! @path/parse */ "./packages/path/parse.ts"));
+const normalize_1 = __importDefault(__webpack_require__(/*! @path/normalize */ "./packages/path/normalize.ts"));
+function join(...pathname) {
+    let i = -1;
+    const p = parse_1.default(pathname[0]);
+    const n = pathname.length;
+    const res = [];
+    while (++i < n) {
+        res.push(normalize_1.default(pathname[i]));
+    }
+    return p.root + res.join("/") + "/";
+}
+exports.default = join;
+
+
+/***/ }),
+
+/***/ "./packages/path/normalize.ts":
+/*!************************************!*\
+  !*** ./packages/path/normalize.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function normalize(pathname) {
+    let i = -1;
+    const p = pathname.split("/");
+    const n = p.length;
+    const res = [];
+    while (++i < n) {
+        if (p[i]) {
+            res.push(p[i]);
+        }
+    }
+    return res.join("/");
+}
+exports.default = normalize;
+;
+
+
+/***/ }),
+
+/***/ "./packages/path/params.ts":
+/*!*********************************!*\
+  !*** ./packages/path/params.ts ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const normalize_1 = __importDefault(__webpack_require__(/*! @path/normalize */ "./packages/path/normalize.ts"));
+const join_1 = __importDefault(__webpack_require__(/*! @path/join */ "./packages/path/join.ts"));
 function isMatch(query, url) {
     return query === url || (query && url && query[0] === ":");
 }
-function getParams(pathname = "", schema) {
-    const urlPathname = _path_1.default.normalize(_path_1.default.join(pathname)).split("/");
-    const queryPathname = schema ? _path_1.default.normalize(schema).split("/") : null;
+function params(pathname = "", schema) {
+    const urlPathname = normalize_1.default(join_1.default(pathname)).split("/");
+    const queryPathname = schema ? normalize_1.default(schema).split("/") : null;
     const params = {
         __exact: true,
         __match: true,
@@ -445,24 +596,27 @@ function getParams(pathname = "", schema) {
     }
     return params;
 }
-exports.default = getParams;
+exports.default = params;
 
 
 /***/ }),
 
-/***/ "./packages/path.ts":
-/*!**************************!*\
-  !*** ./packages/path.ts ***!
-  \**************************/
+/***/ "./packages/path/parse.ts":
+/*!********************************!*\
+  !*** ./packages/path/parse.ts ***!
+  \********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const path = {};
+const normalize_1 = __importDefault(__webpack_require__(/*! @path/normalize */ "./packages/path/normalize.ts"));
 function parse(pathname) {
-    const p = path.normalize(pathname);
+    const p = normalize_1.default(pathname);
     const chunks = p.split("/");
     return {
         chunks,
@@ -470,39 +624,119 @@ function parse(pathname) {
         root: pathname[0] === "/" ? "/" : "",
     };
 }
-path.normalize = function (pathname) {
-    let i = -1;
-    const p = pathname.split("/");
-    const n = p.length;
-    const res = [];
-    while (++i < n) {
-        if (p[i]) {
-            res.push(p[i]);
-        }
-    }
-    return res.join("/");
+exports.default = parse;
+
+
+/***/ }),
+
+/***/ "./packages/path/pop.ts":
+/*!******************************!*\
+  !*** ./packages/path/pop.ts ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-path.join = function (...pathname) {
-    let i = -1;
-    const p = parse(pathname[0]);
-    const n = pathname.length;
-    const res = [];
-    while (++i < n) {
-        res.push(this.normalize(pathname[i]));
-    }
-    return p.root + res.join("/") + "/";
-};
-path.pop = function (pathname, times = 1) {
-    const p = parse(pathname);
+Object.defineProperty(exports, "__esModule", { value: true });
+const parse_1 = __importDefault(__webpack_require__(/*! @path/parse */ "./packages/path/parse.ts"));
+function pop(pathname, times = 1) {
+    const p = parse_1.default(pathname);
     let i = -1;
     while (++i < times) {
         p.chunks.pop();
     }
     return p.root + p.chunks.join("/") + "/";
+}
+exports.default = pop;
+;
+
+
+/***/ }),
+
+/***/ "./packages/path/push.ts":
+/*!*******************************!*\
+  !*** ./packages/path/push.ts ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-path.splice = function (pathname, member, index, length) {
-    const p = parse(pathname);
-    const m = this.normalize(member);
+Object.defineProperty(exports, "__esModule", { value: true });
+const normalize_1 = __importDefault(__webpack_require__(/*! @path/normalize */ "./packages/path/normalize.ts"));
+const parse_1 = __importDefault(__webpack_require__(/*! @path/parse */ "./packages/path/parse.ts"));
+function push(pathname, ...members) {
+    const p = parse_1.default(pathname);
+    const m = members.map((member) => normalize_1.default(member));
+    Array.prototype.push.apply(p.chunks, m);
+    return p.root + p.chunks.join("/") + "/";
+}
+exports.default = push;
+
+
+/***/ }),
+
+/***/ "./packages/path/replace.ts":
+/*!**********************************!*\
+  !*** ./packages/path/replace.ts ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const parse_1 = __importDefault(__webpack_require__(/*! @path/parse */ "./packages/path/parse.ts"));
+function replace(schema, params) {
+    const p = parse_1.default(schema);
+    const n = p.chunks.length;
+    let i = -1;
+    let res = [];
+    let cache;
+    while (++i < n) {
+        cache = p.chunks[i][0] === ":" && params[p.chunks[i].substring(1)];
+        if (cache) {
+            res.push(cache);
+        }
+        else {
+            res.push(p.chunks[i]);
+        }
+    }
+    return p.root + res.join("/") + "/";
+}
+exports.default = replace;
+
+
+/***/ }),
+
+/***/ "./packages/path/splice.ts":
+/*!*********************************!*\
+  !*** ./packages/path/splice.ts ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const parse_1 = __importDefault(__webpack_require__(/*! @path/parse */ "./packages/path/parse.ts"));
+const normalize_1 = __importDefault(__webpack_require__(/*! @path/normalize */ "./packages/path/normalize.ts"));
+function splice(pathname, member, index, length) {
+    const p = parse_1.default(pathname);
+    const m = normalize_1.default(member);
     if (index < 0 && typeof length === "undefined") {
         p.chunks.splice(p.chunks.length + index, p.chunks.length, m);
     }
@@ -510,14 +744,9 @@ path.splice = function (pathname, member, index, length) {
         p.chunks.splice(index, length || index, m);
     }
     return p.root + p.chunks.join("/") + "/";
-};
-path.push = function (pathname, ...members) {
-    const p = parse(pathname);
-    const m = members.map((member) => this.normalize(member));
-    Array.prototype.push.apply(p.chunks, m);
-    return p.root + p.chunks.join("/") + "/";
-};
-exports.default = path;
+}
+exports.default = splice;
+;
 
 
 /***/ }),
@@ -532,12 +761,14 @@ exports.default = path;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-function querySelectorToObject(selector) {
-    const attributes = {};
-    const queryObject = {
+function querySelectorToObjectList(selector) {
+    const queryList = [];
+    let attributes = {};
+    let queryObject = {
         attributes,
     };
     let i = -1;
+    let c;
     const n = selector.length;
     const boundary = {
         " ": true,
@@ -553,27 +784,62 @@ function querySelectorToObject(selector) {
                 queryObject.type += selector[i];
                 i += 1;
             }
+            i -= 1;
         }
-        else if (selector[i] === "#") {
+        if (selector[i] === "#") {
             attributes.id = "";
             i += 1;
             while (selector[i] && !boundary[selector[i]]) {
                 attributes.id += selector[i];
                 i += 1;
             }
+            i -= 1;
         }
-        else if (selector[i] === ".") {
+        if (selector[i] === ".") {
             attributes.className = attributes.className ? attributes.className + " " : "";
             i += 1;
             while (selector[i] && !boundary[selector[i]]) {
                 attributes.className += selector[i];
                 i += 1;
             }
+            i -= 1;
+        }
+        if (selector[i] === "[") {
+            c = [""];
+            i += 1;
+            while (selector[i] && selector[i] !== "]") {
+                c[0] += selector[i];
+                i += 1;
+            }
+            c[1] = c[0].match(/[A-Za-z\-\_]+|/)[0];
+            c[2] = c[0].match(/[\^|\*|\$]=|/)[0][0];
+            c[3] = (c[0].match(/=[^\]]+$/) || [""])[0].substring(1).replace(/^"|"$/g, "");
+            if (c[2] === "^") {
+                c[4] = new RegExp("^" + c[3]);
+            }
+            else if (c[2] === "$") {
+                c[4] = new RegExp(c[3] + "$");
+            }
+            else if (c[2] === "*") {
+                c[4] = new RegExp(c[3]);
+            }
+            else {
+                c[4] = c[3];
+            }
+            attributes[c[0].match(/[A-Za-z\-\_]+|/)[0]] = c[4];
+            i -= 1;
+        }
+        if (selector[i] === " " || i === n - 1) {
+            queryList.push(queryObject);
+            attributes = {};
+            queryObject = {
+                attributes,
+            };
         }
     }
-    return queryObject;
+    return queryList;
 }
-exports.default = querySelectorToObject;
+exports.default = querySelectorToObjectList;
 
 
 /***/ }),
@@ -587,28 +853,18 @@ exports.default = querySelectorToObject;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const get_params_1 = __importDefault(__webpack_require__(/*! @components/router/get-params */ "./frontend/src/components/router/get-params.tsx"));
 function default_1(test) {
-    test("getParams", function () {
-        return get_params_1.default("/a/b/c/", "/a/b/").__match;
-    }).isEqual(true);
-    test("getParams: with parameter set in schema", function () {
-        return get_params_1.default("/a/b/c/", "/a/:b/").__match;
-    }).isEqual(true);
 }
 exports.default = default_1;
 
 
 /***/ }),
 
-/***/ "./test/database.ts":
-/*!**************************!*\
-  !*** ./test/database.ts ***!
-  \**************************/
+/***/ "./test/database/index.ts":
+/*!********************************!*\
+  !*** ./test/database/index.ts ***!
+  \********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -627,8 +883,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(__webpack_require__(/*! fs */ "fs"));
 const path = __importStar(__webpack_require__(/*! path */ "path"));
-const database_1 = __importDefault(__webpack_require__(/*! ../backend/src/class/database */ "./backend/src/class/database.ts"));
-const _query_selector_to_object_1 = __importDefault(__webpack_require__(/*! @query-selector-to-object */ "./packages/query-selector-to-object.ts"));
+const database_1 = __importDefault(__webpack_require__(/*! @class/database */ "./backend/src/class/database.ts"));
 const verified_1 = __importDefault(__webpack_require__(/*! verified */ "verified"));
 fs.writeFileSync(path.resolve(__dirname, "test.json"), "");
 const database = new database_1.default(path.resolve(__dirname, "test.json"));
@@ -669,61 +924,8 @@ function default_1(test) {
             attributes: "object",
         }).validate(element).isValid;
     }).isEqual(true);
-    test("Database: appendChild", function () {
-        const a = database.createElement("div");
-        const b = database.createElement("span");
-        const body = database.body;
-        body.appendChild(a);
-        a.appendChild(b);
-        return body.children.indexOf(a) > -1 && a.children.indexOf(b) > -1;
-    }).isEqual(true);
-    test("Database: appendChild as string", function () {
-        const element = database.body.appendChild("Child");
-        return element.children.find(a => a === "Child");
-    }).isEqual("Child");
-    test("Database: find", function () {
-        const validator = new verified_1.default({
-            type: "element",
-            attributes: {
-                id: "bnm"
-            },
-            children: "any[]",
-            parentNode: "object",
-        });
-        database.body.appendChild(database.createElement({ id: "76l" }));
-        database.body.appendChild(database.createElement({ id: "bnm" }));
-        database.body.appendChild(database.createElement({ id: "9jh" }));
-        database.body.appendChild(database.createElement({ id: "76h" }));
-        return validator.validate(database.find("#bnm")).isValid;
-    }).isEqual(true);
-    test("Database: removeChild", function () {
-        let a = database.createElement("div", { id: "98a" });
-        let b = database.createElement("div", { id: "071k" });
-        database.body.appendChild(a);
-        database.body.appendChild(b);
-        database.body.removeChild(b);
-        return database.find("#071k") === null && !!database.find("#98a");
-    }).isEqual(true);
-    test("Database: setAttirbute", function () {
-        let a = database.createElement("div", { id: "98a" });
-        a.setAttributes("created", new Date().getTime());
-        a.setAttributes("id", "someId");
-        return new verified_1.default({ created: "number", id: "string" }).validate(a.attributes).isValid;
-    }).isEqual(true);
-    test("Database: queryStringToObject ID", function () {
-        const a = _query_selector_to_object_1.default("#bnm");
-        return a;
-    }).isDeepEqual({
-        attributes: { id: "bnm" }
-    });
-    test("Database: queryStringToObject className", function () {
-        const a = _query_selector_to_object_1.default(".todo");
-        return a;
-    }).isDeepEqual({
-        attributes: { className: "todo" }
-    });
     test("Database: persistence", function () {
-        const db = new database_1.default(path.resolve(__dirname, "elements.json"));
+        const db = new database_1.default(path.resolve(__dirname, "../elements.json"));
         return new verified_1.default({
             type: "category",
             attributes: {
@@ -734,17 +936,258 @@ function default_1(test) {
         })
             .validate(db.getElementById("0t5-4..$4p$7nhX9sK80zhwEuO8F.+Dg")).isValid;
     }).isEqual(true);
-    test("Database: persistence, remove child", function () {
-        const db = new database_1.default(path.resolve(__dirname, "elements.json"));
-        const categories = db.getElementById("categories");
-        const category = db.getElementById("0t5-4..$4p$7nhX9sK80zhwEuO8F.+Dg");
-        categories.removeChild(category);
-        return categories.children.indexOf(category) === -1;
+}
+exports.default = default_1;
+
+/* WEBPACK VAR INJECTION */}.call(this, "test/database"))
+
+/***/ }),
+
+/***/ "./test/element/append-child.ts":
+/*!**************************************!*\
+  !*** ./test/element/append-child.ts ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(__dirname) {
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs = __importStar(__webpack_require__(/*! fs */ "fs"));
+const path = __importStar(__webpack_require__(/*! path */ "path"));
+const database_1 = __importDefault(__webpack_require__(/*! @class/database */ "./backend/src/class/database.ts"));
+const verified_1 = __importDefault(__webpack_require__(/*! verified */ "verified"));
+fs.writeFileSync(path.resolve(__dirname, "test.json"), "");
+const database = new database_1.default(path.resolve(__dirname, "test.json"));
+function default_1(test) {
+    test("Element: appendChild", function () {
+        const a = database.createElement("div");
+        const b = database.createElement("span");
+        const body = database.body;
+        body.appendChild(a);
+        a.appendChild(b);
+        return body.children.indexOf(a) > -1 && a.children.indexOf(b) > -1;
+    }).isEqual(true);
+    test("Element: appendChild as string", function () {
+        const element = database.body.appendChild("Child");
+        return element.children.find(a => a === "Child");
+    }).isEqual("Child");
+    test("Element: removeChild", function () {
+        let a = database.createElement("div", { id: "98a" });
+        let b = database.createElement("div", { id: "071k" });
+        database.body.appendChild(a);
+        database.body.appendChild(b);
+        database.body.removeChild(b);
+        return (database.body.querySelector("#071k") === null &&
+            !!database.body.querySelector("#98a"));
+    }).isEqual(true);
+    test("Element: setAttirbute", function () {
+        let a = database.createElement("div", { id: "98a" });
+        a.setAttributes("created", new Date().getTime());
+        a.setAttributes("id", "someId");
+        return new verified_1.default({ created: "number", id: "string" }).validate(a.attributes).isValid;
     }).isEqual(true);
 }
 exports.default = default_1;
 
-/* WEBPACK VAR INJECTION */}.call(this, "test"))
+/* WEBPACK VAR INJECTION */}.call(this, "test/element"))
+
+/***/ }),
+
+/***/ "./test/element/index.ts":
+/*!*******************************!*\
+  !*** ./test/element/index.ts ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const append_child_1 = __importDefault(__webpack_require__(/*! ./append-child */ "./test/element/append-child.ts"));
+const query_selector_1 = __importDefault(__webpack_require__(/*! ./query-selector */ "./test/element/query-selector.ts"));
+const query_selector_all_1 = __importDefault(__webpack_require__(/*! ./query-selector-all */ "./test/element/query-selector-all.ts"));
+function default_1(test) {
+    append_child_1.default(test);
+    query_selector_1.default(test);
+    query_selector_all_1.default(test);
+}
+exports.default = default_1;
+
+
+/***/ }),
+
+/***/ "./test/element/query-selector-all.ts":
+/*!********************************************!*\
+  !*** ./test/element/query-selector-all.ts ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(__dirname) {
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs = __importStar(__webpack_require__(/*! fs */ "fs"));
+const path = __importStar(__webpack_require__(/*! path */ "path"));
+const database_1 = __importDefault(__webpack_require__(/*! @class/database */ "./backend/src/class/database.ts"));
+fs.writeFileSync(path.resolve(__dirname, "test.json"), "");
+const database = new database_1.default(path.resolve(__dirname, "test.json"));
+function default_1(test) {
+    test("Element: querySelectorAll (tag)", function () {
+        const parentNode = database.createElement();
+        const tags = [
+            database.createElement("tag", { className: "test" }),
+            database.createElement("tag", { className: "test" })
+        ];
+        let res;
+        parentNode
+            .appendChild(database.createElement({ id: "76l" }))
+            .appendChild(database.createElement({ id: "bnm" }))
+            .appendChild(tags[0])
+            .appendChild(tags[1])
+            .appendChild(database.createElement());
+        res = parentNode.querySelectorAll("tag");
+        return (res[0] === tags[0] &&
+            res[1] === tags[1]);
+    }).isEqual(true);
+    test("Element: querySelectorAll variable nesting (tag)", function () {
+        const parentNode = database.createElement();
+        const tags = [
+            database.createElement("tag", { className: "test" }),
+            database.createElement("tag", { className: "test" })
+        ];
+        let res;
+        parentNode
+            .appendChild(database.createElement({ id: "76l" }))
+            .appendChild(database.createElement({ id: "bnm" }))
+            .appendChild(database.createElement().appendChild(tags[0]))
+            .appendChild(tags[1])
+            .appendChild(database.createElement());
+        res = parentNode.querySelectorAll("tag");
+        return (res[0] === tags[0] &&
+            res[1] === tags[1]);
+    }).isEqual(true);
+}
+exports.default = default_1;
+
+/* WEBPACK VAR INJECTION */}.call(this, "test/element"))
+
+/***/ }),
+
+/***/ "./test/element/query-selector.ts":
+/*!****************************************!*\
+  !*** ./test/element/query-selector.ts ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(__dirname) {
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs = __importStar(__webpack_require__(/*! fs */ "fs"));
+const path = __importStar(__webpack_require__(/*! path */ "path"));
+const database_1 = __importDefault(__webpack_require__(/*! @class/database */ "./backend/src/class/database.ts"));
+const verified_1 = __importDefault(__webpack_require__(/*! verified */ "verified"));
+fs.writeFileSync(path.resolve(__dirname, "test.json"), "");
+const database = new database_1.default(path.resolve(__dirname, "test.json"));
+function default_1(test) {
+    test("Element: querySelector (#9jh tag)", function () {
+        const validator = new verified_1.default({
+            type: "tag",
+            attributes: {
+                id: "72h"
+            },
+            children: "any[]",
+            parentNode: "object",
+        });
+        let parentElement = database.createElement({ id: "9jh" });
+        database.body.appendChild(database.createElement({ id: "76l" }));
+        database.body.appendChild(database.createElement({ id: "bnm" }));
+        database.body.appendChild(parentElement);
+        parentElement.appendChild(database.createElement({ id: "76h" }));
+        parentElement.appendChild(database.createElement("tag", { id: "72h" }));
+        parentElement.appendChild(database.createElement({ id: "1ef" }));
+        return validator.validate(database.body.querySelector("#9jh tag")).isValid;
+    }).isEqual(true);
+    test("Element: querySelector with skipping parent (#9jh tag)", function () {
+        const validator = new verified_1.default({
+            type: "tag",
+            attributes: {
+                id: "72h"
+            },
+            children: "any[]",
+            parentNode: "object",
+        });
+        let parentElement = database.createElement({ id: "9jh" });
+        let childElement = database.createElement({ id: "kj7" });
+        database.body.appendChild(database.createElement({ id: "76l" }));
+        database.body.appendChild(database.createElement({ id: "bnm" }));
+        database.body.appendChild(parentElement);
+        parentElement.appendChild(childElement);
+        childElement.appendChild(database.createElement({ id: "76h" }));
+        childElement.appendChild(database.createElement("tag", { id: "72h" }));
+        childElement.appendChild(database.createElement({ id: "1ef" }));
+        return validator.validate(database.body.querySelector("#9jh tag")).isValid;
+    }).isEqual(true);
+    test("Element: querySelector with deep parents (.parent .class tag)", function () {
+        const validator = new verified_1.default({
+            type: "tag",
+            attributes: {
+                className: "class"
+            },
+            children: "any[]",
+            parentNode: "object",
+        });
+        let childElement = database.createElement();
+        let tagElement = database.createElement("tag", { className: "class" });
+        database.body.appendChild(database.createElement()
+            .appendChild(database.createElement({
+            className: "parent"
+        })
+            .appendChild(childElement
+            .appendChild(database.createElement()
+            .appendChild(database.createElement({ className: "class" })
+            .appendChild(database.createElement()
+            .appendChild(tagElement)))))));
+        return validator.validate(database.body.querySelector(".parent .class tag")).isValid;
+    }).isEqual(true);
+}
+exports.default = default_1;
+
+/* WEBPACK VAR INJECTION */}.call(this, "test/element"))
 
 /***/ }),
 
@@ -764,15 +1207,113 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tiny_test_1 = __importDefault(__webpack_require__(/*! tiny-test */ "tiny-test"));
 const url_1 = __importDefault(__webpack_require__(/*! ./url */ "./test/url.ts"));
 const components_1 = __importDefault(__webpack_require__(/*! ./components */ "./test/components/index.ts"));
-const database_1 = __importDefault(__webpack_require__(/*! ./database */ "./test/database.ts"));
+const database_1 = __importDefault(__webpack_require__(/*! ./database */ "./test/database/index.ts"));
+const element_1 = __importDefault(__webpack_require__(/*! ./element */ "./test/element/index.ts"));
 const path_1 = __importDefault(__webpack_require__(/*! ./path */ "./test/path/index.ts"));
+const packages_1 = __importDefault(__webpack_require__(/*! ./packages */ "./test/packages/index.ts"));
+let settings = {
+    components: true,
+    database: true,
+    element: true,
+    packages: true,
+    path: true,
+    url: true,
+};
 tiny_test_1.default(function (test, load) {
-    components_1.default(test);
-    database_1.default(test);
-    path_1.default(test);
-    url_1.default(test);
+    if (settings.components)
+        components_1.default(test);
+    if (settings.database)
+        database_1.default(test);
+    if (settings.element)
+        element_1.default(test);
+    if (settings.packages)
+        packages_1.default(test);
+    if (settings.path)
+        path_1.default(test);
+    if (settings.url)
+        url_1.default(test);
     load();
 });
+
+
+/***/ }),
+
+/***/ "./test/packages/index.ts":
+/*!********************************!*\
+  !*** ./test/packages/index.ts ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const query_selector_to_object_1 = __importDefault(__webpack_require__(/*! ./query-selector-to-object */ "./test/packages/query-selector-to-object.ts"));
+function default_1(test) {
+    query_selector_to_object_1.default(test);
+}
+exports.default = default_1;
+;
+
+
+/***/ }),
+
+/***/ "./test/packages/query-selector-to-object.ts":
+/*!***************************************************!*\
+  !*** ./test/packages/query-selector-to-object.ts ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _query_selector_to_object_1 = __importDefault(__webpack_require__(/*! @query-selector-to-object */ "./packages/query-selector-to-object.ts"));
+function default_1(test) {
+    test("querySelectorToObject: '.class'", function () {
+        return _query_selector_to_object_1.default(".class");
+    }).isDeepEqual([{
+            attributes: {
+                className: "class"
+            }
+        }]);
+    test("querySelectorToObject: 'element'", function () {
+        return _query_selector_to_object_1.default("element");
+    }).isDeepEqual([{
+            type: "element",
+            attributes: {}
+        }]);
+    test("querySelectorToObject: '.class1.class2'", function () {
+        return _query_selector_to_object_1.default(".class1.class2");
+    }).isDeepEqual([{
+            attributes: {
+                className: "class1 class2"
+            }
+        }]);
+    test("querySelectorToObject: 'element.class'", function () {
+        return _query_selector_to_object_1.default("element.class");
+    }).isDeepEqual([{
+            type: "element",
+            attributes: {
+                className: "class"
+            }
+        }]);
+    test("querySelectorToObject: '[value=\"Here with space\"]'", function () {
+        return _query_selector_to_object_1.default("[value=\"Here with space\"]");
+    }).isDeepEqual([{
+            attributes: {
+                value: "Here with space"
+            }
+        }]);
+}
+exports.default = default_1;
+;
 
 
 /***/ }),
@@ -790,7 +1331,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const _path_1 = __importDefault(__webpack_require__(/*! @path */ "./packages/path.ts"));
+const _path_1 = __importDefault(__webpack_require__(/*! @path */ "./packages/path/index.ts"));
 function default_1(test) {
     test("path.splice", _path_1.default.splice("/a/b/c/", "d", 1)).isEqual("/a/d/c/");
     test("path.splice", _path_1.default.splice("/a/b/c/", "d", -1)).isEqual("/a/b/d/");
