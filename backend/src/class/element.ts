@@ -54,7 +54,9 @@ function findElementsFromQuery(node: Element, index: number, queryObject: Partia
     let child = node.children[i] as Element;
     if (child instanceof Element) {
       if (child.is(query)) {
-        children.push(child);
+        if (index === queryObject.length - 1) {
+          children.push(child);
+        }
       }
       
       [].push.apply(
