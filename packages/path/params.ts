@@ -1,5 +1,4 @@
-import normalize from "@path/normalize";
-import join from "@path/join";
+import parse from "@path/parse";
 
 function isMatch(query: any, url: any) {
   return query === url || (query && url && query[0] === ":");
@@ -13,9 +12,9 @@ export interface Params {
   [key: string]: any;
 }
 
-export default function params(pathname: string = "", schema: string) {
-  const urlPathname = normalize(join(pathname)).split("/");
-  const queryPathname = schema ? normalize(schema).split("/") : null;
+export default function params(pathname: string = "", schema: string = "") {
+  const urlPathname = parse(pathname).chunks;
+  const queryPathname = parse(schema).chunks;
 
   const params: Params = {
     __exact: true,
