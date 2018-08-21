@@ -1,0 +1,18 @@
+.todo-tags {
+  .titlebar {
+    .swatch-picker {
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 2;
+    }
+  }
+
+  form {
+    .todo-tags_tag-input {
+      input {
+        padding-left: $u9;
+      }
+    }
+  }
+}
