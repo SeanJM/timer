@@ -28,10 +28,11 @@ export interface TodoNode {
 export interface Category extends TodoNode {
 }
 
-export interface TodoTag {
+export interface TagNode {
   name: string;
   id: string;
   colorID: number;
+  created: number;
 }
 
 export interface StoreState {
@@ -45,7 +46,7 @@ export interface StoreState {
     isSuccess?: null | boolean;
   };
 
-  tags: TodoTag[];
+  tags: TagNode[];
 
   slideOut: {
     type: string | null;
