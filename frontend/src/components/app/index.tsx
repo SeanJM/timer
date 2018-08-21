@@ -33,10 +33,10 @@ export default class App extends React.Component {
           <div className="app-content_container">
             <Router>
               <Route
-                pathname={routes.actions}
+                pathname={routes.params.todoCategory}
                 component={TodoList} />
               <Route
-                pathname={routes.tags}
+                pathname={routes.params.tagsCategory}
                 component={TodoTags} />
               <Route pathname="/">
                 <div></div>

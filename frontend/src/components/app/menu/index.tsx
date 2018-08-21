@@ -6,27 +6,29 @@ import Titlebar from "@components/titlebar";
 import Icon, { IconType } from "@components/icon";
 import { MenuItem } from "@components/menu";
 import { dispatch } from "@action";
-import { 
-  getParams, 
-  History, 
-  Link,
-  Params, 
-  RouterLocation, 
+import {
+  History,
+  RouterLocation,
   withRouter,
 } from "@components/router";
-import path from "@path";
+import path, { Params } from "@path";
+import { routes } from "@components/app";
 
 interface Props {
   todo: StoreState["todo"];
   history: History;
   location: RouterLocation;
-  params: Params;
+  params: MenuParams;
 }
 
 interface ItemProps {
+  onClick: () => void;
   isSelected: boolean;
-  to: string;
   icon: IconType;
+}
+
+interface MenuParams extends Params {
+  type: string;
 }
 
 function mapStateToProps(state: StoreState, props: Props): Props {
@@ -34,7 +36,7 @@ function mapStateToProps(state: StoreState, props: Props): Props {
     todo: state.todo,
     history: props.history,
     location: props.location,
-    params: getParams(props.location.pathname, "/todo/:category"),
+    params: path.params(props.location.pathname, "/todo/:type") as MenuParams,
   };
 }
 
@@ -42,32 +44,58 @@ function AppMenuCategoriesItem(props: ItemProps) {
   const className = [
     "app_menu_categories_item"
   ];
-  
+
   if (props.isSelected) {
     className.push("app_menu_categories_item-select");
   }
 
   return (
-    <Link 
-      to={props.to} 
+    <div
+      onClick={props.onClick}
       className={className.join(" ")}
     >
       <Icon type={props.icon}/>
-    </Link>
+    </div>
   );
 }
 
-function AppMenuCategories(props: Pick<Props, "params">) {
-  const category = props.params.category;
+function AppMenuCategories(props: Pick<Props, "params" | "history" | "location">) {
+  const location = props.location;
+  const params = path.params(location.pathname, routes.root);
+  const history = props.history;
   return (
     <div className="app_menu_categories">
-      <AppMenuCategoriesItem 
-        to="/todo/category" 
-        isSelected={category === "category"} 
+      <AppMenuCategoriesItem
+        onClick={() => {
+          const withCategory =
+            path.params(location.pathname, routes.category);
+          let url;
+          if (withCategory.__match) {
+            url = path.replace(routes.params.todoCategory, {
+              categoryID: withCategory.categoryID,
+            });
+          } else {
+            url = routes.todoRoot;
+          }
+          history.push(url);
+        }}
+        isSelected={params.type === "todo"}
         icon="book"/>
-      <AppMenuCategoriesItem 
-        to="/todo/tags" 
-        isSelected={category === "tags"} 
+      <AppMenuCategoriesItem
+        onClick={() => {
+          const withCategory =
+            path.params(location.pathname, routes.category);
+          let url;
+          if (withCategory.__match) {
+            url = path.replace(routes.params.tagsCategory, {
+              categoryID: withCategory.categoryID,
+            });
+          } else {
+            url = routes.todoRoot;
+          }
+          history.push(url);
+        }}
+        isSelected={params.type === "tags"}
         icon="tag"/>
     </div>
   );
@@ -93,12 +121,15 @@ function AppMenuGroup(props) {
           title={a.attributes.name}
           onClick={() => {
             const pathname = props.location.pathname;
-            const category = getParams(pathname, "/todo/:type/:typeID");
-            
-            const url = category.__match 
-             ? path.splice(pathname, a.attributes.id, -1) 
-             : path.push(pathname, a.attributes.id);
-             
+            const params = path.params(pathname, routes.category);
+
+            const url = path.replace(routes.category, {
+              type: params.type,
+              categoryID: a.attributes.id,
+            });
+
+            console.log(url);
+
             props.history.push(url);
           }}
           control={
@@ -119,7 +150,10 @@ export class AppMenuView extends React.Component<Props, {}> {
   render() {
     return (
       <div className="app_menu">
-        <AppMenuCategories params={this.props.params}/>
+        <AppMenuCategories
+          params={this.props.params}
+          location={this.props.location}
+          history={this.props.history}/>
         <AppMenuGroup {...this.props}/>
       </div>
     );
