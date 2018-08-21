@@ -22,6 +22,7 @@ export type InputEvents = {
 
 interface InputProps extends InputEvents {
   type: InputType;
+  className?: string;
   defaultValue?: string;
   label?: string;
   formID?: string;

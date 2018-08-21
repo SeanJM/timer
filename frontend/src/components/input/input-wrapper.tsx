@@ -6,6 +6,7 @@ interface InputWrapperProps extends JSX.ElementChildrenAttribute {
   type: InputType;
   button?: JSX.Element;
   label?: string;
+  className?: string;
 }
 
 export function InputWrapper(props: InputWrapperProps) {
@@ -20,6 +21,10 @@ export function InputWrapper(props: InputWrapperProps) {
 
   if (props.button) {
     className.push("input-wrapper-button");
+  }
+
+  if (props.className) {
+    className.push(props.className);
   }
 
   return (
