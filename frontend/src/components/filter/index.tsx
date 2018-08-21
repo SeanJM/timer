@@ -2,6 +2,11 @@ import React, { Fragment } from "react";
 import curry from "@curry";
 
 interface FilterProps extends Partial<JSX.ElementChildrenAttribute> {
+  id?: string;
+  className?: string;
+  name?: string;
+  action?: string;
+  value?: string;
   [key: string]: any;
 }
 
