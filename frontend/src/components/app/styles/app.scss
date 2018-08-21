@@ -2,6 +2,15 @@
   padding-left: $u70;
 }
 
+.app-content_container {
+  position: absolute;
+  top: 0;
+  left: $u70;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
 .app_menu {
   position: absolute;
   left: 0;
@@ -26,10 +35,9 @@
   &_categories {
     position: absolute;
     left: 0;
-    top: 0;
-    bottom: 0;
+    top: $u3;
+    bottom: $u3;
     width: $u11;
-    background: $black-lightest;
   }
   
   &_items {
