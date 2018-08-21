@@ -19,6 +19,7 @@ export default function querySelectorToObjectList(selector: string) {
     "[": true,
     "]": true,
     "#": true,
+    ">": true,
   };
 
   while (++i < n) {
