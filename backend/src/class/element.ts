@@ -57,17 +57,16 @@ function findElementsFromQuery(node: Element, index: number, queryObject: Partia
         if (index === queryObject.length - 1) {
           children.push(child);
         }
-      }
-      
-      [].push.apply(
-        children,
-        findElementsFromQuery(child, index, queryObject)
-      );
-
-      if (queryObject[index + 1]) {
+        if (queryObject[index + 1]) {
+          [].push.apply(
+            children,
+            findElementsFromQuery(child, index + 1, queryObject)
+          );
+        }
+      } else {
         [].push.apply(
           children,
-          findElementsFromQuery(child, index + 1, queryObject)
+          findElementsFromQuery(child, index, queryObject)
         );
       }
     }
