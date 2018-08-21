@@ -1,0 +1,58 @@
+.list-item {
+  position: relative;
+  padding: $u2 0 $u3;
+  border-bottom: 1px solid $grey-light;
+
+  .button_face {
+    top: $u2;
+    right: $u2;
+    left: $u2;
+    bottom: $u2;
+  }
+}
+
+.list-item-passive {
+  background: $grey-lightest;
+
+  .list-item_title *,
+  .list-item_timestamp .timestamp {
+    color: $grey-light;
+  }
+}
+
+.list-item_title {
+  padding: $u $u3;
+}
+
+.list-item_body {
+  padding: $u;
+}
+
+.list-item_feet {
+  padding: $u;
+}
+
+.list-item_timestamp {
+  position: absolute;
+  right: $u3;
+  top: $u;
+}
+
+.list-item-primary-action {
+  padding-left: $u11;
+}
+
+.list-item-primary-action .list-item_timestamp {
+  position: static;
+  padding-left: $u3;
+}
+
+.list-item-primary-action.list-item-timestamp .list-item_title {
+  padding-bottom: 0;
+}
+
+.list-item_primary-action {
+  position: absolute;
+  left: $u2;
+  top: $u2;
+}
