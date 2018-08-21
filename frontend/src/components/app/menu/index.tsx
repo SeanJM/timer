@@ -3,102 +3,37 @@ import { withStore, StoreState } from "@store";
 import Button from "@components/button";
 import Control from "@components/control";
 import Titlebar from "@components/titlebar";
-import Icon, { IconType } from "@components/icon";
 import { MenuItem } from "@components/menu";
 import { dispatch } from "@action";
+
 import {
   History,
   RouterLocation,
   withRouter,
 } from "@components/router";
+
+import AppMenuCategories from "./app-menu-categories";
 import path, { Params } from "@path";
 import { routes } from "@components/app";
 
-interface Props {
+export interface AppMenuProps {
   todo: StoreState["todo"];
   history: History;
   location: RouterLocation;
   params: MenuParams;
 }
 
-interface ItemProps {
-  onClick: () => void;
-  isSelected: boolean;
-  icon: IconType;
-}
-
 interface MenuParams extends Params {
   type: string;
 }
 
-function mapStateToProps(state: StoreState, props: Props): Props {
+function mapStateToProps(state: StoreState, props: AppMenuProps): AppMenuProps {
   return {
     todo: state.todo,
     history: props.history,
     location: props.location,
     params: path.params(props.location.pathname, "/todo/:type") as MenuParams,
   };
-}
-
-function AppMenuCategoriesItem(props: ItemProps) {
-  const className = [
-    "app_menu_categories_item"
-  ];
-
-  if (props.isSelected) {
-    className.push("app_menu_categories_item-select");
-  }
-
-  return (
-    <div
-      onClick={props.onClick}
-      className={className.join(" ")}
-    >
-      <Icon type={props.icon}/>
-    </div>
-  );
-}
-
-function AppMenuCategories(props: Pick<Props, "params" | "history" | "location">) {
-  const location = props.location;
-  const params = path.params(location.pathname, routes.root);
-  const history = props.history;
-  return (
-    <div className="app_menu_categories">
-      <AppMenuCategoriesItem
-        onClick={() => {
-          const withCategory =
-            path.params(location.pathname, routes.category);
-          let url;
-          if (withCategory.__match) {
-            url = path.replace(routes.params.todoCategory, {
-              categoryID: withCategory.categoryID,
-            });
-          } else {
-            url = routes.todoRoot;
-          }
-          history.push(url);
-        }}
-        isSelected={params.type === "todo"}
-        icon="book"/>
-      <AppMenuCategoriesItem
-        onClick={() => {
-          const withCategory =
-            path.params(location.pathname, routes.category);
-          let url;
-          if (withCategory.__match) {
-            url = path.replace(routes.params.tagsCategory, {
-              categoryID: withCategory.categoryID,
-            });
-          } else {
-            url = routes.todoRoot;
-          }
-          history.push(url);
-        }}
-        isSelected={params.type === "tags"}
-        icon="tag"/>
-    </div>
-  );
 }
 
 function AppMenuGroup(props) {
@@ -121,9 +56,9 @@ function AppMenuGroup(props) {
           title={a.attributes.name}
           onClick={() => {
             const pathname = props.location.pathname;
-            const params = path.params(pathname, routes.category);
+            const params = path.params(pathname, routes.pathname);
 
-            const url = path.replace(routes.category, {
+            const url = path.replace(routes.pathname, {
               type: params.type,
               categoryID: a.attributes.id,
             });
@@ -146,7 +81,7 @@ function AppMenuGroup(props) {
   </div>);
 }
 
-export class AppMenuView extends React.Component<Props, {}> {
+export class AppMenuView extends React.Component<AppMenuProps, {}> {
   render() {
     return (
       <div className="app_menu">
