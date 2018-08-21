@@ -6,6 +6,7 @@ interface InputTextProps extends InputEvents {
   defaultValue?: string;
   label?: string;
   button?: JSX.Element;
+  className?: string;
 }
 
 interface InputTextState {
@@ -30,10 +31,12 @@ export class InputText extends Component<InputTextProps, InputTextState> {
       onKeyDown,
       onValue,
       onRef,
+      className,
     } = this.props;
 
     return (
       <InputWrapper
+        className={className}
         focus={this.state.focus}
         type="text"
         label={label}
@@ -41,10 +44,7 @@ export class InputText extends Component<InputTextProps, InputTextState> {
         <input
           type="text"
           defaultValue={this.props.defaultValue}
-          ref={(node) => {
-            console.log(node);
-            onRef && onRef(node);
-          }}
+          ref={onRef}
           onInput={(e) => {
             const value = (e.target as HTMLInputElement).value.trim();
             onInput && onInput(e);
