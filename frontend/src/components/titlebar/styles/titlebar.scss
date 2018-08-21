@@ -1,5 +1,4 @@
 .titlebar {
-  height: $titlebar-size;
   padding: $u2;
   border-bottom: 1px solid $grey-light;
 }
@@ -10,9 +9,13 @@
   display: inline-block;
   width: 100%;
 
+  h5 {
+    padding-top: $u3;
+    line-height: $input-size - $u2;
+  }
+
   h6 {
-    padding-top: $u;
-    padding-bottom: $u;
+    padding-top: $u3;
     line-height: $input-size - $u2;
   }
 }
