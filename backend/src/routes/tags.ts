@@ -27,17 +27,17 @@ export default function (database: Database): express.Router {
 
   function createTag(req: TagPostRequest, res: Response) {
     const category = database.getElementById(req.params.categoryID)
-    
+
     const tag = database.createElement("tag", {
       id: generateHash(7),
       name: req.query.name,
       colorID: req.query.colorID,
       created: new Date().getTime(),
     });
-    
+
     if (category) {
       category.appendChild(tag);
-      res.send();
+      res.send(toTagResponse(tag));
       database.save();
     } else {
       res.status(404).send("CATEGORY_NOT_FOUND");
@@ -56,7 +56,7 @@ export default function (database: Database): express.Router {
   router.get("/:categoryID", function (req: TagGetRequest, res: Response) {
     const selector = "#" + req.params.categoryID + " tag";
 
-    const tagElements: TagNode[] = 
+    const tagElements: TagNode[] =
       database.body
         .querySelectorAll(selector)
         .map(toTagResponse);
