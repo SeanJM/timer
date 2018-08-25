@@ -1,0 +1,53 @@
+.color-picker_slider {
+  position: relative;
+  margin-bottom: $u3;
+}
+
+.color-picker_slider-track {
+  height: $u4;
+  position: relative;
+}
+
+.color-picker_slider-thumb {
+  position: absolute;
+  left: 0;
+  top: $u2;
+  height: $u4;
+}
+
+.color-picker_slider-thumb-face {
+  position: absolute;
+  width: $u - 1;
+  height: $u - 1;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  left: -$u/2;
+  bottom: 6px;
+}
+
+.color-picker_slider-thumb-stroke {
+  position: absolute;
+  left: -1px;
+  top: -8px;
+  width: 1px;
+  height: $u4;
+  background: #fff;
+}
+
+.color-picker_slider-face {
+  border: 1px solid rgba(0, 0, 0, 0.45);
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: $u4;
+}
+
+.color-picker_slider-background {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: $u4;
+}

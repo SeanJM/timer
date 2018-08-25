@@ -1,0 +1,67 @@
+.color-picker_palette {
+  margin-left: 0px;
+}
+
+.color-picker_palette_swatch {
+  display: inline-block;
+  width: $u5;
+  height: $u5;
+  position: relative;
+  margin: 0px -1px -1px 0;
+}
+
+.color-picker_palette_swatch-face {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.color-picker_palette_swatch-stroke {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+}
+
+.color-picker_palette_swatch--active {
+  .color-picker_palette_swatch-active {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    top: 0px;
+    border: 2px solid #fff;
+    border-radius: 2px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.5) inset;
+    z-index: 2;
+  }
+}
+
+@mixin center($w) {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -$w/2;
+  margin-top: -$w/2;
+}
+
+.color-picker_palette_swatch-delete {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: $u3;
+  height: $u3;
+  border-radius: 2px 0 0 0;
+  background: $grey-lightest;
+  box-shadow: -1px -1px 0 rgba(0, 0, 0, 0.4);
+  .icon {
+    @include center($u2);
+    width: $u2;
+    height: $u2;
+    fill: $grey;
+  }
+}

@@ -1,0 +1,81 @@
+.color-picker {
+  position: absolute;
+  width: $u87 - 3;
+  border: 1px solid $grey;
+  z-index: 2;
+  box-shadow: 0 $u2 $u3 rgba(0, 0, 0, 0.5);
+  background: $grey-lightest;
+
+  .button {
+    min-width: $u18;
+  }
+
+  .button + .button {
+    margin-left: $u;
+  }
+}
+
+.color-picker_body {
+  position: relative;
+  padding: $u4;
+}
+
+.color-picker_feet {
+  padding: 0 $u4 $u4;
+}
+
+.color-picker-swatch {
+  width: $u7;
+  height: $u7;
+  display: inline-block;
+  position: relative;
+  position: absolute;
+  left: $u4;
+  top: $u4;
+}
+
+.color-picker-swatch_face {
+  width: 100%;
+  height: 100%;
+}
+
+.color-picker-swatch_border {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.color-picker-swatch_add-to-palette {
+  z-index: 1;
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: $u3;
+  height: $u3;
+  border-radius: 2px 0 0 0;
+  background: $grey-lightest;
+  box-shadow: -1px -1px 0px rgba(0, 0, 0, 0.5);
+
+  .icon {
+    width: $u2;
+    height: $u2;
+    fill: $grey;
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    margin-left: $u2/-2;;
+    margin-top: $u2/-2;;
+  }
+}
+
+.color-picker-right {
+  padding-left: $u11;
+}
+
+.color-picker_title {
+  height: $u4;
+  background: $black;
+}
