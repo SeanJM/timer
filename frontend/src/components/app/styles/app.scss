@@ -19,11 +19,11 @@
   background: $black;
   bottom: 0;
   padding-left: $u15;
-  
+
   h6 {
     color: #fff;
   }
-  
+
   .titlebar {
     position: absolute;
     top: 0;
@@ -39,14 +39,14 @@
     bottom: $u3;
     width: $u11;
   }
-  
+
   &_items {
     position: relative;
     width: 100%;
     height: 100%;
     padding-top: $titlebar-size;
   }
-  
+
   &_categories_item {
     display: inline-block;
     padding: $u3;
@@ -57,7 +57,7 @@
       fill: $grey;
     }
   }
-  
+
   &_categories_item-select {
     .icon {
       fill: $grey-lightest;
