@@ -89,4 +89,4 @@ export class AddTodo extends Component<Props, State> {
   }
 }
 
-export const AddTodoConnect = withStore(AddTodo, mapStateToProps)();
+export const AddTodoConnect = withStore<Props>(AddTodo, mapStateToProps)();

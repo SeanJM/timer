@@ -21,10 +21,10 @@ interface State { }
 function mapStateToProps(state: StoreState) {
   const form =
     state.form.find((form) => form.id === "add-category") || { inputs: [] };
-    
+
   const category =
     (form as FormElement).inputs.find((a) => a.name === "category") || { value: "" };
-    
+
   return {
     name: category.value,
     isRequest: state.todo.isRequest,
@@ -88,4 +88,4 @@ export class AddCategory extends Component<Props, State> {
   }
 }
 
-export const AddCategoryConnect = withStore(AddCategory, mapStateToProps)();
+export const AddCategoryConnect = withStore<Props>(AddCategory, mapStateToProps)();
