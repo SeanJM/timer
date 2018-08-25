@@ -19,6 +19,11 @@ if (!database.getElementById("categories")) {
     id: "categories",
     created: new Date().getTime(),
   }));
+
+  database.body.appendChild(database.createElement({
+    id: "color",
+    created: new Date().getTime(),
+  }));
 }
 
 page(__root);
