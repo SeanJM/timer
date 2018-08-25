@@ -26,11 +26,13 @@ interface SwatchElement extends Element {
   attributes: SwatchAttributes;
 }
 
-function mapSwatchToResponse(swatch: SwatchElement) {
+function toSwatchResponse(swatch: SwatchElement) {
   return swatch.attributes;
 }
 
 export default function (database: Database): express.Router {
+  const router = express.Router();
+
   function createSwatch(req, res) {
     const color = database.body.querySelector("#color");
 
@@ -41,9 +43,9 @@ export default function (database: Database): express.Router {
     } as SwatchAttributes) as SwatchElement;
 
     color.appendChild(swatch);
-    return res.send(mapSwatchToResponse(swatch));
+    res.send(toSwatchResponse(swatch));
+    database.save();
   }
-  const router = express.Router();
 
   router.post("/palette", function (req: PalettePostRequest, res: Response) {
     const v = new Validate({
@@ -54,6 +56,10 @@ export default function (database: Database): express.Router {
     if (v.validate(req.query)) {
       createSwatch(req, res);
     }
+  });
+
+  router.get("/palette", function (req: Request, res: Response) {
+    res.send(database.body.querySelector("#color").children.map(toSwatchResponse));
   });
 
   return router;
