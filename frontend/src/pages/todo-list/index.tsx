@@ -1,10 +1,11 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import Button from "@components/button";
 import { dispatch } from "@action";
 import { Input } from "@components/input";
 import { FormConnect } from "@components/form";
 import { RouterProps } from "@components/router";
 import Titlebar from "@components/titlebar";
+import { Viewport } from "@components/viewport";
 import generateId from "@generate-id";
 import { withStore, StoreState, FormElement, TodoNode, FormElementInput } from "@store";
 import Todo from "@components/todo";
@@ -118,55 +119,59 @@ class TodoList extends Component<TodoProps, State> {
     return (
       <div className="todo-list">
         <div className="todo-titlebar">
-          <Titlebar left={<h6>{this.props.name}</h6>} />
-          <Titlebar center={
-            <FormConnect id={FORM_ID} onSubmit={() => this.addTodo()}>
-              <Input
-                onRef={(node) => { this.node = node as HTMLInputElement;}}
-                type="text"
-                formID={FORM_ID}
-                name="todo_value"
-                onValue={value => this.setState({ todo: value })}
-                button={
-                  <Button
+        </div>
+        <Viewport
+          titlebar={
+            <Titlebar left={<h6>{this.props.name}</h6>} />
+          }
+          toolbar={
+            <Titlebar center={
+              <FormConnect id={FORM_ID} onSubmit={() => this.addTodo()}>
+                <Input
+                  onRef={(node) => { this.node = node as HTMLInputElement;}}
+                  type="text"
+                  formID={FORM_ID}
+                  name="todo_value"
+                  onValue={value => this.setState({ todo: value })}
+                  button={
+                    <Button
                     icon="add"
                     onClick={() => this.addTodo()}
-                  />
-                }
-              />
-            </FormConnect>
-          } />
-        </div>
-        <div className="todo-list_content">
-          <div className="todo-list_row">
-            <Titlebar left={<h6>Complete</h6>} />
-            {this.props.completeTodos.map((todo) => (
-              <Todo
-                key={todo.attributes.id}
-                state={todo.attributes.state}
-                name={todo.attributes.name}
-                created={todo.attributes.created}
-                id={todo.attributes.id}
-                categoryID={this.props.categoryID}
-                showAlt={this.props.controlPressed}
-              />
-            ))}
-          </div>
-          <div className="todo-list_row">
-            <Titlebar left={<h6>Incomplete</h6>} />
-            {this.props.incompleteTodos.map((todo) => (
-              <Todo
-                key={todo.attributes.id}
-                state={todo.attributes.state}
-                name={todo.attributes.name}
-                created={todo.attributes.created}
-                id={todo.attributes.id}
-                categoryID={this.props.categoryID}
-                showAlt={this.props.controlPressed}
-              />
-            ))}
-          </div>
-        </div>
+                    />
+                  }
+                />
+              </FormConnect>
+            } />
+          }
+          body={
+            <Fragment>
+              <Titlebar left={<h6>Complete</h6>} />
+              {this.props.completeTodos.map((todo) => (
+                <Todo
+                  key={todo.attributes.id}
+                  state={todo.attributes.state}
+                  name={todo.attributes.name}
+                  created={todo.attributes.created}
+                  id={todo.attributes.id}
+                  categoryID={this.props.categoryID}
+                  showAlt={this.props.controlPressed}
+                />
+              ))}
+              <Titlebar left={<h6>Incomplete</h6>} />
+              {this.props.incompleteTodos.map((todo) => (
+                <Todo
+                  key={todo.attributes.id}
+                  state={todo.attributes.state}
+                  name={todo.attributes.name}
+                  created={todo.attributes.created}
+                  id={todo.attributes.id}
+                  categoryID={this.props.categoryID}
+                  showAlt={this.props.controlPressed}
+                />
+              ))}
+            </Fragment>
+          }
+        />
       </div >
     );
   }

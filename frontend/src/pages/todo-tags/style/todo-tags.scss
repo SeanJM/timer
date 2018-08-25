@@ -1,18 +1,14 @@
-.todo-tags {
-  .titlebar {
-    .swatch {
-      position: absolute;
-      left: 0;
-      top: 0;
-      z-index: 2;
-    }
+.todo-tags-input {
+  .swatch {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
   }
 
-  form {
-    .todo-tags_tag-input {
-      input {
-        padding-left: $u9;
-      }
+  .todo-tags_tag-input {
+    input {
+      padding-left: $u9;
     }
   }
 }

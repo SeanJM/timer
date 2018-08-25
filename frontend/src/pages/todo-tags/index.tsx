@@ -6,6 +6,7 @@ import { RouterProps } from "@components/router";
 import Titlebar from "@components/titlebar";
 import Swatch from "@components/swatch";
 import generateHash from "@generate-hash";
+import { Viewport } from "@components/viewport";
 import { withStore, StoreState, FormElementInput, TagNode } from "@store";
 import { ColorPicker } from "@types";
 import path from "@path";
@@ -80,38 +81,42 @@ class TodoTags extends Component<Props, {}> {
 
   render() {
     return (
-      <div className="todo-tags">
-        <div className="todo-titlebar">
+      <Viewport
+        titlebar={
           <Titlebar left={<h6>{this.props.categoryName}</h6>} />
+        }
+        toolbar={
           <Titlebar center={
             <FormConnect id={FORM_ID} onSubmit={() => this.addTag()}>
-              <Swatch
-                background={this.props.color}
-                onClick={() => {
-                  dispatch("COLOR_PICKER", {
-                    type: "OPEN",
-                    id: COLOR_PICKER_ID,
-                  });
-                }}
-              />
-              <Input
-                className="todo-tags_tag-input"
-                onRef={(node) => { this.node = node as HTMLInputElement;}}
-                type="text"
-                formID={FORM_ID}
-                name="tagName"
-                onValue={value => this.setState({ todo: value })}
-                button={
-                  <Button
-                    icon="add"
-                    onClick={() => this.addTag()}
-                  />
-                }
-              />
+              <div className="todo-tags-input">
+                <Swatch
+                  background={this.props.color}
+                  onClick={() => {
+                    dispatch("COLOR_PICKER", {
+                      type: "OPEN",
+                      id: COLOR_PICKER_ID,
+                    });
+                  }}
+                />
+                <Input
+                  className="todo-tags_tag-input"
+                  onRef={(node) => { this.node = node as HTMLInputElement;}}
+                  type="text"
+                  formID={FORM_ID}
+                  name="tagName"
+                  onValue={value => this.setState({ todo: value })}
+                  button={
+                    <Button
+                      icon="add"
+                      onClick={() => this.addTag()}
+                    />
+                  }
+                />
+              </div>
             </FormConnect>
           } />
-        </div>
-        <div className="todo-list_content">
+        }
+        body={
           <List>
             {this.props.tags.map((tag) => {
               return (
@@ -131,8 +136,8 @@ class TodoTags extends Component<Props, {}> {
               );
             })}
           </List>
-        </div>
-      </div>
+        }
+      />
     );
   }
 }
