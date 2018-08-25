@@ -8,6 +8,7 @@ export interface ElementAttributes {
   state?: string;
   created?: number;
   completed?: number;
+  color?: string;
   [key: string]: any;
 }
 
@@ -109,7 +110,7 @@ export default class Element {
     if (query.type && query.type !== this.type) {
       return false;
     }
-    
+
     for (var k in query.attributes) {
       if (query.attributes[k] instanceof RegExp) {
         if (!query.attributes[k].test(this.attributes[k])) {
@@ -133,7 +134,7 @@ export default class Element {
         return false;
       }
     }
-    
+
     return true;
   }
 
