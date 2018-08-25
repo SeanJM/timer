@@ -14,23 +14,55 @@ body {
 }
 
 @include header(
-  $font-size * 1.07, 
+  $font-size * 1.07,
   $font-size * 3.5, 1);
 @include header(
-  $font-size * 1.07, 
+  $font-size * 1.07,
   $font-size * 3.5, 2);
 @include header(
-  $font-size * 1.07, 
+  $font-size * 1.07,
   $font-size * 3.5, 3);
 @include header(
-  $font-size * 1.07, 
+  $font-size * 1.07,
   $font-size * 3.5, 4);
 @include header(
-  $font-size * 1.07, 
+  $font-size * 1.07,
   $font-size * 3.5, 5);
 @include header(
-  $font-size * 1.07, 
+  $font-size * 1.07,
   $font-size * 3.5, 6);
+
+small {
+  $font-size: 9px;
+  @include header(
+    $font-size * 1.07,
+    $font-size * 3.5, 1);
+  @include header(
+    $font-size * 1.07,
+    $font-size * 3.5, 2);
+  @include header(
+    $font-size * 1.07,
+    $font-size * 3.5, 3);
+  @include header(
+    $font-size * 1.07,
+    $font-size * 3.5, 4);
+  @include header(
+    $font-size * 1.07,
+    $font-size * 3.5, 5);
+  @include header(
+    $font-size * 1.07,
+    $font-size * 3.5, 6);
+
+  h6, h5, h4, h3, h2, h1 {
+    color: $grey;
+    font-weight: normal;
+    text-transform: uppercase;
+  }
+
+  h6 {
+    margin-bottom: $u * 0.4;
+  }
+}
 
 p {
   font-size: $font-size;
