@@ -12,7 +12,7 @@ interface TagPostRequest extends Request {
   };
   query: {
     name: string;
-    colorID: string;
+    color: string;
   };
 }
 
@@ -31,9 +31,9 @@ export default function (database: Database): express.Router {
     const tag = database.createElement("tag", {
       id: generateHash(7),
       name: req.query.name,
-      colorID: req.query.colorID,
+      color: req.query.color,
       created: new Date().getTime(),
-    });
+    } as TagNode);
 
     if (category) {
       category.appendChild(tag);
@@ -49,25 +49,22 @@ export default function (database: Database): express.Router {
       name: tagElement.attributes.name,
       id: tagElement.attributes.id,
       created: tagElement.attributes.created,
-      colorID: tagElement.attributes.colorID,
+      color: tagElement.attributes.color,
     };
   }
 
   router.get("/:categoryID", function (req: TagGetRequest, res: Response) {
     const selector = "#" + req.params.categoryID + " tag";
-
-    const tagElements: TagNode[] =
-      database.body
-        .querySelectorAll(selector)
-        .map(toTagResponse);
-
+    const tagElements: TagNode[] = database.body
+      .querySelectorAll(selector)
+      .map(toTagResponse);
     return res.send(tagElements);
   });
 
   router.post("/:categoryID", function (req: TagPostRequest, res: Response) {
     const queryV = new Validate({
       action: "create",
-      colorID: "string",
+      color: "string",
       name: "string",
     });
     if (queryV.validate(req.query)) {
