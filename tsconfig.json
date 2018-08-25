@@ -18,10 +18,17 @@
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
+      "@types": [
+        "types/"
+      ],
+      "@frontend/*": [
+        "frontend/src/*"
+      ],
+      "@backend/*": [
+        "backend/src/*"
+      ],
       "@*": [
         "/*",
-        "frontend/src/*",
-        "backend/src/*",
         "packages/*"
       ]
     }
