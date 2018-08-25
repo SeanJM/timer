@@ -1,5 +1,5 @@
-import { store, ColorPicker } from "@store";
-import { SwatchAttributes } from '@types';
+import { store } from "@store";
+import { SwatchAttributes, ColorPicker } from '@types';
 import ajax from "@ajax";
 import _ from "lodash";
 import generateHash from "@generate-hash";
