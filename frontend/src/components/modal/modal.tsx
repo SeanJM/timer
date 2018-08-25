@@ -12,7 +12,7 @@ import {
 export type ModalNames = | "ADD_CATEGORY" | "ADD_TODO";
 
 interface Modals {
-  [key: string]: typeof React.Component;
+  [key: string]: React.ComponentType;
 }
 
 type ModalProps = StoreState["modal"];
