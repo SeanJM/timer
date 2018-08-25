@@ -10,8 +10,9 @@ interface PalettePostRequest extends Request {
     categoryID: string;
   };
   query: {
-    action: "create",
-    value: string;
+    action: "create" | "delete",
+    value?: string;
+    id?: string;
   };
 }
 
@@ -47,14 +48,27 @@ export default function (database: Database): express.Router {
     database.save();
   }
 
+  function deleteSwatch(req: PalettePostRequest, res) {
+    const color = database.body.querySelector("#color");
+    const swatch = color.querySelector("#" + req.query.id);
+    color.removeChild(swatch);
+    res.send();
+    database.save();
+  }
+
   router.post("/palette", function (req: PalettePostRequest, res: Response) {
     const v = new Validate({
-      action: "create",
-      value: "string"
+      action: "create|delete",
+      value: "string",
+      "id?": "string",
     });
 
     if (v.validate(req.query)) {
-      createSwatch(req, res);
+      if (req.query.action === "create") {
+        createSwatch(req, res);
+      } else if (req.query.action === "delete") {
+        deleteSwatch(req, res);
+      }
     }
   });
 
