@@ -4,9 +4,10 @@ import { Input } from "@components/input";
 import { FormConnect } from "@components/form";
 import { RouterProps } from "@components/router";
 import Titlebar from "@components/titlebar";
-import SwatchPicker from "@components/swatch";
+import Swatch from "@components/swatch";
 import generateHash from "@generate-hash";
 import { withStore, StoreState, FormElementInput, TagNode } from "@store";
+import { ColorPicker } from "@types";
 import path from "@path";
 import { dispatch } from "@action";
 import { routes } from "@components/app";
@@ -14,27 +15,31 @@ import { List, ListItem } from "@components/list";
 import Timestamp from "@components/timestamp";
 
 const FORM_ID = generateHash();
+const COLOR_PICKER_ID = "tag_name";
 
 interface Props extends Partial<TagNode>, Pick<StoreState, "tags"> {
   categoryName: string;
   categoryID: string;
+  colorPicker: Partial<ColorPicker>;
 }
 
 function mapStateToProps(state: StoreState, props: RouterProps): Props {
-  const params = path.params(props.location.pathname, routes.category);
+  const params = path.params(props.location.pathname, routes.pathname);
   const category = state.todo.categories.find(a => a.attributes.id === params.categoryID);
   const form = state.form.find(a => a.id === FORM_ID);
 
-  const tagNameInput: FormElementInput = 
+  const tagNameInput: FormElementInput =
     form && form.inputs.find((input) => input.name === "tagName");
-  const colorInput: FormElementInput = 
+
+  const colorInput: FormElementInput =
     form && form.inputs.find((input) => input.name === "color");
 
   return {
+    colorPicker: state.color.items.find((a) => a.id === COLOR_PICKER_ID) || {},
     categoryName: category && category.attributes.name,
     categoryID: params.categoryID,
     name: tagNameInput ? tagNameInput.value : "",
-    colorID: colorInput ? colorInput.value : -1,
+    color: colorInput ? colorInput.value : null,
     tags: state.tags,
   };
 }
@@ -45,7 +50,7 @@ class TodoTags extends Component<Props, {}> {
   addTag() {
     dispatch("CREATE_TAG", {
       name: this.props.name,
-      colorID: this.props.colorID,
+      color: this.props.color,
       categoryID: this.props.categoryID,
     } as Partial<Props>);
   }
@@ -56,6 +61,23 @@ class TodoTags extends Component<Props, {}> {
     });
   }
 
+  componentWillReceiveProps(nextProps: Props) {
+    if (nextProps.categoryID !== this.props.categoryID) {
+      dispatch("GET_TAGS", {
+        categoryID: nextProps.categoryID,
+      });
+    }
+
+    if (this.props.colorPicker.isOpen && !nextProps.colorPicker.isOpen && nextProps.colorPicker.value) {
+      dispatch("FORM_VALUE", {
+        id: FORM_ID,
+        name: "color",
+        type: "color",
+        value: nextProps.colorPicker.value,
+      });
+    }
+  }
+
   render() {
     return (
       <div className="todo-tags">
@@ -63,13 +85,12 @@ class TodoTags extends Component<Props, {}> {
           <Titlebar left={<h6>{this.props.categoryName}</h6>} />
           <Titlebar center={
             <FormConnect id={FORM_ID} onSubmit={() => this.addTag()}>
-              <SwatchPicker 
-                onSelect={(color) => {
-                  dispatch("FORM_VALUE", {
-                    id: FORM_ID,
-                    type: "text",
-                    name: "color",
-                    value: color.index
+              <Swatch
+                background={this.props.color}
+                onClick={() => {
+                  dispatch("COLOR_PICKER", {
+                    type: "OPEN",
+                    id: COLOR_PICKER_ID,
                   });
                 }}
               />
@@ -96,6 +117,14 @@ class TodoTags extends Component<Props, {}> {
               return (
                 <ListItem
                   title={tag.name}
+                  primaryAction={
+                    <Swatch
+                      background={tag.color}
+                      onClick={() => {
+                        // console.log(color);
+                      }}
+                    />
+                  }
                   timestamp={<Timestamp>{tag.created}</Timestamp>}
                   key={tag.id}>
                 </ListItem>
@@ -106,6 +135,6 @@ class TodoTags extends Component<Props, {}> {
       </div>
     );
   }
-}       
-  
+}
+
 export default withStore(TodoTags, mapStateToProps)() as React.ComponentClass<any>;
