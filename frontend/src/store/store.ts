@@ -1,4 +1,5 @@
 import Persistore from "@class/persistore";
+import { Keys, Color } from "@types";
 
 export interface FormElementInput {
   name: string;
@@ -31,20 +32,20 @@ export interface Category extends TodoNode {
 export interface TagNode {
   name: string;
   id: string;
-  colorID: number;
+  color: string;
   created: number;
 }
 
 export interface StoreState {
-  keys: {
-    control: boolean;
-  };
+  keys: Keys;
 
   todo: {
     categories?: Category[];
     isRequest?: null | boolean;
     isSuccess?: null | boolean;
   };
+
+  color: Color;
 
   tags: TagNode[];
 
@@ -73,6 +74,13 @@ export const store = new Persistore<StoreState>(
       isSuccess: null,
     },
 
+    color: {
+      items:[],
+      palette: [],
+    },
+
+    tags: [],
+
     modal: {
       name: null,
       value: {}
@@ -86,6 +94,6 @@ export const store = new Persistore<StoreState>(
     form: []
   } as StoreState,
   {
-    ignore: [/^form\./, /^slideOut\./]
+    ignore: [/^form\./, /^slideOut\./, /^color\.items/]
   }
 );
