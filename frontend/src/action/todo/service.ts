@@ -1,5 +1,5 @@
 import { store, Category, StoreState, TodoNode } from "@store";
-import ajax from "@scripts/ajax";
+import ajax from "@ajax";
 import _ from "lodash";
 
 export default class Service {
@@ -95,7 +95,7 @@ export default class Service {
         this.mergeTodo(e.categoryID, todoResponse);
       });
     }
-    
+
     complete(e) {
       ajax.post("/todo/category/" + e.categoryID, {
         data: {
