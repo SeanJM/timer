@@ -44,9 +44,6 @@ export function ListItem(props: ListItemProps) {
       {props.to
         ? <Link className="list-item_link" to={props.to} />
         : null}
-      {props.primaryAction
-        ? <div className="list-item_primary-action">{props.primaryAction}</div>
-        : null}
       {props.secondaryAction
         ? <div className="list-item_secondary-action">{props.primaryAction}</div>
         : null}
@@ -61,6 +58,9 @@ export function ListItem(props: ListItemProps) {
         : null}
       {props.feet
         ? <div className="list-item_feet">{props.feet}</div>
+        : null}
+      {props.primaryAction
+        ? <div className="list-item_primary-action">{props.primaryAction}</div>
         : null}
       {props.children}
     </div>
