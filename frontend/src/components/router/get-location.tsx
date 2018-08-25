@@ -1,6 +1,6 @@
-import getPathname from "@components/router/get-pathname";
-import getSearch from "@components/router/get-search";
-import getHash from "@components/router/get-hash";
+import getPathname from "@frontend/components/router/get-pathname";
+import getSearch from "@frontend/components/router/get-search";
+import getHash from "@frontend/components/router/get-hash";
 
 export default function getLocation(href: string) {
   return {

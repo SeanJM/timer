@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Component } from "react";
-import { InputWrapper, InputEvents } from "@components/input";
+import { InputWrapper, InputEvents } from "@frontend/components/input";
 
 interface InputTextProps extends InputEvents {
   defaultValue?: string;

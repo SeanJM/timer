@@ -1,5 +1,5 @@
-import Persistore from "@class/persistore";
-import { Keys, Color } from "@types";
+import Persistore from "@frontend/class/persistore";
+import { Keys, Color, TagNode } from "@types";
 
 export interface FormElementInput {
   name: string;
@@ -27,13 +27,6 @@ export interface TodoNode {
 }
 
 export interface Category extends TodoNode {
-}
-
-export interface TagNode {
-  name: string;
-  id: string;
-  color: string;
-  created: number;
 }
 
 export interface StoreState {

@@ -1,6 +1,6 @@
 import { Request } from "express";
 import Validate from "verified";
-import Database from "@class/database";
+import Database from "@backend/class/database";
 import generateHash from "@generate-hash";
 
 export default function (router, database: Database) {

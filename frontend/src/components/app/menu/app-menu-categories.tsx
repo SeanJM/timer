@@ -1,8 +1,8 @@
 import * as React from "react";
 import path from "@path";
-import { routes } from "@components/app";
-import Icon, { IconType } from "@components/icon";
-import { History, RouterLocation } from "@components/router";
+import { routes } from "@frontend/routes";
+import Icon, { IconType } from "@frontend/components/icon";
+import { History, RouterLocation } from "@frontend/components/router";
 import { AppMenuProps } from "./";
 
 interface AppMenuCategoriesItemProps {
@@ -31,10 +31,12 @@ function AppMenuCategoriesItem(props: AppMenuCategoriesItemProps) {
         const params =
           path.params(location.pathname, routes.pathname);
 
-        let url = path.replaceReduce(routes.pathname, {
+        let url = path.reduce(routes.pathname, {
           type: props.type,
           categoryID: params.categoryID,
         });
+
+        console.log(url, routes.pathname);
 
         history.push(url);
       }}

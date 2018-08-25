@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import Validate from "verified";
-import Database from "@class/database";
+import Database from "@backend/class/database";
 import generateHash from "@generate-hash";
 import express from "express";
-import { TagNode } from "@store";
-import Element from "@class/element";
+import { TagNode } from "@types";
+import Element from "@backend/class/element";
 
 interface TagPostRequest extends Request {
   params: {

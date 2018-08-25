@@ -1,5 +1,5 @@
-import { RouterLocation } from "@components/router/types";
-import getLocation from "@components/router/get-location";
+import { RouterLocation } from "@frontend/components/router/types";
+import getLocation from "@frontend/components/router/get-location";
 
 export interface History {
   stack: RouterLocation[],

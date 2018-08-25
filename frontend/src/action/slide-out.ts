@@ -1,4 +1,4 @@
-import { store, StoreState } from "@store";
+import { store, StoreState } from "@frontend/store";
 
 export default function (subscribe) {
   subscribe("OPEN_SLIDEOUT", function (e) {

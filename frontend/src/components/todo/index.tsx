@@ -1,10 +1,11 @@
 import React from "react";
-import Button from "@components/button";
-import Control from "@components/control";
-import { ListItem } from "@components/list";
+import Button from "@frontend/components/button";
+import Control from "@frontend/components/control";
+import { ListItem } from "@frontend/components/list";
 import path from "@path";
-import { dispatch } from "@action";
-import Timestamp from "@components/timestamp";
+import { dispatch } from "@frontend/action/";
+import Timestamp from "@frontend/components/timestamp";
+import { routes } from "@frontend/routes";
 
 interface TodoProps {
   state: string;
@@ -67,7 +68,11 @@ export default function Todo(props: TodoProps) {
       passive={props.state === "complete"}
       title={props.name}
       timestamp={<Timestamp>{props.created}</Timestamp>}
-      to={path.join("/category/", props.categoryID, props.id)}
+      to={path.reduce(routes.pathname, {
+        type: "todo",
+        categoryID: props.categoryID,
+        todoID: props.id
+      })}
       primaryAction={
         <Control>
           {props.state === "complete"

@@ -223,11 +223,15 @@ function findElementsFromQuery(node, index, queryObject) {
         let child = node.children[i];
         if (child instanceof Element) {
             if (child.is(query)) {
-                children.push(child);
+                if (index === queryObject.length - 1) {
+                    children.push(child);
+                }
+                if (queryObject[index + 1]) {
+                    [].push.apply(children, findElementsFromQuery(child, index + 1, queryObject));
+                }
             }
-            [].push.apply(children, findElementsFromQuery(child, index, queryObject));
-            if (queryObject[index + 1]) {
-                [].push.apply(children, findElementsFromQuery(child, index + 1, queryObject));
+            else {
+                [].push.apply(children, findElementsFromQuery(child, index, queryObject));
             }
         }
     }
@@ -456,6 +460,70 @@ exports.default = URL;
 
 /***/ }),
 
+/***/ "./packages/path/chain.ts":
+/*!********************************!*\
+  !*** ./packages/path/chain.ts ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const replace_1 = __importDefault(__webpack_require__(/*! ./replace */ "./packages/path/replace.ts"));
+const reduce_1 = __importDefault(__webpack_require__(/*! @path/reduce */ "./packages/path/reduce.ts"));
+const join_1 = __importDefault(__webpack_require__(/*! ./join */ "./packages/path/join.ts"));
+const normalize_1 = __importDefault(__webpack_require__(/*! ./normalize */ "./packages/path/normalize.ts"));
+const params_1 = __importDefault(__webpack_require__(/*! ./params */ "./packages/path/params.ts"));
+const pop_1 = __importDefault(__webpack_require__(/*! ./pop */ "./packages/path/pop.ts"));
+const push_1 = __importDefault(__webpack_require__(/*! ./push */ "./packages/path/push.ts"));
+const splice_1 = __importDefault(__webpack_require__(/*! ./splice */ "./packages/path/splice.ts"));
+function chain(pathname) {
+    const self = {
+        value: pathname,
+        replace(template) {
+            this.value = replace_1.default(this.value, template);
+            return this;
+        },
+        replaceReduce(template) {
+            this.value = reduce_1.default(this.value, template);
+            return this;
+        },
+        join(...args) {
+            this.value = join_1.default(this.value, ...args);
+            return this;
+        },
+        normalize() {
+            this.value = normalize_1.default(this.value);
+            return this;
+        },
+        params(schema) {
+            return params_1.default(this.value, schema);
+        },
+        pop(times = 1) {
+            this.value = pop_1.default(this.value, times);
+            return this;
+        },
+        push(...members) {
+            this.value = push_1.default(this.value, ...members);
+            return this;
+        },
+        splice(member, index, length) {
+            this.value = splice_1.default(this.value, member, index, length);
+            return this;
+        },
+    };
+    return self;
+}
+exports.default = chain;
+;
+
+
+/***/ }),
+
 /***/ "./packages/path/index.ts":
 /*!********************************!*\
   !*** ./packages/path/index.ts ***!
@@ -472,20 +540,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const chain_1 = __importDefault(__webpack_require__(/*! ./chain */ "./packages/path/chain.ts"));
 const join_1 = __importDefault(__webpack_require__(/*! ./join */ "./packages/path/join.ts"));
 const normalize_1 = __importDefault(__webpack_require__(/*! ./normalize */ "./packages/path/normalize.ts"));
 const params_1 = __importDefault(__webpack_require__(/*! ./params */ "./packages/path/params.ts"));
 const pop_1 = __importDefault(__webpack_require__(/*! ./pop */ "./packages/path/pop.ts"));
 const push_1 = __importDefault(__webpack_require__(/*! ./push */ "./packages/path/push.ts"));
 const replace_1 = __importDefault(__webpack_require__(/*! ./replace */ "./packages/path/replace.ts"));
+const reduce_1 = __importDefault(__webpack_require__(/*! ./reduce */ "./packages/path/reduce.ts"));
 const splice_1 = __importDefault(__webpack_require__(/*! ./splice */ "./packages/path/splice.ts"));
 const path = {
+    chain: chain_1.default,
     join: join_1.default,
     normalize: normalize_1.default,
     params: params_1.default,
     pop: pop_1.default,
     push: push_1.default,
     replace: replace_1.default,
+    reduce: reduce_1.default,
     splice: splice_1.default,
 };
 exports.default = path;
@@ -565,14 +637,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const normalize_1 = __importDefault(__webpack_require__(/*! @path/normalize */ "./packages/path/normalize.ts"));
-const join_1 = __importDefault(__webpack_require__(/*! @path/join */ "./packages/path/join.ts"));
+const parse_1 = __importDefault(__webpack_require__(/*! @path/parse */ "./packages/path/parse.ts"));
 function isMatch(query, url) {
     return query === url || (query && url && query[0] === ":");
 }
-function params(pathname = "", schema) {
-    const urlPathname = normalize_1.default(join_1.default(pathname)).split("/");
-    const queryPathname = schema ? normalize_1.default(schema).split("/") : null;
+function params(pathname = "", schema = "") {
+    const urlPathname = parse_1.default(pathname).chunks;
+    const queryPathname = parse_1.default(schema).chunks;
     const params = {
         __exact: true,
         __match: true,
@@ -683,6 +754,44 @@ exports.default = push;
 
 /***/ }),
 
+/***/ "./packages/path/reduce.ts":
+/*!*********************************!*\
+  !*** ./packages/path/reduce.ts ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const parse_1 = __importDefault(__webpack_require__(/*! @path/parse */ "./packages/path/parse.ts"));
+function reduceReplace(schema, params) {
+    const p = parse_1.default(schema);
+    const n = p.chunks.length;
+    let i = -1;
+    let res = [];
+    let cache;
+    let isSchema;
+    while (++i < n) {
+        isSchema = p.chunks[i][0] === ":";
+        cache = isSchema && params[p.chunks[i].substring(1)];
+        if (cache === true || !isSchema) {
+            res.push(p.chunks[i]);
+        }
+        else if (cache) {
+            res.push(cache);
+        }
+    }
+    return p.root + res.join("/") + "/";
+}
+exports.default = reduceReplace;
+
+
+/***/ }),
+
 /***/ "./packages/path/replace.ts":
 /*!**********************************!*\
   !*** ./packages/path/replace.ts ***!
@@ -776,6 +885,7 @@ function querySelectorToObjectList(selector) {
         "[": true,
         "]": true,
         "#": true,
+        ">": true,
     };
     while (++i < n) {
         if (/[a-zA-Z]/.test(selector[i])) {
@@ -1341,6 +1451,17 @@ function default_1(test) {
     test("path.pop", _path_1.default.pop("/a/b/c/d/", 2)).isEqual("/a/b/");
     test("path.push", _path_1.default.push("/a/b/c/", "d")).isEqual("/a/b/c/d/");
     test("path.push (multiple arguments)", _path_1.default.push("/a/b/c/", "d", "e")).isEqual("/a/b/c/d/e/");
+    test("path.replace (/a/:b/:c/)", _path_1.default.replace("/a/:b/:c/", { b: "t" })).isEqual("/a/t/:c/");
+    test("path.reduce (/a/:b/:c/)", _path_1.default.reduce("/a/:b/:c/", { b: "t" })).isEqual("/a/t/");
+    test("path.reduce 1 present", _path_1.default.reduce("/:type/:categoryID/:todoID/", {
+        type: "todo"
+    })).isEqual("/todo/");
+    test("path.reduce 2 present", () => {
+        return _path_1.default.reduce("/:type/:categoryID/:todoID/", {
+            type: "todo",
+            categoryID: "an7yH"
+        });
+    }).isEqual("/todo/an7yH/");
 }
 exports.default = default_1;
 

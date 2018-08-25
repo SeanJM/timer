@@ -1,5 +1,5 @@
 import * as React from "react";
-import Icon, { IconType } from "@components/icon";
+import Icon, { IconType } from "@frontend/components/icon";
 
 type ButtonType =
   | "primary"

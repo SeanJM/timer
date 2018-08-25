@@ -1,3 +1,3 @@
-export * from "@components/Input/input";
-export * from "@components/Input/input-text";
-export * from "@components/Input/input-wrapper";
+export * from "@frontend/components/Input/input";
+export * from "@frontend/components/Input/input-text";
+export * from "@frontend/components/Input/input-wrapper";

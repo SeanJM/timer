@@ -9,10 +9,10 @@ export default function reduceReplace(schema: string, params: object) {
   while (++i < n) {
     isSchema = p.chunks[i][0] === ":";
     cache = isSchema && params[p.chunks[i].substring(1)];
-    if (cache) {
-      res.push(cache);
-    } else if (!isSchema) {
+    if (cache === true || !isSchema) {
       res.push(p.chunks[i]);
+    } else if (cache) {
+      res.push(cache);
     }
   }
   return p.root + res.join("/") + "/";

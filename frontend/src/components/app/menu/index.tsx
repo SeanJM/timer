@@ -1,20 +1,20 @@
 import * as React from "react";
-import { withStore, StoreState } from "@store";
-import Button from "@components/button";
-import Control from "@components/control";
-import Titlebar from "@components/titlebar";
-import { MenuItem } from "@components/menu";
-import { dispatch } from "@action";
+import { withStore, StoreState } from "@frontend/store";
+import Button from "@frontend/components/button";
+import Control from "@frontend/components/control";
+import Titlebar from "@frontend/components/titlebar";
+import { MenuItem } from "@frontend/components/menu";
+import { dispatch } from "@frontend/action/";
 
 import {
   History,
   RouterLocation,
   withRouter,
-} from "@components/router";
+} from "@frontend/components/router";
 
 import AppMenuCategories from "./app-menu-categories";
 import path, { Params } from "@path";
-import { routes } from "@components/app";
+import { routes } from "@frontend/routes";
 
 export interface AppMenuProps {
   todo: StoreState["todo"];
@@ -58,12 +58,10 @@ function AppMenuGroup(props) {
             const pathname = props.location.pathname;
             const params = path.params(pathname, routes.pathname);
 
-            const url = path.replace(routes.pathname, {
+            const url = path.reduce(routes.pathname, {
               type: params.type,
               categoryID: a.attributes.id,
             });
-
-            console.log(url);
 
             props.history.push(url);
           }}

@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import Database from "@class/database";
+import Database from "@backend/class/database";
 import Validate from "verified";
 
 fs.writeFileSync(path.resolve(__dirname, "test.json"), "");
@@ -103,7 +103,7 @@ export default function (test) {
 
     let childElement = database.createElement();
     let tagElement = database.createElement("tag", { className: "class" });
-    
+
     database.body.appendChild(
       database.createElement()
         .appendChild(

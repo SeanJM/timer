@@ -1,13 +1,13 @@
 import * as React from "react";
 import { Component } from "react";
-import Titlebar from "@components/titlebar";
-import { FormConnect } from "@components/form";
-import { InputLabel } from "@components/input-label";
-import Button from "@components/button";
-import Control from "@components/control";
-import { ModalWindow } from "@components/modal/modal-window";
-import { dispatch } from "@action";
-import { withStore, StoreState, FormElement } from "@store";
+import Titlebar from "@frontend/components/titlebar";
+import { FormConnect } from "@frontend/components/form";
+import { InputLabel } from "@frontend/components/input-label";
+import Button from "@frontend/components/button";
+import Control from "@frontend/components/control";
+import { ModalWindow } from "@frontend/components/modal/modal-window";
+import { dispatch } from "@frontend/action/";
+import { withStore, StoreState, FormElement } from "@frontend/store";
 
 interface Props extends Pick<
   StoreState["todo"],

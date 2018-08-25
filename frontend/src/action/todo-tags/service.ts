@@ -1,5 +1,6 @@
 import ajax from "@ajax";
-import { store, TagNode } from "@store";
+import { store } from "@frontend/store";
+import { TagNode } from "@types";
 import { replaceById } from "@replace-by-id";
 import path from "@path";
 import generateHash from "@generate-hash";

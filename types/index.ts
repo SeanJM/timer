@@ -4,6 +4,13 @@ export interface SwatchAttributes {
   id: string;
 }
 
+export interface TagNode {
+  name: string;
+  id: string;
+  color: string;
+  created: number;
+}
+
 export interface Keys {
   control: boolean;
 }

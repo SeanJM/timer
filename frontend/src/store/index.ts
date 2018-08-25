@@ -1,2 +1,2 @@
-export * from "@store/with-store";
-export * from "@store/store";
+export * from "@frontend/store/with-store";
+export * from "@frontend/store/store";

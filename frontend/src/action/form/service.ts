@@ -1,4 +1,4 @@
-import { store, FormElement, FormElementInput } from "@store";
+import { store, FormElement, FormElementInput } from "@frontend/store";
 
 type InputQuery = Partial<FormElementInput>;
 

@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import React, { Fragment } from "react";
 import ReactDOM from "react-dom/server";
-import SpriteLoad, { spriteTracker } from "@components/sprite-load";
+import SpriteLoad, { spriteTracker } from "@backend/components/sprite-load";
 import * as path from "path";
 
 const Page = (
@@ -13,10 +13,10 @@ const Page = (
 
 function render(Component: JSX.Element, pathname) {
   const str = fs.readFileSync(path.join(__dirname, "template.html"), "utf8");
-  
+
   const options = {
-    head: process.env.NODE_ENV === "production" 
-      ? <link rel="stylesheet" href="bundle.css"/> 
+    head: process.env.NODE_ENV === "production"
+      ? <link rel="stylesheet" href="bundle.css"/>
       : null,
     body: ReactDOM.renderToStaticMarkup(Component),
     script: "bundle.js",

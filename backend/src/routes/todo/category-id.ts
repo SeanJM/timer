@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Validate from "verified";
-import Database from "@class/database";
+import Database from "@backend/class/database";
 import generateHash from "@generate-hash";
 
 function createTodo(req: Request, res: Response, database: Database) {

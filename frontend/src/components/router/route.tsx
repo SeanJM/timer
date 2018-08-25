@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
-import history, { History } from "@components/router/history";
+import history, { History } from "@frontend/components/router/history";
 import path, { Params } from "@path";
-import { RouterLocation } from "@components/router";
+import { RouterLocation } from "@frontend/components/router";
 
 type AnyComponent = React.ComponentClass;
 

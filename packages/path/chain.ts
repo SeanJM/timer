@@ -1,5 +1,5 @@
 import replace from "./replace";
-import replaceReduce from "./replace-reduce";
+import replaceReduce from "@path/reduce";
 import join from "./join";
 import normalize from "./normalize";
 import params from "./params";

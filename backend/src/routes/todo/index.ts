@@ -1,7 +1,7 @@
 import express from "express";
-import Database from "@class/database";
-import categoryID from "@routes/todo/category-id";
-import category from "@routes/todo/category";
+import Database from "@backend/class/database";
+import categoryID from "@backend/routes/todo/category-id";
+import category from "@backend/routes/todo/category";
 
 
 export default function (database: Database) {

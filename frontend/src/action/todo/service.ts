@@ -1,4 +1,4 @@
-import { store, Category, StoreState, TodoNode } from "@store";
+import { store, Category, StoreState, TodoNode } from "@frontend/store";
 import ajax from "@ajax";
 import _ from "lodash";
 

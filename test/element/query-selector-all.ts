@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import Database from "@class/database";
+import Database from "@backend/class/database";
 
 fs.writeFileSync(path.resolve(__dirname, "test.json"), "");
 
@@ -39,7 +39,7 @@ export default function (test) {
     res = parentNode.querySelectorAll("tag");
 
     return (
-      res[0] === tags[0] && 
+      res[0] === tags[0] &&
       res[1] === tags[1]
     );
   }).isEqual(true);
@@ -76,7 +76,7 @@ export default function (test) {
     res = parentNode.querySelectorAll("tag");
 
     return (
-      res[0] === tags[0] && 
+      res[0] === tags[0] &&
       res[1] === tags[1]
     );
   }).isEqual(true);

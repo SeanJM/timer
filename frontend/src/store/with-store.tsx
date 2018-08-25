@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Component } from "react";
-import { store, StoreState } from "@store";
+import { store, StoreState } from "@frontend/store";
 
 function defaultMapStateToProps(state, props) {
   return {

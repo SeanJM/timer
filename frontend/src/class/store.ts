@@ -1,6 +1,6 @@
 import { set, get } from "lodash";
-import copy from "@scripts/copy";
-import getPaths from "@scripts/get-paths";
+import copy from "@frontend/scripts/copy";
+import getPaths from "@frontend/scripts/get-paths";
 
 export type OnChangeFunction<T> =
   (prevState: T, nextState: T) => void;

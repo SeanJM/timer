@@ -5,7 +5,7 @@ import params from "./params";
 import pop from "./pop";
 import push from "./push";
 import replace from "./replace";
-import replaceReduce from "./replace-reduce";
+import reduce from "./reduce";
 import splice from "./splice";
 
 type Path = {
@@ -16,7 +16,7 @@ type Path = {
   pop: typeof pop,
   push: typeof push,
   replace: typeof replace,
-  replaceReduce: typeof replaceReduce,
+  reduce: typeof reduce,
   splice: typeof splice,
 };
 
@@ -28,7 +28,7 @@ const path: Path = {
   pop,
   push,
   replace,
-  replaceReduce,
+  reduce,
   splice,
 };
 

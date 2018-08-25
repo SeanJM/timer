@@ -1,12 +1,12 @@
 import React, { Fragment } from "react";
-import { withStore, StoreState } from "@store";
+import { withStore, StoreState } from "@frontend/store";
 import { ColorPicker, Color } from "@types";
-import { dispatch } from "@action";
+import { dispatch } from "@frontend/action/";
 import blush from "blush";
-import Button from "@components/button";
-import Control from "@components/control";
+import Button from "@frontend/components/button";
+import Control from "@frontend/components/control";
 import ColorPickerSwatch from "./color-picker-swatch";
-import ColorPickerPalette from "@components/color-picker/color-picker-palette";
+import ColorPickerPalette from "@frontend/components/color-picker/color-picker-palette";
 import { HueSlider, LightnessSlider, SaturationSlider } from "./hsl-sliders";
 
 interface PickerProps extends Partial<Color> {

@@ -1,10 +1,10 @@
 import { debounce } from "lodash";
-import getPaths from "@scripts/get-paths";
+import getPaths from "@frontend/scripts/get-paths";
 
 import Store, {
   OnChangeFunction,
   OnPathChangeFunction
-} from "@class/store";
+} from "@frontend/class/store";
 
 const validFirstCharacter = {
   "\"": true,

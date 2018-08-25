@@ -2,14 +2,14 @@ import React from "react";
 import path from "path";
 import fs from "fs";
 import generateId from "@generate-id";
-import SvgIcon from "@components/sprite-load/svg-icon";
-import spriteTracker from "@components/sprite-load/sprite-tracker";
+import SvgIcon from "@backend/components/sprite-load/svg-icon";
+import spriteTracker from "@backend/components/sprite-load/sprite-tracker";
 
 function alias(src) {
   const resolve = {
     "@frontend": path.resolve(__dirname, "../../../../frontend"),
   };
-  
+
   for (var k in resolve) {
     if (src.indexOf(k) === 0) {
       return resolve[k] + src.substring(k.length);

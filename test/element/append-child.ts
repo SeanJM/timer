@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import Database from "@class/database";
+import Database from "@backend/class/database";
 import Validate from "verified";
 
 fs.writeFileSync(path.resolve(__dirname, "test.json"), "");
@@ -31,7 +31,7 @@ export default function (test) {
     database.body.appendChild(b);
     database.body.removeChild(b);
     return (
-      database.body.querySelector("#071k") === null && 
+      database.body.querySelector("#071k") === null &&
       !!database.body.querySelector("#98a")
     );
   }).isEqual(true);

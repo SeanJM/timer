@@ -1,8 +1,8 @@
 import React from "react";
-import history, { History } from "@components/router/history";
-import getLocation from "@components/router/get-location";
+import history, { History } from "@frontend/components/router/history";
+import getLocation from "@frontend/components/router/get-location";
 import path, { Params } from "@path";
-import { RouterLocation } from "@components/router/types";
+import { RouterLocation } from "@frontend/components/router/types";
 
 interface WithRouterProps {
   pathname?: string;

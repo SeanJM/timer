@@ -1,9 +1,9 @@
 import React, { Fragment } from "react";
-import { Route } from "@components/router/route";
-import { withRouter } from "@components/router/with-router";
+import { Route } from "@frontend/components/router/route";
+import { withRouter } from "@frontend/components/router/with-router";
 import path from "@path";
-import getPathname from "@components/router/get-pathname";
-import { WithRouterComponentProps } from "@components/router";
+import getPathname from "@frontend/components/router/get-pathname";
+import { WithRouterComponentProps } from "@frontend/components/router";
 
 function routeIsMatch(props) {
   const { exact } = props;

@@ -1,11 +1,11 @@
-import Action from "@class/action";
-import color from "@action/color";
-import form from "@action/form";
-import keydown from "@action/keydown";
-import modal from "@action/modal";
-import slideOut from "@action/slide-out";
-import todo from "@action/todo";
-import todoTags from "@action/todo-tags";
+import Action from "@frontend/class/action";
+import color from "@frontend/action/color";
+import form from "@frontend/action/form";
+import keydown from "@frontend/action/keydown";
+import modal from "@frontend/action/modal";
+import slideOut from "@frontend/action/slide-out";
+import todo from "@frontend/action/todo";
+import todoTags from "@frontend/action/todo-tags";
 
 const action = new Action();
 action.debug = process.env.NODE_ENV === "development";

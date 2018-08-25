@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import Validate from "verified";
-import Database from "@class/database";
+import Database from "@backend/class/database";
 import generateHash from "@generate-hash";
 import express from "express";
-import Element from "@class/element";
+import Element from "@backend/class/element";
 
 interface PalettePostRequest extends Request {
   params: {

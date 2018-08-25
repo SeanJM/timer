@@ -1,4 +1,4 @@
-import Element, { ElementAttributes } from "@class/element";
+import Element, { ElementAttributes } from "@backend/class/element";
 
 type QueryObject = Partial<Element>;
 
@@ -33,7 +33,7 @@ export default function querySelectorToObjectList(selector: string) {
 
       i -= 1;
     }
-    
+
     if (selector[i] === "#") {
       attributes.id = "";
       i += 1;
@@ -45,7 +45,7 @@ export default function querySelectorToObjectList(selector: string) {
 
       i -= 1;
     }
-    
+
     if (selector[i] === ".") {
       attributes.className = attributes.className ? attributes.className + " " : "";
       i += 1;
@@ -57,11 +57,11 @@ export default function querySelectorToObjectList(selector: string) {
 
       i -= 1;
     }
-    
+
     if (selector[i] === "[") {
       c = [""];
       i += 1;
-      
+
       while (selector[i] && selector[i] !== "]") {
         c[0] += selector[i];
         i += 1;
@@ -90,6 +90,6 @@ export default function querySelectorToObjectList(selector: string) {
       };
     }
   }
-  
+
   return queryList;
 }

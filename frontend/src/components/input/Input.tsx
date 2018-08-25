@@ -1,7 +1,7 @@
 import * as React from "react";
-import { InputText } from "@components/Input/input-text";
-import { InputSwitch } from "@components/Input/input-switch";
-import { dispatch } from "@action";
+import { InputText } from "@frontend/components/Input/input-text";
+import { InputSwitch } from "@frontend/components/Input/input-switch";
+import { dispatch } from "@frontend/action";
 
 const BYTYPE = {
   text: InputText,

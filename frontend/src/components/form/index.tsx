@@ -1,5 +1,5 @@
 import * as React from "react";
-import { withStore } from "@store";
+import { withStore } from "@frontend/store";
 
 function mapStateToProps(state, props) {
   return {

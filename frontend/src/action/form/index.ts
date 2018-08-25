@@ -1,7 +1,7 @@
-import { store } from "@store";
+import { store } from "@frontend/store";
 import Validator from "verified";
 import * as _ from "lodash";
-import Service from "@action/form/service";
+import Service from "@frontend/action/form/service";
 
 const service = new Service();
 

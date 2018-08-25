@@ -1,9 +1,9 @@
 import React from "react";
-import { withStore, StoreState } from "@store";
+import { withStore, StoreState } from "@frontend/store";
 import { SwatchAttributes, Keys, Color } from "@types";
 import generateHash from "@generate-hash";
-import Icon from "@components/icon";
-import { dispatch } from "@action";
+import Icon from "@frontend/components/icon";
+import { dispatch } from "@frontend/action/";
 
 const rowLength = 14;
 let idList = [];

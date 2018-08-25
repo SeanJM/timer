@@ -1,13 +1,13 @@
 import * as React from "react";
 import { StatelessComponent } from "react";
-import { withStore, StoreState } from "@store";
-import { dispatch } from "@action";
-export * from "@components/modal/modal-window";
+import { withStore, StoreState } from "@frontend/store";
+import { dispatch } from "@frontend/action/";
+export * from "@frontend/components/modal/modal-window";
 
 import {
   AddCategoryConnect,
   AddTodoConnect
-} from "@components/modal/modals";
+} from "@frontend/components/modal/modals";
 
 export type ModalNames = | "ADD_CATEGORY" | "ADD_TODO";
 

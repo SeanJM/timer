@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
-import { withStore, StoreState } from "@store";
-import SlideOutTodo from "@containers/slide-out-todo";
-import { withRouter, RouterProps } from "@components/router";
+import { withStore, StoreState } from "@frontend/store";
+import SlideOutTodo from "@frontend/containers/slide-out-todo";
+import { withRouter, RouterProps } from "@frontend/components/router";
 import path from "@path";
 import anime from "animejs";
 

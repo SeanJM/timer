@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Component } from "react";
-import { InputWrapper, InputEvents } from "@components/input";
-import Switch from "@components/switch";
+import { InputWrapper, InputEvents } from "@frontend/components/input";
+import Switch from "@frontend/components/switch";
 
 interface InputSwitchProps extends InputEvents {
   defaultValue?: boolean;

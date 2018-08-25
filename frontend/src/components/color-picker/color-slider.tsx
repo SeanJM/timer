@@ -1,5 +1,5 @@
 import React from "react";
-import DragMe from "@components/drag-me";
+import DragMe from "@frontend/components/drag-me";
 
 interface ColorSliderProps {
   background: string;

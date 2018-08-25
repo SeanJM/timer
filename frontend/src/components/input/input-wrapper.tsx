@@ -1,5 +1,5 @@
 import * as React from "react";
-import { InputType } from "@components/input";
+import { InputType } from "@frontend/components/input";
 
 interface InputWrapperProps extends JSX.ElementChildrenAttribute {
   focus: boolean;

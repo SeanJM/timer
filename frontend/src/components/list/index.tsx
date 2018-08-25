@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "@components/router";
+import { Link } from "@frontend/components/router";
 
 interface ListProps extends Partial<JSX.ElementChildrenAttribute> {
 

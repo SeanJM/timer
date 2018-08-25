@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Input, InputType } from "@components/input";
-import { withStore } from "@store";
+import { Input, InputType } from "@frontend/components/input";
+import { withStore } from "@frontend/store";
 
 interface InputLabelProps {
   type: InputType;

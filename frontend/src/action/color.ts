@@ -1,4 +1,4 @@
-import { store } from "@store";
+import { store } from "@frontend/store";
 import { SwatchAttributes, ColorPicker } from '@types';
 import ajax from "@ajax";
 import _ from "lodash";

@@ -1,19 +1,20 @@
 import React, { Component } from "react";
-import Button from "@components/button";
-import { Input } from "@components/input";
-import { FormConnect } from "@components/form";
-import { RouterProps } from "@components/router";
-import Titlebar from "@components/titlebar";
-import Swatch from "@components/swatch";
+import Button from "@frontend/components/button";
+import { Input } from "@frontend/components/input";
+import { FormConnect } from "@frontend/components/form";
+import { RouterProps } from "@frontend/components/router";
+import Titlebar from "@frontend/components/titlebar";
+import Swatch from "@frontend/components/swatch";
 import generateHash from "@generate-hash";
-import { Viewport } from "@components/viewport";
-import { withStore, StoreState, FormElementInput, TagNode } from "@store";
+import { Viewport } from "@frontend/components/viewport";
+import { withStore, StoreState, FormElementInput } from "@frontend/store";
+import { TagNode } from "@types";
 import { ColorPicker } from "@types";
 import path from "@path";
-import { dispatch } from "@action";
-import { routes } from "@components/app";
-import { List, ListItem } from "@components/list";
-import Timestamp from "@components/timestamp";
+import { dispatch } from "@frontend/action";
+import * as pathlist from "@frontend/routes";
+import { List, ListItem } from "@frontend/components/list";
+import Timestamp from "@frontend/components/timestamp";
 
 const FORM_ID = generateHash();
 const COLOR_PICKER_ID = "tag_name";
@@ -25,7 +26,7 @@ interface Props extends Partial<TagNode>, Pick<StoreState, "tags"> {
 }
 
 function mapStateToProps(state: StoreState, props: RouterProps): Props {
-  const params = path.params(props.location.pathname, routes.pathname);
+  const params = path.params(props.location.pathname, pathlist.pathname);
   const category = state.todo.categories.find(a => a.attributes.id === params.categoryID);
   const form = state.form.find(a => a.id === FORM_ID);
 

@@ -4,7 +4,7 @@ module.exports = function (__root) {
   return {
     extensions: [".js", ".jsx"],
     alias: {
-      "@action": path.join(__root, "frontend/src/action"),
+      "@frontend/action/": path.join(__root, "frontend/src/action"),
       "@class": path.join(__root, "frontend/src/class"),
       "@constants": path.join(__root, "frontend/src/constants"),
       "@components": path.join(__root, "frontend/src/components"),

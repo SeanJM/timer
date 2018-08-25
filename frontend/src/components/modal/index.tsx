@@ -1,3 +1,3 @@
-export * from "@components/modal/modal-window";
-export * from "@components/modal/modal";
-export * from "@components/modal/modals";
+export * from "@frontend/components/modal/modal-window";
+export * from "@frontend/components/modal/modal";
+export * from "@frontend/components/modal/modals";
