@@ -3,6 +3,7 @@ import AppMenuConnect from "@components/app/menu";
 import { Router, Route } from "@components/router";
 import { ModalConnect } from "@components/modal";
 import { SlideOutContainerConnect } from "@containers/slide-out";
+import { ColorPickerSpawnConnect } from "@components/color-picker";
 import { dispatch } from "@action";
 import TodoList from "@pages/todo-list";
 import TodoTags from "@pages/todo-tags";
@@ -46,6 +47,7 @@ export default class App extends React.Component {
         </div>
         <ModalConnect />
         <SlideOutContainerConnect />
+        <ColorPickerSpawnConnect />
       </div>
     );
   }
