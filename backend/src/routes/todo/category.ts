@@ -2,6 +2,18 @@ import { Request } from "express";
 import Validate from "verified";
 import Database from "@backend/class/database";
 import generateHash from "@generate-hash";
+import { CategoryElement, CategoryResponse, TodoElement } from "@types";
+import { toTodoResponse } from "./todos";
+
+function toCategoryResponse(element: CategoryElement): CategoryResponse {
+  const todoElements = (element.querySelectorAll("todo") as TodoElement[]);
+  return {
+    id: element.attributes.id,
+    created: element.attributes.created,
+    name: element.attributes.name,
+    todos: todoElements.map(toTodoResponse),
+  };
+}
 
 export default function (router, database: Database) {
   router.post("/category", function (req: Request, res) {
@@ -37,7 +49,6 @@ export default function (router, database: Database) {
       id: "string"
     });
 
-    console.log(req.query, categoriesElement, categoryElement);
     if (v.validate(req.query).isValid) {
       categoriesElement.removeChild(categoryElement);
       res.send();
@@ -51,12 +62,7 @@ export default function (router, database: Database) {
     res.send(
       database.body
         .querySelectorAll("#categories category")
-        .map((category) => {
-          return {
-            ...category,
-            children: category.querySelectorAll("todo"),
-          };
-        })
+        .map(toCategoryResponse)
     );
   });
 }
