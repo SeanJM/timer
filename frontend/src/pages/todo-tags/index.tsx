@@ -27,7 +27,7 @@ interface Props extends Partial<TagNode>, Pick<StoreState, "tags"> {
 
 function mapStateToProps(state: StoreState, props: RouterProps): Props {
   const params = path.params(props.location.pathname, pathlist.pathname);
-  const category = state.todo.categories.find(a => a.attributes.id === params.categoryID);
+  const category = state.todo.categories.find(a => a.id === params.categoryID);
   const form = state.form.find(a => a.id === FORM_ID);
 
   const tagNameInput: FormElementInput =
@@ -38,7 +38,7 @@ function mapStateToProps(state: StoreState, props: RouterProps): Props {
 
   return {
     colorPicker: state.color.items.find((a) => a.id === COLOR_PICKER_ID) || {},
-    categoryName: category && category.attributes.name,
+    categoryName: category && category.name,
     categoryID: params.categoryID,
     name: tagNameInput ? tagNameInput.value : "",
     color: colorInput ? colorInput.value : null,

@@ -7,13 +7,13 @@ import { RouterProps } from "@frontend/components/router";
 import Titlebar from "@frontend/components/titlebar";
 import { Viewport } from "@frontend/components/viewport";
 import generateId from "@generate-id";
-import { withStore, StoreState, FormElement, TodoNode, FormElementInput } from "@frontend/store";
+import { withStore, StoreState, FormElement, FormElementInput } from "@frontend/store";
 import Todo from "@frontend/components/todo";
 import path from "@path";
+import { routes } from "@frontend/routes";
+import { TodoResponse } from "types";
 
 const FORM_ID = generateId();
-
-const TODO_URL = "/todo/category/:categoryID/:todoID";
 
 const EMPTY_FORM = {
   id: FORM_ID,
@@ -31,17 +31,17 @@ interface TodoProps {
   form: FormElement;
   controlPressed: boolean;
   name: string;
-  completeTodos: TodoNode[];
-  incompleteTodos: TodoNode[];
+  completeTodos: TodoResponse[];
+  incompleteTodos: TodoResponse[];
   input: FormElementInput;
   todoID: null | string;
 }
 
-function isComplete(todo: TodoNode) {
-  return todo.attributes.state === "complete";
+function isComplete(todo: TodoResponse) {
+  return todo.state === "complete";
 }
 
-function isIncomplete(todo: TodoNode) {
+function isIncomplete(todo: TodoResponse) {
   return !isComplete(todo);
 }
 
@@ -51,20 +51,20 @@ function mapStateToProps(state: StoreState, props: RouterProps): TodoProps {
 
   const category =
     state.todo.categories
-      .find((category) => category.attributes.id === categoryID);
+      .find((category) => category.id === categoryID);
 
-  const todoParams =
-    path.params(props.location.pathname, TODO_URL);
+  const params =
+    path.params(props.location.pathname, routes.pathname);
 
   return {
     categoryID,
     form,
     controlPressed: state.keys.control,
-    name: category && category.attributes.name,
-    completeTodos: category && category.children.filter(isComplete),
-    incompleteTodos: category && category.children.filter(isIncomplete),
+    name: category && category.name,
+    completeTodos: category && category.todos.filter(isComplete),
+    incompleteTodos: category && category.todos.filter(isIncomplete),
     input: form.inputs.find((input) => input.name === "todo_value") || { value: undefined },
-    todoID: todoParams.todoID,
+    todoID: params.todoID,
   };
 }
 
@@ -148,11 +148,11 @@ class TodoList extends Component<TodoProps, State> {
               <Titlebar left={<h6>Complete</h6>} />
               {this.props.completeTodos.map((todo) => (
                 <Todo
-                  key={todo.attributes.id}
-                  state={todo.attributes.state}
-                  name={todo.attributes.name}
-                  created={todo.attributes.created}
-                  id={todo.attributes.id}
+                  key={todo.id}
+                  state={todo.state}
+                  name={todo.name}
+                  created={todo.created}
+                  id={todo.id}
                   categoryID={this.props.categoryID}
                   showAlt={this.props.controlPressed}
                 />
@@ -160,11 +160,11 @@ class TodoList extends Component<TodoProps, State> {
               <Titlebar left={<h6>Incomplete</h6>} />
               {this.props.incompleteTodos.map((todo) => (
                 <Todo
-                  key={todo.attributes.id}
-                  state={todo.attributes.state}
-                  name={todo.attributes.name}
-                  created={todo.attributes.created}
-                  id={todo.attributes.id}
+                  key={todo.id}
+                  state={todo.state}
+                  name={todo.name}
+                  created={todo.created}
+                  id={todo.id}
                   categoryID={this.props.categoryID}
                   showAlt={this.props.controlPressed}
                 />

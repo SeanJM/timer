@@ -1,5 +1,5 @@
 import Persistore from "@frontend/class/persistore";
-import { Keys, Color, TagNode } from "@types";
+import { Keys, Color, TagNode, CategoryResponse } from "@types";
 
 export interface FormElementInput {
   name: string;
@@ -33,7 +33,7 @@ export interface StoreState {
   keys: Keys;
 
   todo: {
-    categories?: Category[];
+    categories?: CategoryResponse[];
     isRequest?: null | boolean;
     isSuccess?: null | boolean;
   };

@@ -1,4 +1,5 @@
 import { store, Category, StoreState, TodoNode } from "@frontend/store";
+import { CategoryResponse, TodoResponse } from "@types";
 import ajax from "@ajax";
 import _ from "lodash";
 
@@ -11,7 +12,7 @@ export default class Service {
       }
     });
     ajax.get("/todo/category/all")
-      .then((categories: Category[]) => {
+      .then((categories: CategoryResponse[]) => {
         store.set({
           todo: {
             categories: categories,
@@ -40,7 +41,7 @@ export default class Service {
         const { categories } = store.value.todo;
         store.set({
           todo: {
-            categories: categories.filter(category => category.attributes.id !== e.id)
+            categories: categories.filter(category => category.id !== e.id)
           }
         })
       });
@@ -55,11 +56,11 @@ export default class Service {
         action: "create",
       }
     })
-      .then((newTodo) => {
+      .then((newTodo: TodoResponse) => {
         const todo: StoreState["todo"] = _.merge({}, store.value.todo);
-        const category: Category = todo.categories
-          .find((a) => e.categoryID === a.attributes.id);
-        category.children.push(newTodo);
+        const category = todo.categories
+          .find((a) => e.categoryID === a.id);
+        category.todos.push(newTodo);
         store.set({
           todo,
         });
@@ -80,8 +81,8 @@ export default class Service {
 
   getTodo(categoryID: string, todoID: string) {
     const categories = store.value.todo.categories;
-    const category: Category = categories.find(a => a.attributes.id === categoryID);
-    return _.merge({}, category.children.find((child: TodoNode) => child.attributes.id === todoID));
+    const category = categories.find(a => a.id === categoryID);
+    return _.merge({}, category.todos.find((child) => child.id === todoID));
   }
 
   incomplete(e) {
@@ -139,7 +140,7 @@ export default class Service {
     });
 
     ajax.post("/todo/category", { data: category })
-      .then((res: Category) => {
+      .then((res: CategoryResponse) => {
         store.set({
           todo: {
             categories: store.value.todo.categories.concat(res),
