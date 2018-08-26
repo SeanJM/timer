@@ -40,16 +40,16 @@ export default class Database {
       : this.createElement({ id: "body" });
   }
 
-  createElement(): Element;
-  createElement(tagName: string): Element;
-  createElement(props: ElementAttributes): Element;
-  createElement(props: ElementAttributes, children: ElementChild[]): Element;
-  createElement(children: ElementChild[]): Element;
-  createElement(tagName: string, props: ElementAttributes): Element;
-  createElement(tagName: string, props: ElementAttributes, children: ElementChild[]): Element;
-  createElement(...args: any[]): Element {
+  createElement<T extends Element>(): T;
+  createElement<T extends Element>(tagName: string): T;
+  createElement<T extends Element>(props: ElementAttributes): T;
+  createElement<T extends Element>(props: ElementAttributes, children: ElementChild[]): T;
+  createElement<T extends Element>(children: ElementChild[]): T;
+  createElement<T extends Element>(tagName: string, props: ElementAttributes): T;
+  createElement<T extends Element>(tagName: string, props: ElementAttributes, children: ElementChild[]): T;
+  createElement<T extends Element>(...args: any[]): T {
     let type = "element";
-    let attributes = {};
+    let attributes: Partial<T["attributes"]> = {};
     let children = [];
 
     let i = -1;
@@ -74,7 +74,7 @@ export default class Database {
       this.idList[element.attributes.id] = element;
     }
 
-    return element;
+    return element as T;
   }
 
   save() {
