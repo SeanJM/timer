@@ -2,10 +2,20 @@ import { Request, Response } from "express";
 import Validate from "verified";
 import Database from "@backend/class/database";
 import generateHash from "@generate-hash";
+import { TodoElement, TodoResponse } from "@types";
+
+export function toTodoResponse(todoElement: TodoElement): TodoResponse {
+  return {
+    id: todoElement.attributes.id,
+    created: todoElement.attributes.created,
+    name: todoElement.attributes.name,
+    state: todoElement.attributes.state,
+  }
+}
 
 function createTodo(req: Request, res: Response, database: Database) {
   const todoElement =
-    database.createElement("todo", {
+    database.createElement<TodoElement>("todo", {
       id: generateHash(6),
       name: req.query.name,
       state: "incomplete",
@@ -16,7 +26,11 @@ function createTodo(req: Request, res: Response, database: Database) {
     database.getElementById(req.params.categoryId);
 
   categoryElement.appendChild(todoElement);
-  res.send(todoElement);
+
+  res.send(
+    toTodoResponse(todoElement)
+  );
+
   database.save();
 }
 
@@ -50,7 +64,6 @@ function completeTodo(req, res, database) {
   database.save();
 }
 
-
 function incompleteTodo(req, res, database) {
   let todoElement =
     database.getElementById(req.query.id);
@@ -62,6 +75,7 @@ function incompleteTodo(req, res, database) {
   res.send(todoElement);
   database.save();
 }
+
 export default function (router, database: Database) {
   router.post("/category/:categoryId", function (req: Request, res) {
     const v = new Validate({
