@@ -60,7 +60,7 @@ function completeTodo(req, res, database) {
     state: "complete"
   });
 
-  res.send(todoElement);
+  res.send(toTodoResponse(todoElement));
   database.save();
 }
 
@@ -72,7 +72,7 @@ function incompleteTodo(req, res, database) {
     state: "incomplete"
   });
 
-  res.send(todoElement);
+  res.send(toTodoResponse(todoElement));
   database.save();
 }
 
