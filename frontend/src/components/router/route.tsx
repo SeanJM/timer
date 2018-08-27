@@ -5,11 +5,12 @@ import { RouterLocation } from "@frontend/components/router";
 
 type AnyComponent = React.ComponentClass;
 
-interface RouteProps extends Partial<JSX.ElementChildrenAttribute> {
+export interface RouteProps extends Partial<JSX.ElementChildrenAttribute> {
   pathname: string;
   exact?: boolean;
   component?: AnyComponent;
   location?: RouterLocation;
+  filter?: (location: RouterLocation) => boolean;
 }
 
 export interface RouterProps {

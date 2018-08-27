@@ -1,15 +1,16 @@
 import React, { Fragment } from "react";
-import { Route } from "@frontend/components/router/route";
+import { Route, RouteProps } from "@frontend/components/router/route";
 import { withRouter } from "@frontend/components/router/with-router";
 import path from "@path";
 import getPathname from "@frontend/components/router/get-pathname";
 import { WithRouterComponentProps } from "@frontend/components/router";
 
-function routeIsMatch(props) {
-  const { exact } = props;
+function routeIsMatch(props: RouteProps) {
+  const { exact, filter } = props;
   const pathname = getPathname(window.location.hash.substring(1));
   const params = path.params(pathname, props.pathname);
-  return exact ? params.__exact : params.__match;
+  const show = exact ? params.__exact : params.__match;
+  return show && filter ? filter(props.location) : show;
 }
 
 interface RouterProps extends Partial<WithRouterComponentProps> {
