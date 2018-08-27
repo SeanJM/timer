@@ -13,8 +13,7 @@ function routeIsMatch(props: RouteProps) {
   return show && filter ? filter(props.location) : show;
 }
 
-interface RouterProps extends Partial<WithRouterComponentProps> {
-}
+type RouterProps = Partial<WithRouterComponentProps>;
 
 export function RouterView(props: RouterProps) {
   const routes = React.Children.toArray(props.children).filter((element) => {
