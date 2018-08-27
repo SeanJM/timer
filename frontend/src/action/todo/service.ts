@@ -67,10 +67,10 @@ export default class Service {
       });
   }
 
-  mergeTodo(categoryID: string, todoElement: TodoNode) {
-    const categories = _.merge([], store.value.todo.categories);
-    const category: Category = categories.find(a => a.attributes.id === categoryID);
-    const todo = category.children.find((child: TodoNode) => child.attributes.id === todoElement.attributes.id);
+  mergeTodo(categoryID: string, todoElement: TodoResponse) {
+    const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
+    const category = categories.find((category) => category.id === categoryID);
+    const todo = category.todos.find((child) => child.id === todoElement.id);
     Object.assign(todo, todoElement);
     store.set({
       todo: {
@@ -92,7 +92,7 @@ export default class Service {
         action: "incomplete",
       }
     })
-      .then((todoResponse: TodoNode) => {
+      .then((todoResponse: TodoResponse) => {
         this.mergeTodo(e.categoryID, todoResponse);
       });
     }
@@ -104,7 +104,7 @@ export default class Service {
           action: "complete",
         }
       })
-      .then((todoResponse: TodoNode) => {
+      .then((todoResponse: TodoResponse) => {
         this.mergeTodo(e.categoryID, todoResponse);
       });
   }
