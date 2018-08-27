@@ -1,6 +1,6 @@
 import ajax from "@ajax";
 import { store } from "@frontend/store";
-import { TagNode } from "@types";
+import { TagNode, TagCategory } from "@types";
 import { replaceById } from "@replace-by-id";
 import path from "@path";
 import generateHash from "@generate-hash";
@@ -10,18 +10,30 @@ export default class Service {
   get(e) {
     ajax.get(path.join("/tags/", e.categoryID))
       .then(function (tags: TagNode[]) {
+        const categories: TagCategory[] = _.merge([], store.value.tags.categories);
+        const category = categories.find(a => a.id === e.categoryID);
+
+        if (category) {
+          category.tags = tags;
+        } else {
+          categories.push({
+            id: e.categoryID,
+            tags,
+          });
+        }
+
         store.set({
-          tags: tags.map((tag) => {
-            return {
-              ...tag,
-              color: "#" + tag.color
-            }
-          })
+          tags: {
+            categories,
+          }
         });
       });
   }
 
   createTag(e) {
+    const categories: TagCategory[] = _.merge([], store.value.tags.categories);
+    const category = categories.find(a => a.id === e.categoryID);
+
     const nextTag: TagNode = {
       created: new Date().getTime(),
       name: e.name,
@@ -29,8 +41,12 @@ export default class Service {
       id: generateHash(),
     };
 
+    category.tags.push(nextTag);
+
     store.set({
-      tags: store.value.tags.concat(nextTag)
+      tags: {
+        categories,
+      }
     });
 
     ajax.post(path.join("/tags/", e.categoryID), {
@@ -41,9 +57,13 @@ export default class Service {
       } as Pick<TagNode, "color" | "name">
     })
       .then(function (tag: TagNode) {
-        const tags: TagNode[] = _.merge([], store.value.tags);
+        const categories: TagCategory[] = _.merge([], store.value.tags.categories);
+        const category = categories.find(a => a.id === e.categoryID);
+        replaceById(category.tags, { ...tag, color: "#" + tag.color }, nextTag);
         store.set({
-          tags: replaceById(tags, { ...tag, color: "#" + tag.color }, nextTag)
+          tags: {
+            categories,
+          }
         });
       });
   }

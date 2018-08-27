@@ -1,5 +1,5 @@
 import Persistore from "@frontend/class/persistore";
-import { Keys, Color, TagNode, CategoryResponse } from "@types";
+import { Keys, Color, CategoryResponse, TagsByCategory } from "@types";
 
 export interface FormElementInput {
   name: string;
@@ -40,7 +40,7 @@ export interface StoreState {
 
   color: Color;
 
-  tags: TagNode[];
+  tags: TagsByCategory;
 
   slideOut: {
     type: string | null;
@@ -72,7 +72,9 @@ export const store = new Persistore<StoreState>(
       palette: [],
     },
 
-    tags: [],
+    tags: {
+      categories: [],
+    },
 
     modal: {
       name: null,

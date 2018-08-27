@@ -8,7 +8,7 @@ import Swatch from "@frontend/components/swatch";
 import generateHash from "@generate-hash";
 import { Viewport } from "@frontend/components/viewport";
 import { withStore, StoreState, FormElementInput } from "@frontend/store";
-import { TagNode } from "@types";
+import { TagNode, TagCategory } from "@types";
 import { ColorPicker } from "@types";
 import path from "@path";
 import { dispatch } from "@frontend/action";
@@ -19,16 +19,21 @@ import Timestamp from "@frontend/components/timestamp";
 const FORM_ID = generateHash();
 const COLOR_PICKER_ID = "tag_name";
 
-interface Props extends Partial<TagNode>, Pick<StoreState, "tags"> {
+interface Props extends Partial<TagNode> {
   categoryName: string;
   categoryID: string;
   colorPicker: Partial<ColorPicker>;
+  tags: TagNode[];
 }
 
 function mapStateToProps(state: StoreState, props: RouterProps): Props {
   const params = path.params(props.location.pathname, pathlist.pathname);
   const category = state.todo.categories.find(a => a.id === params.categoryID);
   const form = state.form.find(a => a.id === FORM_ID);
+
+  const tagCategory: TagCategory =
+    state.tags.categories.find(a => a.id === params.categoryID) ||
+    { id: params.categoryID, tags: [] };
 
   const tagNameInput: FormElementInput =
     form && form.inputs.find((input) => input.name === "tagName");
@@ -42,7 +47,7 @@ function mapStateToProps(state: StoreState, props: RouterProps): Props {
     categoryID: params.categoryID,
     name: tagNameInput ? tagNameInput.value : "",
     color: colorInput ? colorInput.value : null,
-    tags: state.tags,
+    tags: tagCategory.tags.map((a) => { return { ...a, color: "#" + a.color }; }),
   };
 }
 
