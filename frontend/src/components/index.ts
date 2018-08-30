@@ -6,4 +6,4 @@ export * from "@frontend/components/modal";
 export * from "@frontend/components/input";
 export * from "@frontend/components/menu";
 export * from "@frontend/components/form";
-export * from "@frontend/components/input-label";
+export * from "@frontend/components/input-group";
