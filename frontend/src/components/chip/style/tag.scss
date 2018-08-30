@@ -1,0 +1,49 @@
+.tag-toggle {
+  display: inline-block;
+  position: relative;
+  margin-left: -4px;
+  padding-left: $u6;
+  padding-right: $u;
+
+  .checkbox {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    height: $u5;
+    width: $u5;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 1;
+    border-radius: 50%;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+
+    .icon {
+      position: absolute;
+      left: 2px;
+      top: 50%;
+      fill: $primary;
+      width: $u4;
+      height: $u4;
+      margin-top: $u4/-2;
+    }
+  }
+}
+
+.tag-toggle_color {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  right: 4px;
+  bottom: 4px;
+  border-radius: $u4;
+}
+
+.tag-toggle_name {
+  font-size: $font-size;
+  position: relative;
+  padding: $u $u3;
+  line-height: $u7;
+}
+
+.tag-toggle--dark .tag-toggle_name {
+  color: #fff;
+}
