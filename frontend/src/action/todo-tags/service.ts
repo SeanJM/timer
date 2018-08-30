@@ -12,13 +12,14 @@ export default class Service {
       .then(function (tags: TagNode[]) {
         const categories: TagCategory[] = _.merge([], store.value.tags.categories);
         const category = categories.find(a => a.id === e.categoryID);
+        const mappedTags = tags.map(tag => ({ ...tag, color: tag.color ? "#" + tag.color : null }));
 
         if (category) {
-          category.tags = tags;
+          category.tags = mappedTags;
         } else {
           categories.push({
             id: e.categoryID,
-            tags,
+            tags: mappedTags,
           });
         }
 
