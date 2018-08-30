@@ -5,7 +5,6 @@ interface InputWrapperProps extends JSX.ElementChildrenAttribute {
   focus: boolean;
   type: InputType;
   button?: JSX.Element;
-  label?: string;
   className?: string;
 }
 
@@ -29,7 +28,6 @@ export function InputWrapper(props: InputWrapperProps) {
 
   return (
     <div className={className.join(" ")}>
-      {props.label ? <label>{props.label}</label> : null}
       <div className="input-wrapper_input">
         <div className="input-wrapper_face"></div>
         {props.children}

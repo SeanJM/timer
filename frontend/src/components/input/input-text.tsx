@@ -24,7 +24,6 @@ export class InputText extends Component<InputTextProps, InputTextState> {
   render() {
     const {
       button,
-      label,
       onBlur,
       onFocus,
       onInput,
@@ -39,7 +38,6 @@ export class InputText extends Component<InputTextProps, InputTextState> {
         className={className}
         focus={this.state.focus}
         type="text"
-        label={label}
         button={button}>
         <input
           type="text"
