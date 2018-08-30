@@ -7,20 +7,15 @@ import { RouterProps } from "@frontend/components/router";
 import Titlebar from "@frontend/components/titlebar";
 import { Viewport } from "@frontend/components/viewport";
 import generateId from "@generate-id";
-import { withStore, StoreState, FormElement, FormElementInput } from "@frontend/store";
+import { withStore, StoreState } from "@frontend/store";
+import { StoreForm, StoreFormInput } from "@types";
 import Todo from "@frontend/components/todo";
 import path from "@path";
 import { routes } from "@frontend/routes";
 import { TodoResponse } from "types";
+import { emptyForm } from "@frontend/action/form";
 
 const FORM_ID = generateId();
-
-const EMPTY_FORM = {
-  id: FORM_ID,
-  inputs: [],
-  isValid: false,
-  showValidation: false,
-};
 
 interface State {
   todo: string;
@@ -28,12 +23,12 @@ interface State {
 
 interface TodoProps {
   categoryID: any;
-  form: FormElement;
+  form: StoreForm;
   controlPressed: boolean;
   name: string;
   completeTodos: TodoResponse[];
   incompleteTodos: TodoResponse[];
-  input: FormElementInput;
+  input: StoreFormInput;
   todoID: null | string;
 }
 
@@ -46,7 +41,7 @@ function isIncomplete(todo: TodoResponse) {
 }
 
 function mapStateToProps(state: StoreState, props: RouterProps): TodoProps {
-  const form = state.form.find((form) => form.id === FORM_ID) || EMPTY_FORM;
+  const form = state.form[FORM_ID] || emptyForm(FORM_ID);
   const categoryID = props.params.categoryID;
 
   const category =
@@ -63,7 +58,7 @@ function mapStateToProps(state: StoreState, props: RouterProps): TodoProps {
     name: category && category.name,
     completeTodos: category && category.todos.filter(isComplete),
     incompleteTodos: category && category.todos.filter(isIncomplete),
-    input: form.inputs.find((input) => input.name === "todo_value") || { value: undefined },
+    input: form.input.todo_value || { name: "todo_value", value: undefined },
     todoID: params.todoID,
   };
 }
