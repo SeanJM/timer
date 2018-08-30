@@ -13,12 +13,13 @@ export type IconType =
 
 interface IconProps {
   className?: string;
+  fill?: string;
   type: IconType;
 }
 
 export default function (props: IconProps) {
   return (
-    <svg className="icon">
+    <svg className="icon" style={{fill: props.fill}}>
       <use href={"#icon-" + props.type}></use>
     </svg>
   );
