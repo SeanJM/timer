@@ -1,53 +1,83 @@
-import { store, FormElement, FormElementInput } from "@frontend/store";
+import { store } from "@frontend/store";
+import { StoreForm, StoreFormInput } from "@types";
+import Validator from "verified";
 
-type InputQuery = Partial<FormElementInput>;
+const validators = {
+  Text(value) {
+    return !!(
+      typeof value === "string" &&
+      value.length
+    );
+  }
+};
+
+const errorMessage = {
+  Text: "Invalid value"
+};
+
+interface FormValueEvent {
+  id: string;
+  type?: string;
+  value: any;
+  name: string;
+}
+
+export function emptyForm(id: string): StoreForm {
+  return {
+    id: id,
+    input: {},
+    isValid: true,
+    showValidation: false,
+  };
+}
 
 export default class Service {
   constructor() {
 
   }
 
-  createInput(formElement: FormElement, query: InputQuery) {
-    const input: FormElementInput = {
-      name: query.name,
-      value: query.value,
-      type: query.type,
-      isValid: query.isValid,
-      errorMessage: query.errorMessage,
-    };
+  value(e: FormValueEvent) {
+    const formElement: StoreForm = store.value.form[e.id] || emptyForm(e.id);
+    const type = e.type ? e.type[0].toUpperCase() + e.type.substring(1) : "Any";
+    const isValid = e.type ? new Validator(type, validators).validate(e.value).isValid : true;
+    let input = formElement.input[e.name];
 
-    formElement.inputs.push(input);
-    return input;
-  }
-
-  getInput(formElement: FormElement, query: InputQuery) {
-    const input = formElement.inputs.find((input) => input.name === query.name);
-
-    if (input) {
-      return input;
+    if (!input) {
+      formElement.input[e.name] = {} as StoreFormInput;
+      input = formElement.input[e.name];
     }
 
-    return this.createInput(formElement, query);
+    Object.assign(input, {
+      name: e.name,
+      value: e.value,
+      type: e.type,
+      isValid,
+      errorMessage: !isValid
+        ? errorMessage[type]
+        : null
+    });
+
+    store.set({
+      form: {
+        [e.id]: formElement
+      }
+    });
   }
 
-  getFormByID(id) {
-    const formElement =
-      store.value.form.find((form) => form.id === id);
+  validate(e) {
+    const formElement: StoreForm = store.value.form[e.id] || emptyForm(e.id);
 
-    if (formElement) {
-      return formElement;
+    formElement.isValid = true;
+    for (var k in formElement.input) {
+      if (!formElement.input[k].isValid) {
+        formElement.isValid = false;
+      }
     }
 
-    store.value.form.push(this.createForm(id));
-    return this.getFormByID(id);
-  }
-
-  createForm(id: string): FormElement {
-    return {
-      id,
-      inputs: [],
-      isValid: true,
-      showValidation: false,
-    };
+    store.set({
+      form: {
+        [e.id]: formElement,
+      }
+    });
   }
 }
