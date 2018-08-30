@@ -7,14 +7,15 @@ import Titlebar from "@frontend/components/titlebar";
 import Swatch from "@frontend/components/swatch";
 import generateHash from "@generate-hash";
 import { Viewport } from "@frontend/components/viewport";
-import { withStore, StoreState, FormElementInput } from "@frontend/store";
-import { TagNode, TagCategory } from "@types";
+import { withStore, StoreState } from "@frontend/store";
+import { TagNode, TagCategory, StoreFormInput } from "@types";
 import { ColorPicker } from "@types";
 import path from "@path";
 import { dispatch } from "@frontend/action";
 import * as pathlist from "@frontend/routes";
 import { List, ListItem } from "@frontend/components/list";
 import Timestamp from "@frontend/components/timestamp";
+import { emptyForm } from "@frontend/action/form";
 
 const FORM_ID = generateHash();
 const COLOR_PICKER_ID = "tag_name";
@@ -29,17 +30,14 @@ interface Props extends Partial<TagNode> {
 function mapStateToProps(state: StoreState, props: RouterProps): Props {
   const params = path.params(props.location.pathname, pathlist.pathname);
   const category = state.todo.categories.find(a => a.id === params.categoryID);
-  const form = state.form.find(a => a.id === FORM_ID);
+  const form = state.form[FORM_ID] || emptyForm(FORM_ID);
 
   const tagCategory: TagCategory =
     state.tags.categories.find(a => a.id === params.categoryID) ||
     { id: params.categoryID, tags: [] };
 
-  const tagNameInput: FormElementInput =
-    form && form.inputs.find((input) => input.name === "tagName");
-
-  const colorInput: FormElementInput =
-    form && form.inputs.find((input) => input.name === "color");
+  const tagNameInput: StoreFormInput = form.input.tagName;
+  const colorInput: StoreFormInput = form.input.color;
 
   return {
     colorPicker: state.color.items.find((a) => a.id === COLOR_PICKER_ID) || {},
@@ -47,7 +45,7 @@ function mapStateToProps(state: StoreState, props: RouterProps): Props {
     categoryID: params.categoryID,
     name: tagNameInput ? tagNameInput.value : "",
     color: colorInput ? colorInput.value : null,
-    tags: tagCategory.tags.map((a) => { return { ...a, color: "#" + a.color }; }),
+    tags: tagCategory.tags,
   };
 }
 
@@ -62,19 +60,7 @@ class TodoTags extends Component<Props, {}> {
     } as Partial<Props>);
   }
 
-  componentDidMount() {
-    dispatch("GET_TAGS", {
-      categoryID: this.props.categoryID,
-    });
-  }
-
   componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.categoryID !== this.props.categoryID) {
-      dispatch("GET_TAGS", {
-        categoryID: nextProps.categoryID,
-      });
-    }
-
     if (this.props.colorPicker.isOpen && !nextProps.colorPicker.isOpen && nextProps.colorPicker.value) {
       dispatch("FORM_VALUE", {
         id: FORM_ID,
