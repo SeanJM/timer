@@ -1,5 +1,67 @@
 import Element from "@backend/class/element";
 
+export type CategoryElementAttributes =
+  Pick<Element["attributes"],
+  | "id"
+  | "created"
+  | "name"
+  >;
+
+export interface CategoryElement extends
+  Element {
+    type: "category";
+    attributes: CategoryElementAttributes;
+    children: TodoElement[];
+  }
+
+export interface CategoryResponse extends
+  Pick<CategoryElementAttributes, "id" | "created" | "name"> {
+    todos: TodoResponse[];
+  }
+
+export interface InputOnValue {
+  (value: any, name: string): void;
+}
+
+export interface SwatchAttributes {
+  value: string;
+  created: number;
+  id: string;
+}
+
+export interface StoreForm {
+  input: {
+    [key: string]: StoreFormInput
+  };
+  id: string;
+  isValid: boolean;
+  showValidation: boolean;
+}
+
+export interface StoreFormInput {
+  name: string;
+  value: any;
+  type?: string;
+  isValid?: boolean;
+  errorMessage?: string | null;
+}
+
+export interface TagCategory {
+  id: string;
+  tags: TagNode[];
+}
+
+export interface TagsByCategory {
+  categories: TagCategory[];
+}
+
+export interface TagNode {
+  name: string;
+  id: string;
+  color: string;
+  created: number;
+}
+
 export interface TodoElement extends
   Element {
   type: "todo";
@@ -14,38 +76,6 @@ export type TodoResponse =
     | "name"
     | "state"
   >;
-
-export type CategoryElementAttributes =
-  Pick<Element["attributes"],
-  | "id"
-  | "created"
-  | "name"
-  >;
-
-export interface CategoryElement extends
-  Element {
-  type: "category";
-  attributes: CategoryElementAttributes;
-  children: TodoElement[];
-}
-
-export interface CategoryResponse extends
-  Pick<CategoryElementAttributes, "id" | "created" | "name"> {
-  todos: TodoResponse[];
-}
-
-export interface SwatchAttributes {
-  value: string;
-  created: number;
-  id: string;
-}
-
-export interface TagNode {
-  name: string;
-  id: string;
-  color: string;
-  created: number;
-}
 
 export interface Keys {
   control: boolean;
