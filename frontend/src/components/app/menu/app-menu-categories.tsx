@@ -3,7 +3,7 @@ import path from "@path";
 import { routes } from "@frontend/routes";
 import Icon, { IconType } from "@frontend/components/icon";
 import { History, RouterLocation } from "@frontend/components/router";
-import { AppMenuProps } from "./";
+import { AppMenuMappedProps } from "./";
 
 interface AppMenuCategoriesItemProps {
   isSelected: boolean;
@@ -47,7 +47,7 @@ function AppMenuCategoriesItem(props: AppMenuCategoriesItemProps) {
   );
 }
 
-export default function AppMenuCategories(props: Pick<AppMenuProps, "params" | "history" | "location">) {
+export default function AppMenuCategories(props: Pick<AppMenuMappedProps, "params" | "history" | "location">) {
   const location = props.location;
   const params = path.params(location.pathname, routes.pathname);
   return (
