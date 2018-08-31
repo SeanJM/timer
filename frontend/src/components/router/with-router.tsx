@@ -20,7 +20,7 @@ interface State {
   location: Partial<RouterLocation>
 };
 
-export function withRouter<P extends WithRouterComponentProps>(C: React.ComponentType<P>) {
+export function withRouter<P extends Partial<WithRouterComponentProps>>(C: React.ComponentType<P>) {
   return class extends React.Component<WithRouterProps, State> {
     update: () => void;
 
