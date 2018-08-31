@@ -2,16 +2,19 @@ import { Request } from "express";
 import Validate from "verified";
 import Database from "@backend/class/database";
 import generateHash from "@generate-hash";
-import { CategoryElement, CategoryResponse, TodoElement } from "@types";
+import { CategoryElement, CategoryResponse, TodoElement, TagElement } from "@types";
 import { toTodoResponse } from "./todos";
+import { toTagResponse } from "@backend/routes/tags";
 
 function toCategoryResponse(element: CategoryElement): CategoryResponse {
   const todoElements = (element.querySelectorAll("todo") as TodoElement[]);
+  const tagElements = (element.querySelectorAll("tag") as TagElement[]);
   return {
     id: element.attributes.id,
     created: element.attributes.created,
     name: element.attributes.name,
     todos: todoElements.map(toTodoResponse),
+    tags: tagElements.map(toTagResponse),
   };
 }
 
