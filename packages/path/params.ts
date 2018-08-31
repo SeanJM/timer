@@ -14,30 +14,33 @@ export interface Params {
 
 export default function params(pathname: string = "", schema: string = "") {
   const urlPathname = parse(pathname).chunks;
-  const queryPathname = parse(schema).chunks;
-  const urlIsAny = urlPathname.length === 1 && urlPathname[0] === "";
+  const schemaPathname = parse(schema).chunks;
+
+  const urlIsAny =
+    (urlPathname.length === 1 && urlPathname[0] === "") ||
+    (schemaPathname.length === 1 && schemaPathname[0] === "");
 
   const params: Params = {
     isExact: true,
     isMatch: true,
     __pathname: urlPathname,
-    __schema: queryPathname,
+    __schema: schemaPathname,
   };
 
   let i = -1;
-  const n = Math.max(queryPathname.length, urlPathname.length);
+  const n = Math.max(schemaPathname.length, urlPathname.length);
 
   while (++i < n) {
-    if (!urlIsAny && i < queryPathname.length && !isMatch(queryPathname[i], urlPathname[i])) {
+    if (!urlIsAny && i < schemaPathname.length && !isMatch(schemaPathname[i], urlPathname[i])) {
       params.isMatch = false;
     }
 
-    if (!isMatch(queryPathname[i], urlPathname[i])) {
+    if (!isMatch(schemaPathname[i], urlPathname[i])) {
       params.isExact = false;
     }
 
-    if (queryPathname[i] && queryPathname[i][0] === ":") {
-      params[queryPathname[i].substring(1)] = urlPathname[i];
+    if (schemaPathname[i] && schemaPathname[i][0] === ":") {
+      params[schemaPathname[i].substring(1)] = urlPathname[i];
     }
   }
 

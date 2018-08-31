@@ -1,7 +1,8 @@
 import path from "@path";
 
 export default function (test) {
-  test("path - / - is match", path.params("/", "/a/b/c/").isMatch).isEqual(true);
+  test("path - / - URL is match", path.params("/", "/a/b/c/").isMatch).isEqual(true);
+  test("path - / - Params is match", path.params("/a/b/c/", "/").isMatch).isEqual(true);
   test("path.splice", path.splice("/a/b/c/", "d", 1)).isEqual("/a/d/c/");
   test("path.splice", path.splice("/a/b/c/", "d", -1)).isEqual("/a/b/d/");
   test("path.splice", path.splice("/a/b/c/", "d", -2)).isEqual("/a/d/");
