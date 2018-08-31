@@ -1,12 +1,12 @@
 import parse from "@path/parse";
 
 function isMatch(query: any, url: any) {
-  return query === url || (query && url && query[0] === ":");
+  return query === url || (!!query && !!url && query[0] === ":");
 }
 
 export interface Params {
-  __exact: boolean;
-  __match: boolean;
+  isExact: boolean;
+  isMatch: boolean;
   __pathname: string[];
   __schema: string[];
   [key: string]: any;
@@ -15,29 +15,29 @@ export interface Params {
 export default function params(pathname: string = "", schema: string = "") {
   const urlPathname = parse(pathname).chunks;
   const queryPathname = parse(schema).chunks;
+  const urlIsAny = urlPathname.length === 1 && urlPathname[0] === "";
 
   const params: Params = {
-    __exact: true,
-    __match: true,
+    isExact: true,
+    isMatch: true,
     __pathname: urlPathname,
     __schema: queryPathname,
   };
 
-  if (queryPathname) {
-    let i = -1;
-    const n = Math.max(queryPathname.length, urlPathname.length);
-    while (++i < n) {
-      if (i < queryPathname.length && !isMatch(queryPathname[i], urlPathname[i])) {
-        params.__match = false;
-      }
+  let i = -1;
+  const n = Math.max(queryPathname.length, urlPathname.length);
 
-      if (!isMatch(queryPathname[i], urlPathname[i])) {
-        params.__exact = false;
-      }
+  while (++i < n) {
+    if (!urlIsAny && i < queryPathname.length && !isMatch(queryPathname[i], urlPathname[i])) {
+      params.isMatch = false;
+    }
 
-      if (queryPathname[i] && queryPathname[i][0] === ":") {
-        params[queryPathname[i].substring(1)] = urlPathname[i];
-      }
+    if (!isMatch(queryPathname[i], urlPathname[i])) {
+      params.isExact = false;
+    }
+
+    if (queryPathname[i] && queryPathname[i][0] === ":") {
+      params[queryPathname[i].substring(1)] = urlPathname[i];
     }
   }
 
