@@ -3,7 +3,7 @@ import Validate from "verified";
 import Database from "@backend/class/database";
 import generateHash from "@generate-hash";
 import express from "express";
-import { TagNode } from "@types";
+import { TagResponse } from "@types";
 import Element from "@backend/class/element";
 
 interface TagPostRequest extends Request {
@@ -22,6 +22,15 @@ interface TagGetRequest extends Request {
   };
 }
 
+export function toTagResponse(tagElement: Partial<Element>): TagResponse {
+  return {
+    name: tagElement.attributes.name,
+    id: tagElement.attributes.id,
+    created: tagElement.attributes.created,
+    color: tagElement.attributes.color,
+  };
+}
+
 export default function (database: Database): express.Router {
   const router = express.Router();
 
@@ -33,7 +42,7 @@ export default function (database: Database): express.Router {
       name: req.query.name,
       color: req.query.color,
       created: new Date().getTime(),
-    } as TagNode);
+    } as TagResponse);
 
     if (category) {
       category.appendChild(tag);
@@ -44,18 +53,9 @@ export default function (database: Database): express.Router {
     }
   }
 
-  function toTagResponse(tagElement: Partial<Element>): TagNode {
-    return {
-      name: tagElement.attributes.name,
-      id: tagElement.attributes.id,
-      created: tagElement.attributes.created,
-      color: tagElement.attributes.color,
-    };
-  }
-
   router.get("/:categoryID", function (req: TagGetRequest, res: Response) {
     const selector = "#" + req.params.categoryID + " tag";
-    const tagElements: TagNode[] = database.body
+    const tagElements: TagResponse[] = database.body
       .querySelectorAll(selector)
       .map(toTagResponse);
     return res.send(tagElements);
