@@ -17,6 +17,7 @@ export interface CategoryElement extends
 export interface CategoryResponse extends
   Pick<CategoryElementAttributes, "id" | "created" | "name"> {
     todos: TodoResponse[];
+    tags: TagResponse[];
   }
 
 export interface InputOnValue {
@@ -48,18 +49,29 @@ export interface StoreFormInput {
 
 export interface TagCategory {
   id: string;
-  tags: TagNode[];
+  tags: TagResponse[];
 }
 
 export interface TagsByCategory {
   categories: TagCategory[];
 }
 
-export interface TagNode {
+export interface TagResponse {
   name: string;
   id: string;
   color: string;
   created: number;
+}
+
+export interface TagElement extends Element {
+  type: "tag";
+  attributes: {
+    name: string;
+    id: string;
+    color: string;
+    created: number;
+  }
+  children: any[];
 }
 
 export interface TodoElement extends
