@@ -8,7 +8,7 @@ import Swatch from "@frontend/components/swatch";
 import generateHash from "@generate-hash";
 import { Viewport } from "@frontend/components/viewport";
 import { withStore, StoreState } from "@frontend/store";
-import { TagNode, TagCategory, StoreFormInput } from "@types";
+import { TagResponse, TagCategory, StoreFormInput } from "@types";
 import { ColorPicker } from "@types";
 import path from "@path";
 import { dispatch } from "@frontend/action";
@@ -20,11 +20,11 @@ import { emptyForm } from "@frontend/action/form";
 const FORM_ID = generateHash();
 const COLOR_PICKER_ID = "tag_name";
 
-interface Props extends Partial<TagNode> {
+interface Props extends Partial<TagResponse> {
   categoryName: string;
   categoryID: string;
   colorPicker: Partial<ColorPicker>;
-  tags: TagNode[];
+  tags: TagResponse[];
 }
 
 function mapStateToProps(state: StoreState, props: RouterProps): Props {
