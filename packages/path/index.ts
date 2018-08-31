@@ -7,17 +7,19 @@ import push from "./push";
 import replace from "./replace";
 import reduce from "./reduce";
 import splice from "./splice";
+import slice from "./slice";
 
-type Path = {
-  chain: typeof chain,
-  join: typeof join,
-  normalize: typeof normalize,
-  params: typeof params,
-  pop: typeof pop,
-  push: typeof push,
-  replace: typeof replace,
-  reduce: typeof reduce,
-  splice: typeof splice,
+interface Path {
+  chain: typeof chain;
+  join: typeof join;
+  normalize: typeof normalize;
+  params: typeof params;
+  pop: typeof pop;
+  push: typeof push;
+  replace: typeof replace;
+  reduce: typeof reduce;
+  splice: typeof splice;
+  slice: typeof slice;
 };
 
 const path: Path = {
@@ -30,6 +32,7 @@ const path: Path = {
   replace,
   reduce,
   splice,
+  slice,
 };
 
 export default path;

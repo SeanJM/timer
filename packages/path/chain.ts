@@ -6,6 +6,7 @@ import params from "./params";
 import pop from "./pop";
 import push from "./push";
 import splice from "./splice";
+import slice from "@path/slice";
 export default function chain(pathname: string) {
   const self = {
     value: pathname,
@@ -46,6 +47,11 @@ export default function chain(pathname: string) {
 
     splice(member: string, index: number, length?: number) {
       this.value = splice(this.value, member, index, length);
+      return this;
+    },
+
+    slice(start?: number, end?: number) {
+      this.value = slice(this.value, start, end);
       return this;
     },
   };
