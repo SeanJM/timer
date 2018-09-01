@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import { withStore, StoreState } from "@frontend/store";
 import SlideOutTodo from "@frontend/containers/slide-out-todo";
 import { withRouter, RouterProps } from "@frontend/components/router";
+import { Viewport } from "@frontend/components/viewport";
 import path from "@path";
 import anime from "animejs";
 
@@ -18,10 +19,9 @@ interface ServiceProps extends
   history: RouterProps["history"]
 }
 
-interface Props {
-  head: JSX.Element;
-  body: JSX.Element;
-  feet: JSX.Element;
+interface SlideOutProps {
+  titlebar?: JSX.Element;
+  body?: JSX.Element;
 }
 
 function mapStateToProps(state: StoreState, props: RouterProps): ServiceProps {
@@ -33,12 +33,13 @@ function mapStateToProps(state: StoreState, props: RouterProps): ServiceProps {
   };
 }
 
-export function SlideOut(props: Props) {
+export function SlideOut(props: SlideOutProps) {
   return (
     <div className="slide-out">
-      <div className="slide-out_head">{props.head}</div>
-      <div className="slide-out_body">{props.body}</div>
-      <div className="slide-out_feet">{props.feet}</div>
+      <Viewport
+        titlebar={ props.titlebar }
+        body={ props.body }
+      />
     </div>
   );
 }
