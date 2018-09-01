@@ -7,7 +7,7 @@ interface Props {
   defaultValue?: string;
   icon?: IconType;
   component: React.ComponentType<any>;
-  onValue: (value: string) => void;
+  onSubmit: (value: string) => void;
 }
 
 interface State {
@@ -15,15 +15,14 @@ interface State {
 }
 
 export interface TitleAndInputPassedProps {
-  onRef: (node: HTMLInputElement) => void,
-  autofocus: boolean,
-  defaultValue: any,
-  onKeyDown: (e: any) => void
+  autofocus: boolean;
+  defaultValue: any;
+  onKeyDown: (e: any) => void;
+  onValue: (e: any) => void;
 }
 
 export class TitleAndInput extends Component<Props, State> {
-  node: HTMLInputElement;
-
+  value: any;
   constructor(props) {
     super(props);
     this.state = {
@@ -44,15 +43,18 @@ export class TitleAndInput extends Component<Props, State> {
         {this.state.showAdd
           ? null
           : React.createElement(this.props.component, {
-            onRef: (node: HTMLInputElement) => { this.node = node; },
             autofocus: true,
-            defaultValue: this.props.defaultValue,
+            defaultValue: this.value || this.props.defaultValue,
+            onValue: (value: any) => {
+              this.value = value;
+            },
             onKeyDown: (e: any) => {
               if (e.which === 13) {
                 this.setState({
                   showAdd: true,
                 });
-                this.props.onValue(this.node.value)
+                this.props.onSubmit(this.value);
+                this.value = undefined;
               } else if (e.which === 27) {
                 this.setState({
                   showAdd: true,
