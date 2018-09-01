@@ -1,6 +1,6 @@
 import React from "react";
 import { withStore, StoreState } from "@frontend/store";
-import { SwatchAttributes, Keys, Color } from "@types";
+import { SwatchAttributes, Keys, ColorState } from "@types";
 import generateHash from "@generate-hash";
 import Icon from "@frontend/components/icon";
 import { dispatch } from "@frontend/action/";
@@ -13,12 +13,12 @@ while (++i < n) {
   idList.push(generateHash());
 }
 
-interface ColorPaletteProps extends Pick<Color, "palette"> {
+interface ColorPaletteProps extends Pick<ColorState, "palette"> {
   onSelect: (value: string) => void;
   value: string;
 };
 
-interface ColorPaletteMappedProps extends Pick<Color, "palette">, ColorPaletteProps {
+interface ColorPaletteMappedProps extends Pick<ColorState, "palette">, ColorPaletteProps {
   empties: SwatchAttributes[];
   keys: Keys;
 };

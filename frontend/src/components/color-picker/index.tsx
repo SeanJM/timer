@@ -1,16 +1,16 @@
 import React, { Fragment } from "react";
 import { withStore, StoreState } from "@frontend/store";
-import { ColorPicker, Color } from "@types";
+import { ColorPicker, ColorState } from "@types";
 import { dispatch } from "@frontend/action/";
 import blush from "blush";
-import Button from "@frontend/components/button";
+import { Button } from "@frontend/components/button";
 import Control from "@frontend/components/control";
 import ColorPickerSwatch from "./color-picker-swatch";
 import ColorPickerPalette from "@frontend/components/color-picker/color-picker-palette";
 import { HueSlider, LightnessSlider, SaturationSlider } from "./hsl-sliders";
 
-interface PickerProps extends Partial<Color> {
-  items: ColorPicker[];
+interface PickerProps extends Partial<ColorState> {
+  colorPickers: ColorPicker[];
 }
 
 interface ColorPickerState {
@@ -25,7 +25,7 @@ interface ColorPickerProps extends Partial<ColorPicker>, Partial<ColorPickerStat
 
 function mapStateToProps(state: StoreState): PickerProps {
   return {
-    items: state.color.items,
+    colorPickers: state.color.colorPickers,
   };
 }
 
@@ -152,7 +152,7 @@ class ColorPickerSpawn extends React.Component<Partial<PickerProps>, Pick<ColorP
   render() {
     return (
       <Fragment>
-        {this.props.items
+        {this.props.colorPickers
           .filter((colorPickerItem) => colorPickerItem.isOpen)
           .map((colorPickerItem) => {
             return (
