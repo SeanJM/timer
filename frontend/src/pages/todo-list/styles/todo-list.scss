@@ -9,6 +9,10 @@
 .app-category-id {
   .todo-list {
     padding-left: $u76;
+
+    .viewport {
+      border-left: 1px solid $grey-light;
+    }
   }
 }
 
