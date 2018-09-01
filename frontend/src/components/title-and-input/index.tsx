@@ -1,14 +1,24 @@
 import React, { Component } from "react";
 import { Button } from "@frontend/components/button";
-import { InputText } from "@frontend/components/input";
+import { IconType } from "@frontend/components/icon";
 
 interface Props {
   title: string;
+  defaultValue?: string;
+  icon?: IconType;
+  component: React.ComponentType<any>;
   onValue: (value: string) => void;
 }
 
 interface State {
   showAdd: boolean;
+}
+
+export interface TitleAndInputPassedProps {
+  onRef: (node: HTMLInputElement) => void,
+  autofocus: boolean,
+  defaultValue: any,
+  onKeyDown: (e: any) => void
 }
 
 export class TitleAndInput extends Component<Props, State> {
@@ -33,10 +43,11 @@ export class TitleAndInput extends Component<Props, State> {
         <h6>{this.props.title}</h6>
         {this.state.showAdd
           ? null
-          : <InputText
-            onRef={(node: HTMLInputElement) => { this.node = node; }}
-            autofocus
-            onKeyDown={(e: any) => {
+          : React.createElement(this.props.component, {
+            onRef: (node: HTMLInputElement) => { this.node = node; },
+            autofocus: true,
+            defaultValue: this.props.defaultValue,
+            onKeyDown: (e: any) => {
               if (e.which === 13) {
                 this.setState({
                   showAdd: true,
@@ -47,12 +58,12 @@ export class TitleAndInput extends Component<Props, State> {
                   showAdd: true,
                 });
               }
-            }}/>
-        }
+            }
+        } as TitleAndInputPassedProps)}
         {this.state.showAdd
           ? (
             <Button
-              icon="add"
+              icon={this.props.icon || "add"}
               onClick={() => {
                 this.setState({
                   showAdd: false,
