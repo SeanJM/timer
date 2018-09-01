@@ -1,5 +1,6 @@
 import Persistore from "@frontend/class/persistore";
-import { Keys, Color, CategoryResponse, TagsByCategory, StoreForm } from "@types";
+import { Keys, ColorState, CategoryResponse, TagsByCategory, StoreForm } from "@types";
+import Validator from "verified";
 
 export interface TodoNode {
   attributes: {
@@ -17,13 +18,17 @@ export interface Category extends TodoNode {
 export interface StoreState {
   keys: Keys;
 
+  categories: {
+    setName: boolean;
+  };
+
   todo: {
     categories?: CategoryResponse[];
     isRequest?: null | boolean;
     isSuccess?: null | boolean;
   };
 
-  color: Color;
+  color: ColorState;
 
   tags: TagsByCategory;
 
@@ -46,6 +51,10 @@ export const store = new Persistore<StoreState>(
       control: false,
     },
 
+    categories: {
+      setName: false,
+    },
+
     todo: {
       categories: [],
       isRequest: null,
@@ -53,7 +62,7 @@ export const store = new Persistore<StoreState>(
     },
 
     color: {
-      items:[],
+      colorPickers: [],
       palette: [],
     },
 
@@ -74,6 +83,24 @@ export const store = new Persistore<StoreState>(
     form: {}
   } as StoreState,
   {
-    ignore: [/^form\./, /^slideOut\./, /^color\.items/]
+    validator: (store) => {
+      const validator = new Validator({
+        keys: {
+          control: "boolean",
+        },
+
+        categories: {
+          setName: "boolean",
+        },
+
+        color: {
+          colorPickers: "any[]",
+          palette: "any[]",
+        }
+      }).validate(store);
+      console.log(validator);
+      return validator.isValid;
+    },
+    ignore: [/^form\./, /^slideOut\./, /^color\.items/, /^categories\.setName/]
   }
 );
