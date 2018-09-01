@@ -4,9 +4,16 @@
   top: 0;
   background: $black;
   bottom: 0;
+  transition: width 0.3s;
+  z-index: 2;
+  width: 100%;
 
   h6 {
     color: #fff;
+  }
+
+  label {
+    transition: opacity 0.3s;
   }
 
   .titlebar {
@@ -58,27 +65,25 @@
 
   label {
     position: absolute;
-    left: $u13;
+    left: 0;
+    padding-left: $u13;
     top: $u4;
     color: $grey-light;
-    width: 100%;
   }
 }
 
-.app-depth-0 {
-  .type-menu {
-    width: 100%;
-  }
-}
-
-.app-depth-1 {
+.app-type {
   .type-menu {
     width: $u53;
   }
 }
 
-.app-depth-2 {
+.app-category-id {
   .type-menu {
-    width: $u13;
+    width: $u12;
+  }
+
+  label {
+    opacity: 0;
   }
 }
