@@ -5,11 +5,13 @@ export type IconType =
   | "book"
   | "check"
   | "close"
+  | "edit"
   | "filter"
   | "folder-add"
   | "folder"
   | "history-back"
-  | "tag";
+  | "tag"
+  ;
 
 interface IconProps {
   className?: string;
