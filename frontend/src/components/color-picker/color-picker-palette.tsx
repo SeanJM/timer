@@ -2,7 +2,7 @@ import React from "react";
 import { withStore, StoreState } from "@frontend/store";
 import { SwatchAttributes, Keys, ColorState } from "@types";
 import generateHash from "@generate-hash";
-import Icon from "@frontend/components/icon";
+import { Icon } from "@frontend/components/icon";
 import { dispatch } from "@frontend/action/";
 
 const rowLength = 14;
@@ -16,12 +16,12 @@ while (++i < n) {
 interface ColorPaletteProps extends Pick<ColorState, "palette"> {
   onSelect: (value: string) => void;
   value: string;
-};
+}
 
 interface ColorPaletteMappedProps extends Pick<ColorState, "palette">, ColorPaletteProps {
   empties: SwatchAttributes[];
   keys: Keys;
-};
+}
 
 function mapStateToProps(
   state: StoreState,
@@ -57,7 +57,7 @@ function ColorPalette(props: ColorPaletteMappedProps) {
         ];
 
         if (a.value === props.value && !props.keys.control) {
-          className.push("color-picker_palette_swatch--active")
+          className.push("color-picker_palette_swatch--active");
         }
 
         if (props.keys.control) {
