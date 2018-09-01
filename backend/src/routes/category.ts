@@ -1,10 +1,11 @@
-import express, { Request } from "express";
+import express, { Request, Express } from "express";
 import Validate from "verified";
 import Database from "@backend/class/database";
 import generateHash from "@generate-hash";
 import { CategoryElement, CategoryResponse, TodoElement, TagElement } from "@types";
 import { toTodoResponse } from "@backend/routes/todo";
 import { toTagResponse } from "@backend/routes/tags";
+import path from "@path";
 
 interface CategoryRequestParams {
   categoryID: string;
@@ -43,9 +44,8 @@ function createCategory(req: CategoryRequest, res, database: Database) {
     .getElementById("categories")
     .appendChild(element);
 
-  database.save().then(() => {
-    res.send(toCategoryResponse(element));
-  });
+  res.send(toCategoryResponse(element));
+  database.save();
 }
 
 function deleteCategory(req: CategoryRequest, res, database: Database) {
@@ -60,19 +60,22 @@ function deleteCategory(req: CategoryRequest, res, database: Database) {
   database.save();
 }
 
-export default function (database: Database, app) {
+export default function (database: Database, app: Express) {
   const router = express.Router();
 
-  app.post("/category/:categoryID", function (req: CategoryRequest, res, next) {
+  app.use("/category", function (req: CategoryRequest, res, next) {
     const queryValidator =
       new Validate({
         "name?": "string",
-        "action?": "delete|create",
+        "action": "delete|create",
         "[string]?": "string",
       });
 
     const isValidQuery =
       queryValidator.validate(req.query).isValid;
+
+    req.params =
+      path(req.url).params("/:categoryID");
 
     if (isValidQuery) {
       if (req.query.action === "create") {
@@ -83,6 +86,7 @@ export default function (database: Database, app) {
     } else {
       res.status(500).send("CATEGORY__INVALID_REQUEST");
     }
+
     next();
   });
 

@@ -136,6 +136,7 @@ function editTodo(req: TodoRequest, res, database: Database) {
       _.pick(req.query, ["name"])
     );
     res.send(toTodoResponse(todoElement));
+    database.save();
   } else if (!categoryElement) {
     res.status(404).send(CATEGORY_NOT_FOUND);
   } else {

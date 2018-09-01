@@ -41,10 +41,6 @@ export default class Service {
   }
 
   create(e) {
-    const category = {
-      name: e.value,
-    };
-
     store.set({
       todo: {
         isRequest: true,
@@ -52,7 +48,12 @@ export default class Service {
       }
     });
 
-    ajax.post("/category", { data: category })
+    ajax.post("/category", {
+      data: {
+        action: "create",
+        name: e.value,
+      }
+    })
       .then((res: CategoryResponse) => {
         store.set({
           todo: {
