@@ -11,6 +11,7 @@ import { Viewport } from "@frontend/components/viewport";
 import { RouterProps } from "@frontend/components/router";
 import { TitleAndInput } from "@frontend/components/title-and-input";
 import { dispatch } from "@frontend/action";
+import Titlebar from "@frontend/components/titlebar";
 
 const FORM_ID = generateHash();
 
@@ -50,20 +51,22 @@ function TodoEditor(props: SlideOutTodoMappedProps) {
     <div className="todo-editor">
       <Viewport
         titlebar={
-          <TitleAndInput
-            icon="edit"
-            defaultValue={props.todoName}
-            title={props.todoName}
-            component={InputText}
-            onValue={(value) => dispatch("TODO", {
-              type: "EDIT",
-              value: {
-                categoryID: props.categoryID,
-                todoID: props.todoID,
-                name: value,
-              }
-            })}
-          />
+          <Titlebar>
+            <TitleAndInput
+              icon="edit"
+              defaultValue={props.todoName}
+              title={props.todoName}
+              component={InputText}
+              onSubmit={(value) => dispatch("TODO", {
+                type: "EDIT",
+                value: {
+                  categoryID: props.categoryID,
+                  todoID: props.todoID,
+                  name: value,
+                }
+              })}
+            />
+          </Titlebar>
         }
         body={
           <div>

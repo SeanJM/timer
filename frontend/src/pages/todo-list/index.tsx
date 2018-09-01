@@ -66,30 +66,32 @@ class TodoList extends Component<TodoProps, {}> {
       <div className="todo-list">
         <Viewport
           titlebar={
-            <TitleAndInput
-              component={InputText}
-              title={this.props.name}
-              onValue={(value) => dispatch("ADD_TODO", {
-                categoryID: this.props.categoryID,
-                value,
-              })}
-            />
+            <Titlebar>
+              <TitleAndInput
+                component={InputText}
+                title={this.props.name}
+                onSubmit={(value) => dispatch("ADD_TODO", {
+                  categoryID: this.props.categoryID,
+                  value,
+                })}
+              />
+            </Titlebar>
           }
           body={
             <Fragment>
-              <Titlebar left={<h6>Complete</h6>} />
+              <Titlebar><h6>Complete</h6></Titlebar>
               {this.props.completeTodos.map((todo) => (
                 <Todo
-                  key={todo.id}
-                  state={todo.state}
-                  name={todo.name}
-                  created={todo.created}
-                  id={todo.id}
-                  categoryID={this.props.categoryID}
-                  showAlt={this.props.controlPressed}
+                key={todo.id}
+                state={todo.state}
+                name={todo.name}
+                created={todo.created}
+                id={todo.id}
+                categoryID={this.props.categoryID}
+                showAlt={this.props.controlPressed}
                 />
               ))}
-              <Titlebar left={<h6>Incomplete</h6>} />
+              <Titlebar><h6>Incomplete</h6></Titlebar>
               {this.props.incompleteTodos.map((todo) => (
                 <Todo
                   key={todo.id}

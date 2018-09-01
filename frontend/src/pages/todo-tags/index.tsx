@@ -5,7 +5,7 @@ import Swatch from "@frontend/components/swatch";
 import generateHash from "@generate-hash";
 import { Viewport } from "@frontend/components/viewport";
 import { withStore, StoreState } from "@frontend/store";
-import { TagResponse, TagCategory, StoreFormInput } from "@types";
+import { TagResponse, StoreFormInput, CategoryResponse } from "@types";
 import { ColorPicker } from "@types";
 import path from "@path";
 import { dispatch } from "@frontend/action";
@@ -14,6 +14,7 @@ import { List, ListItem } from "@frontend/components/list";
 import Timestamp from "@frontend/components/timestamp";
 import { emptyForm } from "@frontend/action/form";
 import { TitleAndInput, TitleAndInputPassedProps } from "@frontend/components/title-and-input";
+import Titlebar from "@frontend/components/titlebar";
 
 const FORM_ID = generateHash();
 const COLOR_PICKER_ID = "tag_name";
@@ -41,8 +42,10 @@ function InputTagName(props: InputTagNameProps) {
       />
       <InputText
         className="todo-tags_tag-input"
+        onValue={props.onValue}
         onKeyDown={props.onKeyDown}
         autofocus={props.autofocus}
+        defaultValue={props.defaultValue}
       />
     </div>
   );
@@ -53,9 +56,8 @@ function mapStateToProps(state: StoreState, props: RouterProps): Props {
   const category = state.todo.categories.find(a => a.id === params.categoryID);
   const form = state.form[FORM_ID] || emptyForm(FORM_ID);
 
-  const tagCategory: TagCategory =
-    state.tags.categories.find(a => a.id === params.categoryID) ||
-    { id: params.categoryID, tags: [] };
+  const tagCategory: CategoryResponse =
+    state.todo.categories.find(a => a.id === params.categoryID);
 
   const tagNameInput: StoreFormInput = form.input.tagName;
   const colorInput: StoreFormInput = form.input.color;
@@ -89,18 +91,20 @@ class TodoTags extends Component<Props, {}> {
       <div className="todo-tags">
         <Viewport
           titlebar={
-            <TitleAndInput
-              title="Tags"
-              component={
-                (props: TitleAndInputPassedProps) =>
-                  InputTagName({ ...props, color: this.props.color })
-              }
-              onValue={(name) => dispatch("CREATE_TAG", {
-                name,
-                color: this.props.color,
-                categoryID: this.props.categoryID,
-              } as Partial<Props>)}
-            />
+            <Titlebar>
+              <TitleAndInput
+                title="Tags"
+                component={
+                  (props: TitleAndInputPassedProps) =>
+                    InputTagName({ ...props, color: this.props.color })
+                }
+                onSubmit={(name) => dispatch("CREATE_TAG", {
+                  name,
+                  color: this.props.color,
+                  categoryID: this.props.categoryID,
+                } as Partial<Props>)}
+              />
+            </Titlebar>
           }
           body={
             <List>
