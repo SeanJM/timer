@@ -25,9 +25,11 @@ export class InputText extends Component<InputTextProps, InputTextState> {
   }
 
   componentDidMount() {
+    const { onValue } = this.props;
     if (this.props.autofocus) {
       this.node.focus();
     }
+    onValue && onValue(this.node.value);
   }
 
   render() {
