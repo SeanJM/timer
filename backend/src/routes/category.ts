@@ -20,6 +20,7 @@ interface CategoryRequest extends Request {
   params: CategoryRequestParams;
   query: CategoryRequestQuery;
   url: string;
+  method: "POST" | "GET";
 }
 
 function toCategoryResponse(element: CategoryElement): CategoryResponse {
@@ -60,42 +61,55 @@ function deleteCategory(req: CategoryRequest, res, database: Database) {
   database.save();
 }
 
-export default function (database: Database, app: Express) {
-  const router = express.Router();
+function onPost(req: CategoryRequest, res, database: Database) {
+  const queryValidator =
+    new Validate({
+      "name?": "string",
+      "action": "delete|create",
+      "[string]?": "string",
+    });
 
-  app.use("/category", function (req: CategoryRequest, res, next) {
-    const queryValidator =
-      new Validate({
-        "name?": "string",
-        "action": "delete|create",
-        "[string]?": "string",
-      });
+  const isValidQuery =
+    queryValidator.validate(req.query).isValid;
 
-    const isValidQuery =
-      queryValidator.validate(req.query).isValid;
+  req.params =
+    path(req.url).params("/:categoryID");
 
-    req.params =
-      path(req.url).params("/:categoryID");
-
-    if (isValidQuery) {
-      if (req.query.action === "create") {
-        createCategory(req, res, database);
-      } else if (req.query.action === "delete") {
-        deleteCategory(req, res, database);
-      }
-    } else {
-      res.status(500).send("CATEGORY__INVALID_REQUEST");
+  if (isValidQuery) {
+    if (req.query.action === "create") {
+      createCategory(req, res, database);
+    } else if (req.query.action === "delete") {
+      deleteCategory(req, res, database);
     }
+  } else {
+    res.status(500).send("CATEGORY__INVALID_REQUEST");
+  }
+}
 
-    next();
-  });
-
-  router.get("/all", function (req: Request, res) {
+function onGet(req: CategoryRequest, res, database: Database) {
+  if (req.params.categoryID === "all") {
     res.send(
       database.body
         .querySelectorAll("#categories category")
         .map(toCategoryResponse)
     );
+  }
+}
+
+export default function (database: Database, app: Express) {
+  const router = express.Router();
+
+  app.use("/category", function (req: CategoryRequest, res, next) {
+    req.params =
+      path(req.url).params("/:categoryID");
+
+    if (req.method === "POST") {
+      onPost(req, res, database);
+    } else if (req.method === "GET") {
+      onGet(req, res, database);
+    }
+
+    next();
   });
 
   return router;
