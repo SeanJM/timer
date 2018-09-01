@@ -35,7 +35,7 @@ export default function (database: Database): express.Router {
   const router = express.Router();
 
   function createTag(req: TagPostRequest, res: Response) {
-    const category = database.getElementById(req.params.categoryID)
+    const category = database.getElementById(req.params.categoryID);
 
     const tag = database.createElement("tag", {
       id: generateHash(7),
