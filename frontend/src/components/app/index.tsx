@@ -8,33 +8,15 @@ import { dispatch } from "@frontend/action/";
 import TodoList from "@frontend/pages/todo-list";
 import TodoTags from "@frontend/pages/todo-tags";
 import { routes } from "@frontend/routes";
-import { Fragment } from "react";
 import path from "@path";
 import { CategoryListConnect } from "@frontend/pages/category-list";
-
-class TagRequester extends React.Component<WithRouterComponentProps> {
-  componentDidMount() {
-    dispatch("GET_TAGS", {
-      categoryID: this.props.params.categoryID,
-    });
-  }
-
-  componentWillReceiveProps(nextProps: WithRouterComponentProps) {
-    if (nextProps.params.categoryID !== this.props.params.categoryID) {
-      dispatch("GET_TAGS", {
-        categoryID: nextProps.params.categoryID,
-      });
-    }
-  }
-
-  render() {
-    return <Fragment/>;
-  }
-}
+import { TodoEditorConnect } from "@frontend/pages/todo-editor";
 
 class App extends React.Component<WithRouterComponentProps> {
   componentDidMount() {
-    dispatch("GET_CATEGORIES");
+    dispatch("CATEGORY", {
+      type: "GET_ALL",
+    });
 
     document.addEventListener("keydown", function (e) {
       if (e.which === 91) {
@@ -50,16 +32,20 @@ class App extends React.Component<WithRouterComponentProps> {
   }
 
   render() {
-    const params = this.props.params;
-    let pathLength = 0
+    const params = path.params(this.props.location.pathname, routes.pathname);
     const className = ["app"];
 
-    if (params.pathname && params.pathname[0] !== "") {
-      pathLength = params.pathname.length;
+    if (params.type) {
+      className.push("app-type");
     }
 
-    console.log(params.pathname);
-    className.push("app-depth-" + pathLength);
+    if (params.categoryID) {
+      className.push("app-category-id");
+    }
+
+    if (params.todoID) {
+      className.push("app-todo-id");
+    }
 
     return (
       <div className={className.join(" ")}>
@@ -74,18 +60,13 @@ class App extends React.Component<WithRouterComponentProps> {
             pathname={routes.todo}
             component={TodoList} />
           <Route
+            pathname={path(routes.pathname).replace({
+              type: "todo",
+            }).value}
+            component={TodoEditorConnect} />
+          <Route
             pathname={routes.tags}
             component={TodoTags} />
-          <Route
-            pathname={path.replace(routes.pathname, {
-              type: "todo",
-            })}
-            component={TagRequester}/>
-          <Route
-            pathname={path.replace(routes.pathname, {
-              type: "tags",
-            })}
-            component={TagRequester}/>
           <Route pathname="/">
             <div></div>
           </Route>
