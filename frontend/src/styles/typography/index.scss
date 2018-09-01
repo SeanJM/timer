@@ -8,6 +8,7 @@ body {
 
   h#{$index} {
     font-size: $base;
+    font-weight: bold;
     line-height: $base * 1.215;
     letter-spacing: $base * -0.02;
   }
@@ -55,7 +56,7 @@ small {
 
   h6, h5, h4, h3, h2, h1 {
     color: $grey;
-    font-weight: normal;
+    font-weight: bold;
     text-transform: uppercase;
   }
 
