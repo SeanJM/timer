@@ -15,7 +15,7 @@
   }
 
   input[type=text] {
-    padding: 0 $u2;
+    padding: 0;
     font-size: $font-size;
     border-radius: 2px;
   }
@@ -23,6 +23,12 @@
   input:active,
   input:focus {
     outline: none;
+  }
+
+  label {
+    padding-top: $u2;
+    padding-bottom: 0;
+    color: $grey;
   }
 }
 
@@ -33,9 +39,8 @@
   right: 0;
   top: 0;
   bottom: 0;
-  border: 2px solid $grey-light;
+  border-bottom: 1px solid $grey-light;
   background: #fff;
-  border-radius: 2px;
 }
 
 .input-wrapper_input {
