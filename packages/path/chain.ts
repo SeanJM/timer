@@ -7,6 +7,7 @@ import pop from "./pop";
 import push from "./push";
 import splice from "./splice";
 import slice from "@path/slice";
+
 export default function chain(pathname: string) {
   const self = {
     value: pathname,
