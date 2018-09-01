@@ -13,7 +13,7 @@ interface ButtonProps extends Partial<JSX.ElementChildrenAttribute> {
   icon?: IconType;
 }
 
-export default function Button(props: ButtonProps) {
+export function Button(props: ButtonProps) {
   const { onClick } = props;
   const className = ["button"];
 
