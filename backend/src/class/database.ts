@@ -83,7 +83,7 @@ export default class Database {
       .catch((e) => console.error(e));
   }
 
-  getElementById(id: string) {
-    return this.idList[id];
+  getElementById<T extends Element>(id: string): T | null {
+    return this.idList[id] as T;
   }
 }
