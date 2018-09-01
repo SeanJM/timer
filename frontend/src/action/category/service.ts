@@ -24,7 +24,17 @@ export default class Service {
       .then((categories: CategoryResponse[]) => {
         store.set({
           todo: {
-            categories: categories,
+            categories: categories.map(category => {
+              return {
+                ...category,
+                tags: category.tags.map(tag => {
+                  return {
+                    ...tag,
+                    color: "#" + tag.color,
+                  };
+                }),
+              };
+            }),
             isRequest: false,
             isSuccess: true,
           }
