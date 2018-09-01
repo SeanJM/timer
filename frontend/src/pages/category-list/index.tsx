@@ -28,7 +28,8 @@ export interface AppMenuMappedProps extends AppMenuProps {
 }
 
 interface MenuParams extends Params {
-  type: string;
+  type: "todo" | "tags";
+  categoryID: string;
 }
 
 function mapStateToProps(state: StoreState, props: AppMenuProps): AppMenuMappedProps {
@@ -36,14 +37,14 @@ function mapStateToProps(state: StoreState, props: AppMenuProps): AppMenuMappedP
     todo: state.todo,
     history: props.history,
     location: props.location,
-    params: path.params(props.location.pathname, "/todo/:type") as MenuParams,
+    params: path.params<MenuParams>(props.location.pathname, "/:type/:categoryID"),
     setCategoryName: state.categories.setName,
   };
 }
 
 export class CategoryList extends Component<AppMenuMappedProps, {}> {
   render() {
-    const { todo } = this.props;
+    const { todo, params } = this.props;
     return (
       <div className="category-list">
         <Titlebar
@@ -51,7 +52,7 @@ export class CategoryList extends Component<AppMenuMappedProps, {}> {
             <TitleAndInput
               component={InputText}
               title="Category"
-              onValue={value => dispatch("CATEGORY", {
+              onSubmit={value => dispatch("CATEGORY", {
                 type: "CREATE",
                 value,
               })}
@@ -63,6 +64,7 @@ export class CategoryList extends Component<AppMenuMappedProps, {}> {
             <MenuItem
               key={a.id}
               title={a.name}
+              isSelected={params.categoryID === a.id}
               onClick={() => {
                 const pathname = this.props.location.pathname;
                 const params = path.params(pathname, routes.pathname);
