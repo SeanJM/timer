@@ -1,6 +1,6 @@
 import * as React from "react";
 
-interface TitlebarProps {
+interface TitlebarProps extends Partial<JSX.ElementChildrenAttribute> {
   left?: JSX.Element;
   right?: JSX.Element;
   center?: JSX.Element;
@@ -45,6 +45,7 @@ export default function Titlebar(props: TitlebarProps) {
             </div>
           )
           : null}
+        {props.children}
       </div>
     </div>
   );
