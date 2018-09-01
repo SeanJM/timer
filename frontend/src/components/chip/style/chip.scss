@@ -1,0 +1,76 @@
+.chip {
+  $chip-height: $input-size - $u;
+  transition: padding-left 0.3s;
+
+  position: relative;
+  display: inline-block;
+  padding: ($chip-height - $line-height)/2 ($chip-height * 0.45);
+  height: $chip-height;
+  user-select: none;
+  cursor: default;
+
+  .chip_label {
+    position: relative;
+    line-height: $line-height;
+    font-size: $font-size - 1;
+  }
+
+  .chip_face {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    bottom: 2px;
+    right: 2px;
+    background: $grey-lightest;
+    border-radius: $chip-height / 2;
+    transition: background 0.3s;
+  }
+
+  .chip_color {
+    $radius: $chip-height - $u3;
+    width: $radius;
+    height: $radius;
+    border-radius: ($radius)/2;
+    position: absolute;
+    left: $radius;
+    top: 50%;
+    margin-top: $radius/-2;
+    margin-left: ($radius/-2)-($radius/5);
+  }
+
+  .icon {
+    width: $u4;
+    height: $u4;
+  }
+
+  &.chip--check,
+  &.chip--color {
+    padding-left: $chip-height;
+  }
+
+  .chip_check {
+    opacity: 0;
+    position: absolute;
+    left: $u2;
+    top: $u2;
+    transition: opacity 0.3s, transform 0.2s;
+    transform: scale(0.5);
+  }
+}
+
+.chip--check {
+  .chip_check {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .chip_face {
+    background: darken($grey-lightest, 12%);
+  }
+}
+
+.chip-filter {
+  margin: 0 -2px;
+  padding: 0 0 $u2;
+}
+
