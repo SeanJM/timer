@@ -4,11 +4,6 @@ import { withStore, StoreState } from "@frontend/store";
 import { dispatch } from "@frontend/action/";
 export * from "@frontend/components/modal/modal-window";
 
-import {
-  AddCategoryConnect,
-  AddTodoConnect
-} from "@frontend/components/modal/modals";
-
 export type ModalNames = | "ADD_CATEGORY" | "ADD_TODO";
 
 interface Modals {
@@ -18,8 +13,6 @@ interface Modals {
 type ModalProps = StoreState["modal"];
 
 const MODALS: Modals = {
-  ADD_CATEGORY: AddCategoryConnect,
-  ADD_TODO: AddTodoConnect,
 };
 
 function mapStateToProps(state: StoreState) {
