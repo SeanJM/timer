@@ -1,7 +1,7 @@
 import * as React from "react";
 import { withStore, StoreState } from "@frontend/store";
 import { routes } from "@frontend/routes";
-import Icon, { IconType } from "@frontend/components/icon";
+import { Icon , IconType } from "@frontend/components/icon";
 import { AppMenuMappedProps } from "@frontend/pages/type-menu";
 import path, { Params } from "@path";
 
@@ -10,7 +10,6 @@ import {
   RouterLocation,
   withRouter,
 } from "@frontend/components/router";
-
 
 export interface AppMenuProps {
   history: History;
@@ -47,7 +46,6 @@ export class AppMenuView extends React.Component<AppMenuMappedProps, {}> {
     );
   }
 }
-
 
 interface AppMenuCategoriesItemProps {
   isSelected: boolean;

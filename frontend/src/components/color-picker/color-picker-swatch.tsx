@@ -1,5 +1,5 @@
 import React from "react";
-import Icon from "@frontend/components/icon";
+import { Icon } from "@frontend/components/icon";
 
 interface ColorPickerSwatchProps {
   value: string;
