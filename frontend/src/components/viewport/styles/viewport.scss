@@ -1,18 +1,45 @@
 .viewport {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.viewport_body {
   position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
   bottom: 0;
+  top: 0;
+  width: 100%;
+  overflow-y: scroll;
+  padding-bottom: $u8;
+}
+
+.viewport--titlebar {
+  .viewport_body {
+    top: $u13;
+  }
+}
+
+.viewport_titlebar {
+  border-bottom: 1px solid $grey-light;
+  height: $u13;
+  padding: $u2 $u2;
+
+  .button_face {
+    background: none;
+  }
+
+  .button .icon {
+    fill: $grey-light;
+  }
+
+  h6 {
+    margin-left: $u2;
+    margin-top: $u4;
+  }
 }
 
 .viewport--titlebar.viewport--toolbar {
   .viewport_body {
-    position: absolute;
     top: $u27 - 2;
-    bottom: 0;
-    width: 100%;
-    overflow-y: scroll;
-    padding-bottom: $u8;
   }
 }
