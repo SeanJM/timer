@@ -99,7 +99,7 @@ export interface ColorPicker {
   isOpen: boolean;
 }
 
-export interface Color {
-  items?: ColorPicker[];
+export interface ColorState {
+  colorPickers?: ColorPicker[];
   palette?: SwatchAttributes[];
 }

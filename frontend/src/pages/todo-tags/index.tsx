@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Button from "@frontend/components/button";
+import { Button } from "@frontend/components/button";
 import { Input } from "@frontend/components/input";
 import { FormConnect } from "@frontend/components/form";
 import { RouterProps } from "@frontend/components/router";
@@ -40,7 +40,7 @@ function mapStateToProps(state: StoreState, props: RouterProps): Props {
   const colorInput: StoreFormInput = form.input.color;
 
   return {
-    colorPicker: state.color.items.find((a) => a.id === COLOR_PICKER_ID) || {},
+    colorPicker: state.color.colorPickers.find((a) => a.id === COLOR_PICKER_ID) || {},
     categoryName: category && category.name,
     categoryID: params.categoryID,
     name: tagNameInput ? tagNameInput.value : "",
@@ -73,63 +73,65 @@ class TodoTags extends Component<Props, {}> {
 
   render() {
     return (
-      <Viewport
-        titlebar={
-          <Titlebar left={<h6>{this.props.categoryName}</h6>} />
-        }
-        toolbar={
-          <Titlebar center={
-            <FormConnect id={FORM_ID} onSubmit={() => this.addTag()}>
-              <div className="todo-tags-input">
-                <Swatch
-                  background={this.props.color}
-                  onClick={() => {
-                    dispatch("COLOR_PICKER", {
-                      type: "OPEN",
-                      id: COLOR_PICKER_ID,
-                    });
-                  }}
-                />
-                <Input
-                  className="todo-tags_tag-input"
-                  onRef={(node) => { this.node = node as HTMLInputElement;}}
-                  type="text"
-                  formID={FORM_ID}
-                  name="tagName"
-                  onValue={value => this.setState({ todo: value })}
-                  button={
-                    <Button
-                      icon="add"
-                      onClick={() => this.addTag()}
-                    />
-                  }
-                />
-              </div>
-            </FormConnect>
-          } />
-        }
-        body={
-          <List>
-            {this.props.tags.map((tag) => {
-              return (
-                <ListItem
-                  title={tag.name}
-                  primaryAction={
-                    <Swatch
-                      background={tag.color}
-                      onClick={() => {
-                        // console.log(color);
-                      }}
-                    />
-                  }
-                  timestamp={<Timestamp>{tag.created}</Timestamp>}
-                  key={tag.id}>
-                </ListItem>
-              );
-            })}
-          </List>
-        }
-      />
+      <div className="todo-tags">
+        <Viewport
+          titlebar={
+            <Titlebar left={<h6>{this.props.categoryName}</h6>} />
+          }
+          toolbar={
+            <Titlebar center={
+              <FormConnect id={FORM_ID} onSubmit={() => this.addTag()}>
+                <div className="todo-tags-input">
+                  <Swatch
+                    background={this.props.color}
+                    onClick={() => {
+                      dispatch("COLOR_PICKER", {
+                        type: "OPEN",
+                        id: COLOR_PICKER_ID,
+                      });
+                    }}
+                  />
+                  <Input
+                    className="todo-tags_tag-input"
+                    onRef={(node) => { this.node = node as HTMLInputElement;}}
+                    type="text"
+                    formID={FORM_ID}
+                    name="tagName"
+                    onValue={value => this.setState({ todo: value })}
+                    button={
+                      <Button
+                        icon="add"
+                        onClick={() => this.addTag()}
+                      />
+                    }
+                  />
+                </div>
+              </FormConnect>
+            } />
+          }
+          body={
+            <List>
+              {this.props.tags.map((tag) => {
+                return (
+                  <ListItem
+                    title={tag.name}
+                    primaryAction={
+                      <Swatch
+                        background={tag.color}
+                        onClick={() => {
+                          // console.log(color);
+                        }}
+                      />
+                    }
+                    timestamp={<Timestamp>{tag.created}</Timestamp>}
+                    key={tag.id}>
+                  </ListItem>
+                );
+              })}
+            </List>
+          }
+        />
+      </div>
     );
   }
 }
