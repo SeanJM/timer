@@ -32,8 +32,8 @@ export default function chain(pathname: string) {
       return this;
     },
 
-    params(schema: string) {
-      return params(this.value, schema);
+    params<T>(schema: string) {
+      return params<T>(this.value, schema);
     },
 
     pop(times: number = 1) {

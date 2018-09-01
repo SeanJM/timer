@@ -9,8 +9,8 @@ import _reduce from "./reduce";
 import _splice from "./splice";
 import _slice from "./slice";
 
-export function path(pathname: string): typeof _chain {
-  return require("./chain").default(pathname);
+export function path(pathname: string) {
+  return _chain(pathname);
 }
 
 export namespace path {

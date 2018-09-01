@@ -5,22 +5,22 @@ function isMatch(schema: any, url: any) {
 }
 
 export interface Params {
-  isExact: boolean;
-  isMatch: boolean;
-  pathname: string[];
-  schema: string[];
+  _isExact: boolean;
+  _isMatch: boolean;
+  _pathname: string[];
+  _schema: string[];
   [key: string]: any;
 }
 
-export default function params(pathname: string = "", schema: string = "") {
+export default function params<T>(pathname: string = "", schema: string = ""): T & Params {
   const urlPathname = parse(pathname).chunks;
   const schemaPathname = parse(schema).chunks;
 
   const params: Params = {
-    isExact: true,
-    isMatch: true,
-    pathname: urlPathname,
-    schema: schemaPathname,
+    _isExact: true,
+    _isMatch: true,
+    _pathname: urlPathname,
+    _schema: schemaPathname,
   };
 
   let i = -1;
@@ -28,11 +28,11 @@ export default function params(pathname: string = "", schema: string = "") {
 
   while (++i < n) {
     if (i < schemaPathname.length && !isMatch(schemaPathname[i], urlPathname[i])) {
-      params.isMatch = false;
+      params._isMatch = false;
     }
 
     if (!isMatch(schemaPathname[i], urlPathname[i])) {
-      params.isExact = false;
+      params._isExact = false;
     }
 
     if (schemaPathname[i] && schemaPathname[i][0] === ":") {
@@ -40,5 +40,5 @@ export default function params(pathname: string = "", schema: string = "") {
     }
   }
 
-  return params;
+  return params as T & Params;
 }
