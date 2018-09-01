@@ -1,8 +1,5 @@
 import React, { Component, Fragment } from "react";
-import Button from "@frontend/components/button";
 import { dispatch } from "@frontend/action";
-import { Input } from "@frontend/components/input";
-import { FormConnect } from "@frontend/components/form";
 import { RouterProps } from "@frontend/components/router";
 import Titlebar from "@frontend/components/titlebar";
 import { Viewport } from "@frontend/components/viewport";
@@ -14,12 +11,10 @@ import path from "@path";
 import { routes } from "@frontend/routes";
 import { TodoResponse } from "types";
 import { emptyForm } from "@frontend/action/form";
+import { TitleAndInput } from "@frontend/components/title-and-input";
+import { InputText } from "@frontend/components";
 
 const FORM_ID = generateId();
-
-interface State {
-  todo: string;
-}
 
 interface TodoProps {
   categoryID: any;
@@ -63,80 +58,22 @@ function mapStateToProps(state: StoreState, props: RouterProps): TodoProps {
   };
 }
 
-class TodoList extends Component<TodoProps, State> {
+class TodoList extends Component<TodoProps, {}> {
   node: HTMLInputElement;
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      todo: ""
-    };
-  }
-
-  addTodo() {
-    const { input } = this.props;
-    if (input.value) {
-      this.node.value = "";
-      dispatch("ADD_TODO", {
-        categoryID: this.props.categoryID,
-        value: input.value,
-      });
-    }
-  }
-
-  openSlideOut(categoryID: string, todoID: string) {
-    dispatch("OPEN_SLIDEOUT", {
-      type: "TODO",
-      value: {
-        categoryID,
-        todoID,
-      },
-    });
-  }
-
-  componentDidMount() {
-    if (this.props.todoID) {
-      setTimeout(() => {
-        this.openSlideOut(this.props.categoryID, this.props.todoID);
-      }, 200);
-    }
-  }
-
-  componentWillReceiveProps(nextProps: TodoProps) {
-    if (!this.props.todoID && nextProps.todoID) {
-      this.openSlideOut(nextProps.categoryID, nextProps.todoID);
-    } else if (this.props.todoID && !nextProps.todoID) {
-      dispatch("CLOSE_SLIDEOUT");
-    }
-  }
 
   render() {
     return (
       <div className="todo-list">
-        <div className="todo-titlebar">
-        </div>
         <Viewport
           titlebar={
-            <Titlebar left={<h6>{this.props.name}</h6>} />
-          }
-          toolbar={
-            <Titlebar center={
-              <FormConnect id={FORM_ID} onSubmit={() => this.addTodo()}>
-                <Input
-                  onRef={(node) => { this.node = node as HTMLInputElement;}}
-                  type="text"
-                  formID={FORM_ID}
-                  name="todo_value"
-                  onValue={value => this.setState({ todo: value })}
-                  button={
-                    <Button
-                    icon="add"
-                    onClick={() => this.addTodo()}
-                    />
-                  }
-                />
-              </FormConnect>
-            } />
+            <TitleAndInput
+              component={InputText}
+              title={this.props.name}
+              onValue={(value) => dispatch("ADD_TODO", {
+                categoryID: this.props.categoryID,
+                value,
+              })}
+            />
           }
           body={
             <Fragment>
@@ -167,7 +104,7 @@ class TodoList extends Component<TodoProps, State> {
             </Fragment>
           }
         />
-      </div >
+      </div>
     );
   }
 }
