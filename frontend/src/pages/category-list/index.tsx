@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { withStore, StoreState } from "@frontend/store";
-import Button from "@frontend/components/button";
-import Control from "@frontend/components/control";
+import { Button } from "@frontend/components/button";
 import Titlebar from "@frontend/components/titlebar";
 import { MenuItem } from "@frontend/components/menu";
 import { dispatch } from "@frontend/action/";
@@ -14,11 +13,14 @@ import {
 
 import path, { Params } from "@path";
 import { routes } from "@frontend/routes";
+import { TitleAndInput } from "@frontend/components/title-and-input";
+import { InputText } from "@frontend/components";
 
 export interface AppMenuProps {
   history: History;
   location: RouterLocation;
   params: MenuParams;
+  setCategoryName: boolean;
 }
 
 export interface AppMenuMappedProps extends AppMenuProps {
@@ -35,6 +37,7 @@ function mapStateToProps(state: StoreState, props: AppMenuProps): AppMenuMappedP
     history: props.history,
     location: props.location,
     params: path.params(props.location.pathname, "/todo/:type") as MenuParams,
+    setCategoryName: state.categories.setName,
   };
 }
 
@@ -44,13 +47,15 @@ export class CategoryList extends Component<AppMenuMappedProps, {}> {
     return (
       <div className="category-list">
         <Titlebar
-          left={<h6>Category</h6>}
-          right={
-            <Control>
-              <Button type="primary" onClick={() => dispatch("MODAL_OPEN", {
-                name: "ADD_CATEGORY",
-              })}>Add</Button>
-            </Control>
+          left={
+            <TitleAndInput
+              component={InputText}
+              title="Category"
+              onValue={value => dispatch("CATEGORY", {
+                type: "CREATE",
+                value,
+              })}
+            />
           }
         />
         <div className="main-menu-list">
@@ -72,8 +77,11 @@ export class CategoryList extends Component<AppMenuMappedProps, {}> {
               control={
                 <Button
                   icon="close"
-                  onClick={() => dispatch("TODO_DELETE_CATEGORY", {
-                    id: a.id
+                  onClick={() => dispatch("CATEGORY", {
+                    type: "DELETE",
+                    value: {
+                      id: a.id
+                    }
                   })}
                 />
               }
