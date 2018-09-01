@@ -9,8 +9,8 @@ function routeIsMatch(props: RouteProps) {
   const { exact, filter } = props;
   const pathname = getPathname(window.location.hash.substring(1));
   const params = path.params(pathname, props.pathname);
-  const show = exact ? params.__exact : params.__match;
-  return show && filter ? filter(props.location) : show;
+  const show = exact ? params._isExact : params._isMatch;
+  return props.pathname === "/" ? true : show && filter ? filter(props.location) : show;
 }
 
 type RouterProps = Partial<WithRouterComponentProps>;
