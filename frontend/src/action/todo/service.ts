@@ -126,36 +126,4 @@ export default class Service {
       });
     });
   }
-
-  addCategory(e) {
-    const category = {
-      name: e.name,
-    };
-
-    store.set({
-      todo: {
-        isRequest: true,
-        isSuccess: null
-      }
-    });
-
-    ajax.post("/todo/category", { data: category })
-      .then((res: CategoryResponse) => {
-        store.set({
-          todo: {
-            categories: store.value.todo.categories.concat(res),
-            isRequest: false,
-            isSuccess: true,
-          }
-        });
-      })
-      .catch(() => {
-        store.set({
-          todo: {
-            isRequest: false,
-            isSuccess: false,
-          }
-        });
-      });
-  }
 }

@@ -1,4 +1,5 @@
 import Action from "@frontend/class/action";
+import category from "@frontend/action/category";
 import color from "@frontend/action/color";
 import form from "@frontend/action/form";
 import keydown from "@frontend/action/keydown";
@@ -16,6 +17,7 @@ export function dispatch(name: string, value?: any): void {
 
 export const subscribe = (name, callback) => action.subscribe(name, callback);
 
+category(subscribe);
 color(subscribe);
 form(subscribe);
 keydown(subscribe);

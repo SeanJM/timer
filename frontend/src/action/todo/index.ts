@@ -26,8 +26,4 @@ export default function (subscribe) {
   subscribe("DELETE_TODO", function (e) {
     service.delete(e);
   });
-
-  subscribe("ADD_CATEGORY", function (e) {
-    service.addCategory(e);
-  });
 }
