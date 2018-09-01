@@ -7,6 +7,7 @@ interface InputTextProps extends InputEvents {
   label?: string;
   button?: JSX.Element;
   className?: string;
+  autofocus?: boolean;
 }
 
 interface InputTextState {
@@ -14,11 +15,19 @@ interface InputTextState {
 }
 
 export class InputText extends Component<InputTextProps, InputTextState> {
+  node: HTMLInputElement;
+
   constructor(props) {
     super(props);
     this.state = {
       focus: false
     };
+  }
+
+  componentDidMount() {
+    if (this.props.autofocus) {
+      this.node.focus();
+    }
   }
 
   render() {
@@ -42,7 +51,10 @@ export class InputText extends Component<InputTextProps, InputTextState> {
         <input
           type="text"
           defaultValue={this.props.defaultValue}
-          ref={onRef}
+          ref={(node) => {
+            this.node = node;
+            onRef && onRef(node);
+          }}
           onInput={(e) => {
             const value = (e.target as HTMLInputElement).value.trim();
             onInput && onInput(e);
