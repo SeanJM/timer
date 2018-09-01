@@ -1,3 +1,11 @@
+.todo-tags {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}
+
 .todo-tags-input {
   .swatch {
     position: absolute;
@@ -10,5 +18,17 @@
     input {
       padding-left: $u9;
     }
+  }
+}
+
+.app-category-id {
+  .todo-tags {
+    padding-left: $u76;
+  }
+}
+
+.app-todo-id {
+  .todo-tags {
+    right: $u90;
   }
 }

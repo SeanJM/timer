@@ -1,14 +1,49 @@
 .category-list {
   position: absolute;
   left: 0;
-  right: 0;
+  width: 100%;
   bottom: 0;
   top: 0;
   overflow-y: scroll;
+  background: $black-light;
+  transition: padding-left 0.3s, width 0.3s;
+  z-index: 1;
+
+  .title-and-input {
+    @extend %title-and-input-dark;
+  }
+
+  .menu-item,
+  .titlebar {
+    border-bottom-color: $black;
+  }
+
+  h6 {
+    color: $grey-lightest;
+  }
+
+  .button_face {
+    background: none;
+  }
+
+  .icon {
+    fill: $grey;
+  }
+
+  .titlebar_left {
+    width: 100%;
+  }
 }
 
-.app-depth-1 {
+.app-type {
   .category-list {
-    left: $u53;
+    padding-left: $u53;
+  }
+}
+
+.app-category-id {
+  .category-list {
+    padding-left: $u12;
+    width: $u76;
   }
 }

@@ -1,0 +1,19 @@
+.todo-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}
+
+.app-category-id {
+  .todo-list {
+    padding-left: $u76;
+  }
+}
+
+.app-todo-id {
+  .todo-list {
+    right: $u90;
+  }
+}

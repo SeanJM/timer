@@ -1,0 +1,14 @@
+.app-todo-id {
+  .todo-editor {
+    width: $u90;
+  }
+}
+
+.todo-editor {
+  position: absolute;
+  right: 0;
+  border-left: 1px solid $grey-light;
+  top: 0;
+  height: 100%;
+  z-index: 5;
+}
