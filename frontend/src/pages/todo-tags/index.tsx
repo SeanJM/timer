@@ -1,9 +1,6 @@
 import React, { Component } from "react";
-import { Button } from "@frontend/components/button";
-import { Input } from "@frontend/components/input";
-import { FormConnect } from "@frontend/components/form";
+import { InputText } from "@frontend/components/input";
 import { RouterProps } from "@frontend/components/router";
-import Titlebar from "@frontend/components/titlebar";
 import Swatch from "@frontend/components/swatch";
 import generateHash from "@generate-hash";
 import { Viewport } from "@frontend/components/viewport";
@@ -16,6 +13,7 @@ import * as pathlist from "@frontend/routes";
 import { List, ListItem } from "@frontend/components/list";
 import Timestamp from "@frontend/components/timestamp";
 import { emptyForm } from "@frontend/action/form";
+import { TitleAndInput, TitleAndInputPassedProps } from "@frontend/components/title-and-input";
 
 const FORM_ID = generateHash();
 const COLOR_PICKER_ID = "tag_name";
@@ -25,6 +23,29 @@ interface Props extends Partial<TagResponse> {
   categoryID: string;
   colorPicker: Partial<ColorPicker>;
   tags: TagResponse[];
+}
+
+interface InputTagNameProps extends TitleAndInputPassedProps {
+  color: string;
+}
+
+function InputTagName(props: InputTagNameProps) {
+  return (
+    <div className="todo-tags-input">
+      <Swatch
+        background={props.color}
+        onClick={() => dispatch("COLOR_PICKER", {
+          type: "OPEN",
+          id: COLOR_PICKER_ID,
+        })}
+      />
+      <InputText
+        className="todo-tags_tag-input"
+        onKeyDown={props.onKeyDown}
+        autofocus={props.autofocus}
+      />
+    </div>
+  );
 }
 
 function mapStateToProps(state: StoreState, props: RouterProps): Props {
@@ -52,14 +73,6 @@ function mapStateToProps(state: StoreState, props: RouterProps): Props {
 class TodoTags extends Component<Props, {}> {
   node: HTMLInputElement;
 
-  addTag() {
-    dispatch("CREATE_TAG", {
-      name: this.props.name,
-      color: this.props.color,
-      categoryID: this.props.categoryID,
-    } as Partial<Props>);
-  }
-
   componentWillReceiveProps(nextProps: Props) {
     if (this.props.colorPicker.isOpen && !nextProps.colorPicker.isOpen && nextProps.colorPicker.value) {
       dispatch("FORM_VALUE", {
@@ -76,38 +89,18 @@ class TodoTags extends Component<Props, {}> {
       <div className="todo-tags">
         <Viewport
           titlebar={
-            <Titlebar left={<h6>{this.props.categoryName}</h6>} />
-          }
-          toolbar={
-            <Titlebar center={
-              <FormConnect id={FORM_ID} onSubmit={() => this.addTag()}>
-                <div className="todo-tags-input">
-                  <Swatch
-                    background={this.props.color}
-                    onClick={() => {
-                      dispatch("COLOR_PICKER", {
-                        type: "OPEN",
-                        id: COLOR_PICKER_ID,
-                      });
-                    }}
-                  />
-                  <Input
-                    className="todo-tags_tag-input"
-                    onRef={(node) => { this.node = node as HTMLInputElement;}}
-                    type="text"
-                    formID={FORM_ID}
-                    name="tagName"
-                    onValue={value => this.setState({ todo: value })}
-                    button={
-                      <Button
-                        icon="add"
-                        onClick={() => this.addTag()}
-                      />
-                    }
-                  />
-                </div>
-              </FormConnect>
-            } />
+            <TitleAndInput
+              title="Tags"
+              component={
+                (props: TitleAndInputPassedProps) =>
+                  InputTagName({ ...props, color: this.props.color })
+              }
+              onValue={(name) => dispatch("CREATE_TAG", {
+                name,
+                color: this.props.color,
+                categoryID: this.props.categoryID,
+              } as Partial<Props>)}
+            />
           }
           body={
             <List>
