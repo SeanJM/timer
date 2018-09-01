@@ -3,12 +3,13 @@ import Service from "@frontend/action/todo/service";
 export default function (subscribe) {
   const service = new Service();
 
-  subscribe("GET_CATEGORIES", function () {
-    service.getCategories();
-  });
-
-  subscribe("TODO_DELETE_CATEGORY", function (e) {
-    service.deleteCategory(e);
+  subscribe("TODO", (e) => {
+    switch (e.type) {
+      case "EDIT": {
+        service.edit(e.value);
+        break;
+      }
+    }
   });
 
   subscribe("ADD_TODO", function (e) {

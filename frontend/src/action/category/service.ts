@@ -1,6 +1,7 @@
 import { store } from "@frontend/store";
 import ajax from "@ajax";
 import { CategoryResponse } from "@types";
+import path from "@path";
 
 export default class Service {
   setName() {
@@ -9,6 +10,34 @@ export default class Service {
         setName: true,
       }
     });
+  }
+
+  getAll() {
+    store.set({
+      todo: {
+        isRequest: true,
+        isSuccess: null,
+      }
+    });
+
+    ajax.get("/category/all")
+      .then((categories: CategoryResponse[]) => {
+        store.set({
+          todo: {
+            categories: categories,
+            isRequest: false,
+            isSuccess: true,
+          }
+        });
+      })
+      .catch(() => {
+        store.set({
+          todo: {
+            isRequest: false,
+            isSuccess: false,
+          }
+        });
+      });
   }
 
   create(e) {
@@ -23,7 +52,7 @@ export default class Service {
       }
     });
 
-    ajax.post("/todo/category", { data: category })
+    ajax.post("/category", { data: category })
       .then((res: CategoryResponse) => {
         store.set({
           todo: {
@@ -40,6 +69,22 @@ export default class Service {
             isSuccess: false,
           }
         });
+      });
+  }
+
+  delete(e) {
+    ajax.post(path.join("/category", e.id), {
+      data: {
+        action: "delete",
+      }
+    })
+      .then(() => {
+        const { categories } = store.value.todo;
+        store.set({
+          todo: {
+            categories: categories.filter(category => category.id !== e.id)
+          }
+        })
       });
   }
 }

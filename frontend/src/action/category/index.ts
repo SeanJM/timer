@@ -9,8 +9,18 @@ export default function (subscribe) {
         break;
       }
 
+      case "GET_ALL": {
+        service.getAll();
+        break;
+      }
+
       case "CREATE": {
         service.create(e);
+        break;
+      }
+
+      case "DELETE": {
+        service.delete(e.value);
         break;
       }
     }
