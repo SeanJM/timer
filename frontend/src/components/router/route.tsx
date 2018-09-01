@@ -3,7 +3,7 @@ import history, { History } from "@frontend/components/router/history";
 import path, { Params } from "@path";
 import { RouterLocation } from "@frontend/components/router";
 
-type AnyComponent = React.ComponentClass;
+type AnyComponent = React.ComponentType;
 
 export interface RouteProps extends Partial<JSX.ElementChildrenAttribute> {
   pathname: string;
@@ -26,7 +26,7 @@ export function Route(props: RouteProps) {
   return (
     <Fragment>
       {C
-        ? React.createElement<RouterProps>(C as React.ComponentClass<RouterProps>, {
+        ? React.createElement(C as React.ComponentType<RouterProps>, {
           history: history,
           params: params,
           location: location,
