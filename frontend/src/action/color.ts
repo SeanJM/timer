@@ -101,8 +101,8 @@ export default function (subscribe) {
   });
 
   subscribe("COLOR_PICKER", function (e: { type: string, value?: string; id: string }) {
-    const items: ColorPicker[] = _.merge([], store.value.color.items);
-    const previousItem = items.find((a) => a.id === e.id);
+    const colorPickers: ColorPicker[] = _.merge([], store.value.color.colorPickers);
+    const previousItem = colorPickers.find((a) => a.id === e.id);
 
     if (e.type === "OPEN") {
       if (previousItem) {
@@ -112,7 +112,7 @@ export default function (subscribe) {
             ? e.value
             : previousItem.value;
       } else {
-        items.push({
+        colorPickers.push({
           value: e.value || "#c18a8a",
           id: e.id,
           isOpen: true,
@@ -120,7 +120,7 @@ export default function (subscribe) {
       }
       store.set({
         color: {
-          items,
+          colorPickers,
         }
       });
     }
@@ -128,13 +128,13 @@ export default function (subscribe) {
 
   subscribe("COLOR_PICKER", function (e: { type: string, id: string, value: string }) {
     if (e.type === "CLOSE") {
-      const items = _.merge([], store.value.color.items);
-      const item: ColorPicker = items.find((a) => a.id === e.id);
+      const colorPickers = _.merge([], store.value.color.colorPickers);
+      const item: ColorPicker = colorPickers.find((a) => a.id === e.id);
       item.isOpen = false;
       item.value = typeof e.value === "string" ? e.value : item.value;
       store.set({
         color: {
-          items,
+          colorPickers,
         }
       });
     }
