@@ -1,0 +1,54 @@
+.title-and-input {
+  position: relative;
+
+  h6 {
+    transition: opacity 0.3s;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .input-wrapper {
+    opacity: 0;
+    transition: opacity 0.3s;
+
+    input {
+      color: $black-lightest;
+      padding: 0 $u2;
+      font-weight: bold;
+    }
+  }
+
+  .input-wrapper_face {
+    background: $grey-lightest;
+    border-bottom: 0;
+    border-radius: 2px;
+  }
+
+
+  .button {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+.title-and-input--show-input {
+  .input-wrapper {
+    opacity: 1;
+  }
+
+  h6 {
+    opacity: 0;
+  }
+}
+
+%title-and-input-dark {
+  .input-wrapper_face {
+    background: $black-lightest;
+  }
+
+  input {
+    color: $grey-lightest;
+  }
+}
