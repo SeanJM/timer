@@ -24,8 +24,8 @@ export default function (router, database: Database) {
       name: "string"
     });
 
-    const element = database.createElement("category", {
-      id: generateHash(6),
+    const element = database.createElement<CategoryElement>("category", {
+      id: generateHash(12),
       name: req.query.name,
     });
 
@@ -34,7 +34,7 @@ export default function (router, database: Database) {
         .getElementById("categories")
         .appendChild(element);
       database.save().then(() => {
-        res.send(element);
+        res.send(toCategoryResponse(element));
       });
     } else {
       res.status(500).send("TODO__INVALID_REQUEST");
