@@ -8,6 +8,6 @@ import Database from "@backend/class/database";
 export default function (app: Express, database: Database) {
   app.use("/category", category(database, app));
   app.use("/todo", todo(database, app));
-  app.use("/tags", tags(database));
+  app.use("/tags", tags(database, app));
   app.use("/color", color(database));
 }
