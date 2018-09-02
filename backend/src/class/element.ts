@@ -77,7 +77,7 @@ function findElementsFromQuery(node: Element, index: number, queryObject: Partia
 }
 
 export default class Element {
-  type: string
+  type: string;
   attributes: ElementAttributes;
   children: Array<ElementChild | undefined>;
   parentNode: Element;
@@ -95,8 +95,8 @@ export default class Element {
     }
   }
 
-  setAttributes(value: { [key in keyof ElementAttributes]: ElementAttributes[key] })
-  setAttributes<T extends keyof ElementAttributes>(name: T, value: ElementAttributes[T])
+  setAttributes(value: { [key in keyof ElementAttributes]: ElementAttributes[key] });
+  setAttributes<T extends keyof ElementAttributes>(name: T, value: ElementAttributes[T]);
   setAttributes() {
     if (typeof arguments[0] === "object") {
       Object.assign(this.attributes, arguments[0]);
@@ -138,12 +138,12 @@ export default class Element {
     return true;
   }
 
-  querySelectorAll(selector: string): Element[] {
+  querySelectorAll<T extends Element>(selector: string): T[] {
     const queryObjectList = querySelectorToObjectList(selector);
     return findElementsFromQuery(this, 0, queryObjectList);
   }
 
-  querySelector(selector: string): null | Element {
+  querySelector<T extends Element>(selector: string): null | T {
     const queryObjectList = querySelectorToObjectList(selector);
     return findElementFromQuery(this, 0, queryObjectList);
   }
