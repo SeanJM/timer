@@ -1,26 +1,17 @@
-import replace from "./replace";
-import replaceReduce from "@path/reduce";
 import join from "./join";
 import normalize from "./normalize";
 import params from "./params";
 import pop from "./pop";
 import push from "./push";
-import splice from "./splice";
+import query from "@path/query";
+import replace from "./replace";
+import reduce from "@path/reduce";
 import slice from "@path/slice";
+import splice from "./splice";
 
 export default function chain(pathname: string) {
   const self = {
     value: pathname,
-
-    replace(template: object) {
-      this.value = replace(this.value, template);
-      return this;
-    },
-
-    replaceReduce(template: object) {
-      this.value = replaceReduce(this.value, template);
-      return this;
-    },
 
     join(...args: string[]) {
       this.value = join(this.value, ...args);
@@ -46,6 +37,20 @@ export default function chain(pathname: string) {
       return this;
     },
 
+    query() {
+      return query(this.value);
+    },
+
+    replace(template: object) {
+      this.value = replace(this.value, template);
+      return this;
+    },
+
+    reduce(template: object) {
+      this.value = reduce(this.value, template);
+      return this;
+    },
+
     splice(member: string, index: number, length?: number) {
       this.value = splice(this.value, member, index, length);
       return this;
@@ -57,4 +62,4 @@ export default function chain(pathname: string) {
     },
   };
   return self;
-};
+}
