@@ -8,6 +8,7 @@ import _replace from "./replace";
 import _reduce from "./reduce";
 import _splice from "./splice";
 import _slice from "./slice";
+import _query from "./query";
 
 export function path(pathname: string) {
   return _chain(pathname);
@@ -24,6 +25,7 @@ export namespace path {
   export const reduce = _reduce;
   export const splice = _splice;
   export const slice = _slice;
+  export const query = _query;
 }
 
 export default path;

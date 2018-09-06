@@ -9,4 +9,4 @@ export default function normalize(pathname: string) {
     }
   }
   return res.join("/");
-};
+}

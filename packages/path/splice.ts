@@ -9,4 +9,4 @@ export default function splice(pathname: string, member: string, index: number, 
     p.chunks.splice(index, length || index, m);
   }
   return p.root + p.chunks.join("/") + "/";
-};
+}
