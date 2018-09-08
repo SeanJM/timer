@@ -10,6 +10,7 @@
     "no-unused-variable": true,
     "no-use-before-declare": true,
     "prefer-object-spread": true,
+    "switch-final-break": true,
     "space-before-function-paren": [true, {
       "anonymous": "always",
       "named": "never",
