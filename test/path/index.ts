@@ -1,6 +1,6 @@
-import path from "@path";
+import path, { PathQuery } from "@path";
 
-export default function (test) {
+export function pathTest(test) {
   test("path.splice", path.splice("/a/b/c/", "d", 1)).isEqual("/a/d/c/");
   test("path.splice", path.splice("/a/b/c/", "d", -1)).isEqual("/a/b/d/");
   test("path.splice", path.splice("/a/b/c/", "d", -2)).isEqual("/a/d/");
@@ -11,6 +11,32 @@ export default function (test) {
   test("path.push (multiple arguments)", path.push("/a/b/c/", "d", "e")).isEqual("/a/b/c/d/e/");
   test("path.replace (/a/:b/:c/)", path.replace("/a/:b/:c/", {b: "t"})).isEqual("/a/t/:c/");
   test("path.reduce (/a/:b/:c/)", path.reduce("/a/:b/:c/", {b: "t"})).isEqual("/a/t/");
+
+  test("PathQuery \"?test=this\"", function () {
+    const query = new PathQuery("?test=this");
+    return query.value;
+  }).isDeepEqual({ test: "this" });
+
+  test("PathQuery \"test=this\"", function () {
+    const query = new PathQuery("test=this");
+    return query.value;
+  }).isDeepEqual({ test: "this" });
+
+  test("PathQuery \"test=this\"", function () {
+    const query = new PathQuery("test=this");
+    query.assign({
+      bear: "monster"
+    });
+    return query.toString();
+  }).isDeepEqual("?bear=monster&test=this");
+
+  test("PathQuery \"test=this\"", function () {
+    const query = new PathQuery();
+    query.assign({
+      animal: [ "bear", "cat", "rabbit" ]
+    });
+    return query.toString();
+  }).isDeepEqual("?animal[]=bear&animal[]=cat&animal[]=rabbit");
 
   test("path.reduce 1 present",
     path.reduce("/:type/:categoryID/:todoID/", {
