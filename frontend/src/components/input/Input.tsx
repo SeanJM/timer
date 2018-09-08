@@ -1,14 +1,20 @@
 import * as React from "react";
-import { InputText } from "@frontend/components/Input/input-text";
-import { InputSwitch } from "@frontend/components/Input/input-switch";
+import { InputText } from "@frontend/components/input/input-text";
+import { InputSwitch } from "@frontend/components/input/input-switch";
+import { InputChipSelect } from "@frontend/components/input/input-chip-select";
 import { dispatch } from "@frontend/action";
 
 const BYTYPE = {
   text: InputText,
   switch: InputSwitch,
+  "chip-select": InputChipSelect,
 };
 
-export type InputType = | "text" | "switch"
+export type InputType =
+  | "text"
+  | "switch"
+  | "chip-select"
+  ;
 
 export type InputEvents = {
   onFocus?: (e: React.FormEvent) => void;
@@ -35,7 +41,9 @@ export function Input(props: InputProps) {
   const InputType = BYTYPE[props.type];
   return (
     <InputType {...props} onValue={(value) => {
-      onValue && onValue(value);
+      if (onValue) {
+        onValue(value);
+      }
       if (props.formID && props.name) {
         dispatch("FORM_VALUE", {
           type: props.type,
