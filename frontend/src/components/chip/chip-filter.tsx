@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { ChipData } from "./chip-types";
 import { ChipSelect } from "./chip-select";
+import _ from "lodash";
 
 export interface ChipFilterProps {
   data: ChipData[];
@@ -20,10 +21,22 @@ export class ChipFilter extends Component<ChipFilterProps, ChipFilterState> {
     };
   }
 
-  componentDidMount() {
+  onValue() {
     const { onValue } = this.props;
     if (onValue) {
       onValue(this.state.value);
+    }
+  }
+
+  componentDidMount() {
+    this.onValue();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!_.isEqual(prevProps.defaultValue, this.props.defaultValue)) {
+      this.setState({
+        value: this.props.defaultValue
+      }, () => this.onValue());
     }
   }
 
