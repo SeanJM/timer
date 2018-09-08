@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { InputText } from "@frontend/components/input";
-import { RouterProps } from "@frontend/components/router";
+import { WithRouterProps } from "@frontend/components/router";
 import Swatch from "@frontend/components/swatch";
 import generateHash from "@generate-hash";
 import { Viewport } from "@frontend/components/viewport";
@@ -15,6 +15,7 @@ import Timestamp from "@frontend/components/timestamp";
 import { emptyForm } from "@frontend/action/form";
 import { TitleAndInput, TitleAndInputPassedProps } from "@frontend/components/title-and-input";
 import Titlebar from "@frontend/components/titlebar";
+import { Button } from "@frontend/components/button";
 
 const FORM_ID = generateHash();
 const COLOR_PICKER_ID = "tag_name";
@@ -51,7 +52,7 @@ function InputTagName(props: InputTagNameProps) {
   );
 }
 
-function mapStateToProps(state: StoreState, props: RouterProps): Props {
+function mapStateToProps(state: StoreState, props: WithRouterProps): Props {
   const params = path.params(props.location.pathname, pathlist.pathname);
   const category = state.todo.categories.find(a => a.id === params.categoryID);
   const form = state.form[FORM_ID] || emptyForm(FORM_ID);
@@ -120,6 +121,13 @@ class TodoTags extends Component<Props, {}> {
                         }}
                       />
                     }
+                    control={<Button icon="close" onClick={() => dispatch("TAG", {
+                      type: "DELETE",
+                      value: {
+                        categoryID: this.props.categoryID,
+                        tagID: tag.id,
+                      }
+                    })}/>}
                     timestamp={<Timestamp>{tag.created}</Timestamp>}
                     key={tag.id}>
                   </ListItem>
