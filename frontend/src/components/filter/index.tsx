@@ -19,7 +19,7 @@ function isVisible(props: FilterProps, child: JSX.Element): boolean {
   return true;
 }
 
-export default function Filter(props: FilterProps) {
+export function Filter(props: FilterProps) {
   const children = React.Children.toArray(props.children);
   return (
     <Fragment>
