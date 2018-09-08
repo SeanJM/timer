@@ -4,7 +4,7 @@ import { ColorPicker, ColorState } from "@types";
 import { dispatch } from "@frontend/action/";
 import blush from "blush";
 import { Button } from "@frontend/components/button";
-import Control from "@frontend/components/control";
+import { Control } from "@frontend/components/control";
 import ColorPickerSwatch from "./color-picker-swatch";
 import ColorPickerPalette from "@frontend/components/color-picker/color-picker-palette";
 import { HueSlider, LightnessSlider, SaturationSlider } from "./hsl-sliders";
@@ -163,7 +163,7 @@ class ColorPickerSpawn extends React.Component<Partial<PickerProps>, Pick<ColorP
               value={colorPickerItem.value}
               pageY={this.state.pageY}
               pageX={this.state.pageX}
-            />)
+            />);
           })}
       </Fragment>
     );
