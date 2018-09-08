@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@frontend/components/button";
-import Control from "@frontend/components/control";
+import { Control } from "@frontend/components/control";
 import { ListItem } from "@frontend/components/list";
 import path from "@path";
 import { dispatch } from "@frontend/action/";
@@ -60,7 +60,7 @@ function ButtonUndone(props: { id: string, categoryID: string }) {
   );
 }
 
-export default function Todo(props: TodoProps) {
+export function Todo(props: TodoProps) {
   const className = ["todo"];
   className.push("todo-" + props.state);
   return (
