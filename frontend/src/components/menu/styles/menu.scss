@@ -25,7 +25,7 @@
   font-size: $font-size;
   line-height: $line-height;
   color: $grey-light;
-  padding: $u3 $u3;
+  padding: $u3 $u3 $u3 $u4;
   border-bottom: 1px solid $black-light;
 }
 
@@ -51,4 +51,17 @@
   position: absolute;
   right: $u2;
   top: 0;
+}
+
+.menu-item--selected {
+  color: $primary;
+  &:after {
+    position: absolute;
+    content: "";
+    left: 0;
+    bottom: 0;
+    top: 0;
+    width: $u;
+    background: $primary;
+  }
 }

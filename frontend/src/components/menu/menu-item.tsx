@@ -2,6 +2,7 @@ import React from "react";
 
 interface Props {
   title: string;
+  isSelected?: boolean;
   className?: string;
   control?: JSX.Element;
   onClick?: (e: React.MouseEvent) => void;
@@ -16,6 +17,10 @@ export function MenuItem(props: Props) {
 
   if (props.control) {
     className.push("menu-item-control");
+  }
+
+  if (props.isSelected) {
+    className.push("menu-item--selected");
   }
 
   return (
