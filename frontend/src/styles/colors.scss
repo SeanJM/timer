@@ -9,7 +9,7 @@ $black: darken(desaturate($blue, 5%), 36%);
 $black-light: desaturate(lighten($black, 11%), 20%);
 $black-lightest: desaturate(lighten($black, 18%), 20%);
 $grey: desaturate($blue, 52%);
-$grey-light: lighten($grey, 23%);
+$grey-light: lighten($grey, 24%);
 $grey-lightest: lighten($grey, 48%);
 $primary: $blue;
 $primary-light: $blue-light;
