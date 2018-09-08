@@ -3,16 +3,16 @@ import { withStore, StoreState } from "@frontend/store";
 import { routes } from "@frontend/routes";
 import { Icon , IconType } from "@frontend/components/icon";
 import { AppMenuMappedProps } from "@frontend/pages/type-menu";
-import path, { Params } from "@path";
+import path, { PathParams } from "@path";
 
 import {
-  History,
+  RouterHistory,
   RouterLocation,
   withRouter,
 } from "@frontend/components/router";
 
 export interface AppMenuProps {
-  history: History;
+  history: RouterHistory;
   location: RouterLocation;
   params: MenuParams;
 }
@@ -21,7 +21,7 @@ export interface AppMenuMappedProps extends AppMenuProps {
   todo: StoreState["todo"];
 }
 
-interface MenuParams extends Params {
+interface MenuParams extends PathParams {
   type: string;
 }
 
@@ -50,10 +50,10 @@ export class AppMenuView extends React.Component<AppMenuMappedProps, {}> {
 interface AppMenuCategoriesItemProps {
   isSelected: boolean;
   icon: IconType;
-  history: History;
+  history: RouterHistory;
   location: RouterLocation;
   label: string;
-  type: "todo" | "tags"
+  type: "todo" | "tags";
 }
 
 function AppMenuCategoriesItem(props: AppMenuCategoriesItemProps) {
@@ -89,7 +89,7 @@ function AppMenuCategoriesItem(props: AppMenuCategoriesItemProps) {
   );
 }
 
-export default function AppMenuCategories(props: Pick<AppMenuMappedProps, "params" | "history" | "location">) {
+export function AppMenuCategories(props: Pick<AppMenuMappedProps, "params" | "history" | "location">) {
   const location = props.location;
   const params = path.params(location.pathname, routes.pathname);
   return (
