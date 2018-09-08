@@ -12,6 +12,7 @@ interface Props {
 
 interface State {
   showAdd: boolean;
+  value: undefined | string;
 }
 
 export interface TitleAndInputPassedProps {
@@ -22,12 +23,20 @@ export interface TitleAndInputPassedProps {
 }
 
 export class TitleAndInput extends Component<Props, State> {
-  value: any;
   constructor(props) {
     super(props);
     this.state = {
       showAdd: true,
+      value: this.props.defaultValue,
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.defaultValue !== this.props.defaultValue) {
+      this.setState({
+        value: this.props.defaultValue
+      });
+    }
   }
 
   render() {
@@ -44,17 +53,21 @@ export class TitleAndInput extends Component<Props, State> {
           ? null
           : React.createElement(this.props.component, {
             autofocus: true,
-            defaultValue: this.value || this.props.defaultValue,
+            defaultValue: this.state.value || this.props.defaultValue,
             onValue: (value: any) => {
-              this.value = value;
+              this.setState({
+                value
+              });
             },
             onKeyDown: (e: any) => {
               if (e.which === 13) {
                 this.setState({
                   showAdd: true,
                 });
-                this.props.onSubmit(this.value);
-                this.value = undefined;
+                this.props.onSubmit(this.state.value);
+                this.setState({
+                  value: undefined
+                });
               } else if (e.which === 27) {
                 this.setState({
                   showAdd: true,
@@ -69,7 +82,7 @@ export class TitleAndInput extends Component<Props, State> {
               onClick={() => {
                 this.setState({
                   showAdd: false,
-                })
+                });
               }}
             />
           )
@@ -79,7 +92,7 @@ export class TitleAndInput extends Component<Props, State> {
             onClick={() => {
               this.setState({
                 showAdd: true,
-              })
+              });
             }}
           />
           )
