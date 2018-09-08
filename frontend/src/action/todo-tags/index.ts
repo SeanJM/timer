@@ -1,4 +1,4 @@
-import Service from "./service";
+import { Service } from "./service";
 const service = new Service();
 
 export function todoTags(subscribe) {
