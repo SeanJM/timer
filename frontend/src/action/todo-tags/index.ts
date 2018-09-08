@@ -1,5 +1,14 @@
 import Service from "./service";
 const service = new Service();
-export default function (subscribe) {
+
+export function todoTags(subscribe) {
   subscribe("CREATE_TAG", (e) => service.createTag(e));
+  subscribe("TAG", (e) => {
+    switch (e.type) {
+      case "DELETE": {
+        service.delete(e.value);
+        break;
+      }
+    }
+  });
 }
