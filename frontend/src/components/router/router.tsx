@@ -40,8 +40,6 @@ export function RouterView(props: WithRouterProps) {
   const partialGetRouted = getRoutedComponent(props);
   const displayedRoutes = routes.filter(routeIsMatch).map(partialGetRouted);
 
-  console.log(displayedRoutes);
-
   return (
     <Fragment>
       {displayedRoutes.length
