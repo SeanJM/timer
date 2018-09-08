@@ -1,0 +1,9 @@
+form.form--borderless {
+  .input-group {
+    .input-wrapper,
+    label {
+      padding-left: $u2;
+      padding-right: $u2;
+    }
+  }
+}

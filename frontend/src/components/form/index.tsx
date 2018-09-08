@@ -5,11 +5,12 @@ function mapStateToProps(state, props) {
   return {
     ...state.form[props.id],
     ...props,
-  }
+  };
 }
 
 interface FormProps extends JSX.ElementChildrenAttribute {
   id?: string;
+  type?: "borderless";
   showValidation?: boolean;
   onSubmit?: (e: React.FormEvent) => void;
 }
@@ -22,12 +23,18 @@ export function Form(props: FormProps) {
     className.push("form--show-validation");
   }
 
+  if (props.type) {
+    className.push("form--" + props.type);
+  }
+
   return (
     <form
       className={className.join(" ")}
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit && onSubmit(e);
+        if (onSubmit) {
+          onSubmit(e);
+        }
       }}
     >
       {props.children}
