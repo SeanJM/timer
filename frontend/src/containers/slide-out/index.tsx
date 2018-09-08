@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { withStore, StoreState } from "@frontend/store";
-import { withRouter, RouterProps } from "@frontend/components/router";
+import { withRouter, WithRouterProps } from "@frontend/components/router";
 import { Viewport } from "@frontend/components/viewport";
 import path from "@path";
 import anime from "animejs";
@@ -10,11 +10,10 @@ const BY_TYPE: {
 } = {
 };
 
-
 interface ServiceProps extends
   Partial<StoreState["slideOut"]>,
-  Pick<RouterProps, "history" | "location"> {
-  history: RouterProps["history"]
+  Pick<WithRouterProps, "history" | "location"> {
+  history: WithRouterProps["history"];
 }
 
 interface SlideOutProps {
@@ -22,7 +21,7 @@ interface SlideOutProps {
   body?: JSX.Element;
 }
 
-function mapStateToProps(state: StoreState, props: RouterProps): ServiceProps {
+function mapStateToProps(state: StoreState, props: WithRouterProps): ServiceProps {
   return {
     type: state.slideOut.type,
     value: state.slideOut.value,
