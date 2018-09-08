@@ -70,23 +70,29 @@ export interface TagElement extends Element {
     id: string;
     color: string;
     created: number;
-  }
+  };
   children: any[];
 }
 
 export interface TodoElement extends
   Element {
   type: "todo";
-  attributes: Pick<Element["attributes"], "id" | "created" | "name" | "state">;
+  attributes: Pick<Element["attributes"],
+  | "id"
+  | "created"
+  | "name"
+  | "state"
+  > & { tags: string[] };
   children: any[];
 }
 
 export type TodoResponse =
-  Pick<Element["attributes"],
+  Pick<TodoElement["attributes"],
     | "id"
     | "created"
     | "name"
     | "state"
+    | "tags"
   >;
 
 export interface Keys {
