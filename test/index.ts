@@ -3,7 +3,7 @@ import url from "./url";
 import components from "./components";
 import database from "./database";
 import element from "./element";
-import path from "./path";
+import {pathTest} from "./path";
 import packages from "./packages";
 
 let settings = {
@@ -16,11 +16,11 @@ let settings = {
 };
 
 tinyTest(function (test, load) {
-  if (settings.components) components(test);
-  if (settings.database) database(test);
-  if (settings.element) element(test);
-  if (settings.packages) packages(test);
-  if (settings.path) path(test);
-  if (settings.url) url(test);
+  if (settings.components) { components(test); }
+  if (settings.database) { database(test); }
+  if (settings.element) { element(test); }
+  if (settings.packages) { packages(test); }
+  if (settings.path) { pathTest(test); }
+  if (settings.url) { url(test); }
   load();
 });
