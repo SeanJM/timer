@@ -39,13 +39,13 @@ const ajax = {
     if (process.env.NODE_ENV === "development") {
       log("POST", url, params.data);
     }
+
     return new Promise(function (resolve, reject) {
       const req = new XMLHttpRequest();
       wrapXMLRequest(url, req, resolve, reject);
+      req.open("POST", getURL(url, params && params.data));
+      req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       // Send the proper header information along with the request
-      console.log(getURL(url, params.data));
-      req.open("POST", getURL(url, params.data));
-      req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
       req.send();
     });
   },
@@ -128,7 +128,13 @@ function wrapXMLRequest(url: string, req: XMLHttpRequest, resolve: (any) => void
 function getURL(url: string, data?: Params["data"]) {
   const paramsString = [];
   for (var k in data) {
-    paramsString.push(k + "=" + data[k]);
+    if (data[k]) {
+      if (data[k].constructor === Array) {
+        data[k].forEach((member) => paramsString.push(k + "[]=" + member));
+      } else {
+        paramsString.push(k + "=" + data[k]);
+      }
+    }
   }
   return url + encodeURI((paramsString.length ? "?" + paramsString.join("&") : ""));
 }
