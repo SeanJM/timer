@@ -6,18 +6,18 @@ import { MenuItem } from "@frontend/components/menu";
 import { dispatch } from "@frontend/action/";
 
 import {
-  History,
+  RouterHistory,
   RouterLocation,
   withRouter,
 } from "@frontend/components/router";
 
-import path, { Params } from "@path";
+import path, { PathParams } from "@path";
 import { routes } from "@frontend/routes";
 import { TitleAndInput } from "@frontend/components/title-and-input";
 import { InputText } from "@frontend/components";
 
 export interface AppMenuProps {
-  history: History;
+  history: RouterHistory;
   location: RouterLocation;
   params: MenuParams;
   setCategoryName: boolean;
@@ -27,7 +27,7 @@ export interface AppMenuMappedProps extends AppMenuProps {
   todo: StoreState["todo"];
 }
 
-interface MenuParams extends Params {
+interface MenuParams extends PathParams {
   type: "todo" | "tags";
   categoryID: string;
 }
