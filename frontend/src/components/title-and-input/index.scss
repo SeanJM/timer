@@ -12,19 +12,21 @@
     opacity: 0;
     transition: opacity 0.3s;
 
+    &:after {
+      background: 0;
+    }
+
     input {
       color: $black-lightest;
-      padding: 0 $u2;
+      padding: 0 $u3;
       font-weight: bold;
     }
   }
 
   .input-wrapper_face {
     background: $grey-lightest;
-    border-bottom: 0;
     border-radius: 2px;
   }
-
 
   .button {
     position: absolute;
