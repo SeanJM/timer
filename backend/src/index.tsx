@@ -1,8 +1,8 @@
-import "source-map-support/register"
+import "source-map-support/register";
 import * as path from "path";
 import bodyParser = require("body-parser");
 import express = require("express");
-import routes from "@backend/routes";
+import { routes } from "@backend/routes";
 import page from "@backend/page";
 import Database from "@backend/class/database";
 
