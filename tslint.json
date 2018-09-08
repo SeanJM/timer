@@ -1,0 +1,21 @@
+{
+  "rules": {
+    "curly": true,
+    "no-consecutive-blank-lines": true,
+    "no-default-export": true,
+    "no-duplicate-super": true,
+    "no-empty-interface": true,
+    "no-unnecessary-type-assertion": [true],
+    "no-unused-expression": true,
+    "no-unused-variable": true,
+    "no-use-before-declare": true,
+    "prefer-object-spread": true,
+    "space-before-function-paren": [true, {
+      "anonymous": "always",
+      "named": "never",
+      "asyncArrow": "always"
+    }],
+    "indent": [true, "spaces", 2],
+    "semicolon": true
+  }
+}
