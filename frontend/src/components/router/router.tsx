@@ -5,7 +5,11 @@ import path from "@path";
 import getPathname from "@frontend/components/router/get-pathname";
 import { WithRouterProps } from "@frontend/components/router";
 
-export interface RouterProps extends Partial<JSX.ElementChildrenAttribute> {}
+export interface RouterProps {
+  baseurl?: string;
+}
+
+interface MergedRouterProps extends WithRouterProps, RouterProps {}
 
 function routeIsMatch(element: ReactElement<RouteProps>) {
   const { exact } = element.props;
@@ -16,21 +20,28 @@ function routeIsMatch(element: ReactElement<RouteProps>) {
 }
 
 const getRoutedComponent =
-  (props: WithRouterProps) =>
+  (routerProps: MergedRouterProps) =>
   (routeElement: ReactElement<RouteProps>, index?: number) => {
-  const RoutedComponent = routeElement.props.component;
-  const { pathname } = routeElement.props;
-  const params = path.params(props.location.pathname, pathname);
-  return (
-    <RoutedComponent
-      key={index}
-      history={props.history}
-      location={props.location}
-      params={params}
-      query={props.query}
-    />
-  );
-};
+    const RoutedComponent =
+      routeElement.props.component;
+
+    const pathname = routerProps.baseurl
+      ? path.join(routerProps.baseurl, routeElement.props.pathname)
+      : routeElement.props.pathname;
+
+    const params =
+      path.params(routerProps.location.pathname, pathname);
+
+    return (
+      <RoutedComponent
+        key={index}
+        history={routerProps.history}
+        location={routerProps.location}
+        params={params}
+        query={routerProps.query}
+      />
+    );
+  };
 
 export function RouterView(props: WithRouterProps) {
   const routes = React.Children.toArray(props.children).filter((element) => {
@@ -50,4 +61,11 @@ export function RouterView(props: WithRouterProps) {
   );
 }
 
-export const Router = withRouter<{}>(RouterView);
+/**
+ * Router
+ * ---
+ * The router view controls how its children (Route) are displayed
+ * it has an optional 'baseurl' property so that routers can be
+ * more modular
+ */
+export const Router = withRouter<RouterProps>(RouterView);
