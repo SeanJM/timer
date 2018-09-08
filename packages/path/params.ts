@@ -4,7 +4,7 @@ function isMatch(schema: any, url: any) {
   return schema === url || (!!schema && !!url && schema[0] === ":");
 }
 
-export interface Params {
+export interface PathParams {
   _isExact: boolean;
   _isMatch: boolean;
   _pathname: string[];
@@ -12,11 +12,12 @@ export interface Params {
   [key: string]: any;
 }
 
-export default function params<T>(pathname: string = "", schema: string = ""): T & Params {
+// tslint:disable-next-line:no-default-export
+export default function params<T>(pathname: string = "", schema: string = ""): T & PathParams {
   const urlPathname = parse(pathname).chunks;
   const schemaPathname = parse(schema).chunks;
 
-  const params: Params = {
+  const params: PathParams = {
     _isExact: true,
     _isMatch: true,
     _pathname: urlPathname,
@@ -40,5 +41,5 @@ export default function params<T>(pathname: string = "", schema: string = ""): T
     }
   }
 
-  return params as T & Params;
+  return params as T & PathParams;
 }
