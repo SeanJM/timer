@@ -17,7 +17,8 @@ export function toTodoResponse(todoElement: TodoElement): TodoResponse {
     created: todoElement.attributes.created,
     name: todoElement.attributes.name,
     state: todoElement.attributes.state,
-  }
+    tags: todoElement.attributes.tags,
+  };
 }
 
 export interface TodoRequestQuery {
@@ -49,6 +50,7 @@ function createTodo(req: TodoRequest, res: Response, database: Database) {
       id: generateHash(6),
       name: req.query.name,
       state: "incomplete",
+      tags: [],
       created: new Date().getTime(),
     });
 
@@ -76,9 +78,9 @@ function deleteTodo(req: TodoRequest, res: Response, database) {
     res.send();
     database.save();
   } else if (!categoryElement) {
-    res.status(404).send(CATEGORY_NOT_FOUND)
+    res.status(404).send(CATEGORY_NOT_FOUND);
   } else {
-    res.status(404).send(TODO_NOT_FOUND)
+    res.status(404).send(TODO_NOT_FOUND);
   }
 }
 
@@ -133,7 +135,7 @@ function editTodo(req: TodoRequest, res, database: Database) {
 
   if (todoElement) {
     todoElement.setAttributes(
-      _.pick(req.query, ["name"])
+      _.pick(req.query, ["name", "tags"])
     );
     res.send(toTodoResponse(todoElement));
     database.save();
@@ -148,6 +150,7 @@ function onPost(req: TodoRequest, res, database: Database) {
   const queryValidator =
     new Validate({
       "name?": "string",
+      "tags?": "Array<string|undefined>",
       "id?": "string",
       action: "create|delete|complete|incomplete|edit",
     });
@@ -156,7 +159,7 @@ function onPost(req: TodoRequest, res, database: Database) {
     if (req.query.action === "create") {
       createTodo(req, res, database);
     } else if (req.query.action === "delete") {
-      deleteTodo(req, res, database)
+      deleteTodo(req, res, database);
     } else if (req.query.action === "complete") {
       completeTodo(req, res, database);
     } else if (req.query.action === "incomplete") {
