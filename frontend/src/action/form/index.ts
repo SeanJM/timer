@@ -1,4 +1,4 @@
-import Service from "@frontend/action/form/service";
+import { Service } from "@frontend/action/form/service";
 export * from "./service";
 const service = new Service();
 
