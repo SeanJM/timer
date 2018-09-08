@@ -30,7 +30,7 @@ export default class Service {
                 tags: category.tags.map(tag => {
                   return {
                     ...tag,
-                    color: "#" + tag.color,
+                    color: tag.color ? "#" + tag.color : null,
                   };
                 }),
               };
