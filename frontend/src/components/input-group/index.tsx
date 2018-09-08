@@ -3,20 +3,20 @@ import { Label } from "@frontend/components/label";
 import { dispatch } from "@frontend/action";
 import { InputOnValue } from "types";
 
-interface InputLabelProps extends JSX.ElementChildrenAttribute {
-  formID: string;
+export interface InputGroupProps extends JSX.ElementChildrenAttribute {
+  formid: string;
   name: string;
   required?: boolean;
 }
 
 interface InputGroupInputChildProps {
-  formID: string,
+  formid: string;
   required: boolean;
-  onValue: InputOnValue,
+  onValue: InputOnValue;
 }
 
-export function InputGroup(props: InputLabelProps) {
-  const { formID, required } = props;
+export function InputGroup(props: InputGroupProps) {
+  const { formid, required, name } = props;
   const children = React.Children.toArray(props.children) as JSX.Element[];
 
   const className = [
@@ -27,28 +27,31 @@ export function InputGroup(props: InputLabelProps) {
     <div className={className.join(" ")}>
       {
         children.map((child) => {
-          if (child.type === Label) {
-            React.cloneElement(child, {
+          if (child.type === Label || child.type === "label") {
+            return React.cloneElement(child, {
               required,
             });
           } else {
             let inputGroupInputChildProps: InputGroupInputChildProps = {
-              formID,
+              formid,
               required,
               onValue: (value: any, type: string) => {
-                const { onValue, name } = child.props;
-                if (props.formID) {
+                const { onValue } = child.props;
+                if (props.formid) {
                   dispatch("FORM_VALUE", {
                     type,
                     value,
                     name,
-                    formID,
+                    id: formid,
                   });
                 }
-                onValue && onValue(value, name);
+
+                if (onValue) {
+                  onValue(value, name);
+                }
               }
             };
-            React.cloneElement(child, inputGroupInputChildProps);
+            return React.cloneElement(child, inputGroupInputChildProps);
           }
         })
       }
