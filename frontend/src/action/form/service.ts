@@ -12,7 +12,7 @@ const validators = {
 };
 
 const errorMessage = {
-  Text: "Invalid value"
+  string: "Invalid value"
 };
 
 interface FormValueEvent {
@@ -31,14 +31,20 @@ export function emptyForm(id: string): StoreForm {
   };
 }
 
-export default class Service {
+export class Service {
   constructor() {
 
   }
 
+  clear(value) {
+    store.set({
+      form: { [value.id]: undefined },
+    });
+  }
+
   value(e: FormValueEvent) {
     const formElement: StoreForm = store.value.form[e.id] || emptyForm(e.id);
-    const type = e.type ? e.type[0].toUpperCase() + e.type.substring(1) : "Any";
+    const type = e.type || "any";
     const isValid = e.type ? new Validator(type, validators).validate(e.value).isValid : true;
     let input = formElement.input[e.name];
 
