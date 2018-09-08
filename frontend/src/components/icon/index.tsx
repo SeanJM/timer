@@ -10,6 +10,7 @@ export type IconType =
   | "folder-add"
   | "folder"
   | "history-back"
+  | "save"
   | "tag"
   ;
 
@@ -19,7 +20,7 @@ interface IconProps {
   type: IconType;
 }
 
-export default function (props: IconProps) {
+export function Icon(props: IconProps) {
   return (
     <svg className="icon" style={{fill: props.fill}}>
       <use href={"#icon-" + props.type}></use>
