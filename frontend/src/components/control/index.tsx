@@ -4,7 +4,7 @@ interface Props extends Partial<JSX.ElementChildrenAttribute> {
   className?: string;
 }
 
-export default function Control(props: Props) {
+export function Control(props: Props) {
   const className = ["control"];
 
   if (props.className) {
