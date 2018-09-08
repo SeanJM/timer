@@ -16,11 +16,11 @@ function routeIsMatch(element: ReactElement<RouteProps>) {
 }
 
 const getRoutedComponent =
-  (props: WithRouterProps) => (routeElement: ReactElement<RouteProps>, index?: number) => {
+  (props: WithRouterProps) =>
+  (routeElement: ReactElement<RouteProps>, index?: number) => {
   const RoutedComponent = routeElement.props.component;
   const { pathname } = routeElement.props;
   const params = path.params(props.location.pathname, pathname);
-  console.log(RoutedComponent);
   return (
     <RoutedComponent
       key={index}
