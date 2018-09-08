@@ -7,7 +7,7 @@ interface ListProps extends Partial<JSX.ElementChildrenAttribute> {
 
 interface ListItemProps extends Partial<JSX.ElementChildrenAttribute> {
   primaryAction?: JSX.Element;
-  secondaryAction?: JSX.Element;
+  control?: JSX.Element;
   timestamp?: JSX.Element;
   body?: JSX.Element;
   feet?: JSX.Element;
@@ -27,7 +27,7 @@ export function ListItem(props: ListItemProps) {
     className.push("list-item-primary-action");
   }
 
-  if (props.secondaryAction) {
+  if (props.control) {
     className.push("list-item-secondary-action");
   }
 
@@ -44,8 +44,8 @@ export function ListItem(props: ListItemProps) {
       {props.to
         ? <Link className="list-item_link" to={props.to} />
         : null}
-      {props.secondaryAction
-        ? <div className="list-item_secondary-action">{props.primaryAction}</div>
+      {props.control
+        ? <div className="list-item_control">{props.control}</div>
         : null}
       {props.title
         ? <div className="list-item_title"><h6>{props.title}</h6></div>
