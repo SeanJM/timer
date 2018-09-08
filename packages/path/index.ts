@@ -1,3 +1,5 @@
+// tslint:disable:no-default-export
+
 import _chain from "./chain";
 import _join from "./join";
 import _normalize from "./normalize";
@@ -30,3 +32,4 @@ export namespace path {
 
 export default path;
 export * from "./params";
+export * from "./query";
