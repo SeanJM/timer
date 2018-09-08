@@ -58,6 +58,13 @@
   z-index: 1;
 }
 
+.list-item_control {
+  position: absolute;
+  right: $u2;
+  top: $u2;
+  z-index: 1;
+}
+
 .list-item_link {
   position: absolute;
   left: 0;
