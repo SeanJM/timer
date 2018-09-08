@@ -24,12 +24,18 @@ export class InputText extends Component<InputTextProps, InputTextState> {
     };
   }
 
-  componentDidMount() {
+  onValue() {
     const { onValue } = this.props;
+    if (onValue) {
+      onValue(this.node.value);
+    }
+  }
+
+  componentDidMount() {
     if (this.props.autofocus) {
       this.node.focus();
     }
-    onValue && onValue(this.node.value);
+    this.onValue();
   }
 
   render() {
@@ -40,7 +46,6 @@ export class InputText extends Component<InputTextProps, InputTextState> {
       onInput,
       onKeyDown,
       onValue,
-      onRef,
       className,
     } = this.props;
 
@@ -55,12 +60,15 @@ export class InputText extends Component<InputTextProps, InputTextState> {
           defaultValue={this.props.defaultValue}
           ref={(node) => {
             this.node = node;
-            onRef && onRef(node);
           }}
           onInput={(e) => {
             const value = (e.target as HTMLInputElement).value.trim();
-            onInput && onInput(e);
-            onValue && onValue(value);
+            if (onInput) {
+              onInput(e);
+            }
+            if (onValue) {
+              onValue(value);
+            }
           }}
           onFocus={(e) => onFocus && onFocus(e)}
           onBlur={(e) => onBlur && onBlur(e)}
