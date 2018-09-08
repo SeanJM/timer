@@ -1,67 +1,59 @@
 import React from "react";
-import history, { History } from "@frontend/components/router/history";
+import history, { RouterHistory } from "@frontend/components/router/history";
 import getLocation from "@frontend/components/router/get-location";
-import path, { Params } from "@path";
+import path from "@path";
 import { RouterLocation } from "@frontend/components/router/types";
+import { PathQueryValue } from "@path/query";
 
-interface WithRouterProps {
-  pathname?: string;
-  exact?: boolean;
-}
+export interface WithRouterProps extends
+  Partial<JSX.ElementChildrenAttribute>
+  {
+    location: RouterLocation;
+    query: PathQueryValue;
+    history: RouterHistory;
+  }
 
-export interface WithRouterComponentProps extends Partial<JSX.ElementChildrenAttribute> {
-  history: History;
-  location: Partial<RouterLocation>;
-  params: Partial<Params>;
-}
+interface State extends Pick<WithRouterProps, "location" | "query"> {}
 
-interface State {
-  params: Partial<Params>;
-  location: Partial<RouterLocation>
-};
-
-export function withRouter<P extends Partial<WithRouterComponentProps>>(C: React.ComponentType<P>) {
-  return class extends React.Component<WithRouterProps, State> {
-    update: () => void;
-
+export function withRouter<P>(C: React.ComponentType<P>) {
+  return class extends React.Component<P, State> {
     constructor(props) {
+      const location = getLocation(window.location.hash.substring(1));
       super(props);
       this.state = {
-        params: {},
-        location: {}
+        location,
+        query: {}
       };
+    }
+
+    handleEvent() {
+      const location = getLocation(window.location.hash.substring(1));
+      let query = path.query(location.pathname).value;
+      this.setState({
+        location,
+        query,
+      });
     }
 
     componentDidMount() {
-      this.update = () => {
-        const location = getLocation(window.location.hash.substring(1));
-        let params = path.params(location.pathname, this.props.pathname);
-        this.setState({
-          params,
-          location,
-        });
-      };
-
-      window.addEventListener("hashchange", this.update);
-      this.update();
+      window.addEventListener("hashchange", this);
     }
 
     componentWillUnmount() {
-      window.removeEventListener("hashchange", this.update);
+      window.removeEventListener("hashchange", this);
     }
 
     render() {
-      const props = {
-        ...this.props,
-        history,
-        location: this.state.location,
-        params: this.state.params,
-      };
+      const props = Object.assign({},
+        this.props,
+        this.state,
+        { history }
+      );
       return (
         <C {...props}>
           {this.props.children}
         </C>
       );
     }
-  }
-};
+  };
+}

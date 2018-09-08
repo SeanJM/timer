@@ -1,38 +1,20 @@
+import { PathParams, PathQueryValue } from "@path";
+import { RouterHistory, RouterLocation } from "@frontend/components/router";
 import React, { Fragment } from "react";
-import history, { History } from "@frontend/components/router/history";
-import path, { Params } from "@path";
-import { RouterLocation } from "@frontend/components/router";
 
-type AnyComponent = React.ComponentType;
-
-export interface RouteProps extends Partial<JSX.ElementChildrenAttribute> {
-  pathname: string;
-  exact?: boolean;
-  component?: AnyComponent;
-  location?: RouterLocation;
-  filter?: (location: RouterLocation) => boolean;
+export interface RouteComponentProps {
+  history: RouterHistory;
+  location: RouterLocation;
+  params: PathParams;
+  query: PathQueryValue;
 }
 
-export interface RouterProps {
-  history: History,
-  params: Params,
-  location: RouterLocation,
+export interface RouteProps {
+  component: React.ComponentType<Partial<RouteComponentProps>>;
+  pathname?: string;
+  exact?: boolean;
 }
 
 export function Route(props: RouteProps) {
-  const C = props.component;
-  const location = history.last();
-  const params = path.params(location.pathname, props.pathname);
-  return (
-    <Fragment>
-      {C
-        ? React.createElement(C as React.ComponentType<RouterProps>, {
-          history: history,
-          params: params,
-          location: location,
-        })
-        : null}
-      {props.children}
-    </Fragment>
-  );
+  return <Fragment/>;
 }

@@ -1,5 +1,5 @@
 export interface RouterLocation {
-  search: object | null;
+  search: string | null;
   pathname: string;
   hash: string | null;
 }
