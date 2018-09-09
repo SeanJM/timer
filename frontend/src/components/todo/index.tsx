@@ -6,8 +6,10 @@ import path from "@path";
 import { dispatch } from "@frontend/action/";
 import Timestamp from "@frontend/components/timestamp";
 import { routes } from "@frontend/routes";
+import { RouterHistory } from "@frontend/components/router";
 
 interface TodoProps {
+  history: RouterHistory;
   state: string;
   name: string;
   categoryID: string;
@@ -62,16 +64,19 @@ function ButtonUndone(props: { id: string, categoryID: string }) {
 
 export function Todo(props: TodoProps) {
   const className = ["todo"];
+  const { history } = props;
   className.push("todo-" + props.state);
   return (
     <ListItem
       passive={props.state === "complete"}
       title={props.name}
       timestamp={<Timestamp>{props.created}</Timestamp>}
-      to={path.reduce(routes.pathname, {
-        type: "todo",
-        categoryID: props.categoryID,
-        todoID: props.id
+      onClick={() => history.push({
+        pathname: path.reduce(routes.pathname, {
+          type: "todo",
+          categoryID: props.categoryID,
+          todoID: props.id
+        })
       })}
       primaryAction={
         <Control>
