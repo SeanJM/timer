@@ -1,10 +1,11 @@
+// tslint:disable:no-default-export
 import parse from "@path/parse";
 
 function isMatch(schema: any, url: any) {
   return schema === url || (!!schema && !!url && schema[0] === ":");
 }
 
-export interface PathParams {
+interface BaseParams {
   _isExact: boolean;
   _isMatch: boolean;
   _pathname: string[];
@@ -12,8 +13,9 @@ export interface PathParams {
   [key: string]: any;
 }
 
-// tslint:disable-next-line:no-default-export
-export default function params<T>(pathname: string = "", schema: string = ""): T & PathParams {
+export type PathParams<T = {}> = Partial<BaseParams> & T;
+
+export default function params<T = {}>(pathname: string = "", schema: string = ""): PathParams<T> {
   const urlPathname = parse(pathname).chunks;
   const schemaPathname = parse(schema).chunks;
 
@@ -41,5 +43,5 @@ export default function params<T>(pathname: string = "", schema: string = ""): T
     }
   }
 
-  return params as T & PathParams;
+  return params as T;
 }
