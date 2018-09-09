@@ -21,14 +21,10 @@
   }
 }
 
-.app-category-id {
-  .todo-tags {
-    padding-left: $u76;
-  }
+.todo-tags--category-id {
+  padding-left: $u76;
 }
 
-.app-todo-id {
-  .todo-tags {
-    right: $u90;
-  }
+.todo-tags--todo-id {
+  right: $u90;
 }

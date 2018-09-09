@@ -7,22 +7,27 @@ import { Viewport } from "@frontend/components/viewport";
 import { withStore, StoreState } from "@frontend/store";
 import { TagResponse, StoreFormInput, CategoryResponse } from "@types";
 import { ColorPicker } from "@types";
-import path from "@path";
+import path, { PathParams } from "@path";
 import { dispatch } from "@frontend/action";
 import * as pathlist from "@frontend/routes";
 import { List, ListItem } from "@frontend/components/list";
 import Timestamp from "@frontend/components/timestamp";
 import { emptyForm } from "@frontend/action/form";
 import { TitleAndInput, TitleAndInputPassedProps } from "@frontend/components/title-and-input";
-import Titlebar from "@frontend/components/titlebar";
+import { Titlebar } from "@frontend/components/titlebar";
 import { Button } from "@frontend/components/button";
 
 const FORM_ID = generateHash();
 const COLOR_PICKER_ID = "tag_name";
 
+interface TagParams {
+  categoryID?: string;
+  todoID?: string;
+}
+
 interface Props extends Partial<TagResponse> {
+  params: PathParams<TagParams>;
   categoryName: string;
-  categoryID: string;
   colorPicker: Partial<ColorPicker>;
   tags: TagResponse[];
 }
@@ -53,27 +58,27 @@ function InputTagName(props: InputTagNameProps) {
 }
 
 function mapStateToProps(state: StoreState, props: WithRouterProps): Props {
-  const params = path.params(props.location.pathname, pathlist.pathname);
-  const category = state.todo.categories.find(a => a.id === params.categoryID);
+  const params = path.params<TagParams>(props.location.pathname, pathlist.pathname);
+  const category = state.todo.categories.find((a) => a.id === params.categoryID);
   const form = state.form[FORM_ID] || emptyForm(FORM_ID);
 
   const tagCategory: CategoryResponse =
-    state.todo.categories.find(a => a.id === params.categoryID);
+    state.todo.categories.find((a) => a.id === params.categoryID);
 
   const tagNameInput: StoreFormInput = form.input.tagName;
   const colorInput: StoreFormInput = form.input.color;
 
   return {
+    params,
     colorPicker: state.color.colorPickers.find((a) => a.id === COLOR_PICKER_ID) || {},
     categoryName: category && category.name,
-    categoryID: params.categoryID,
     name: tagNameInput ? tagNameInput.value : "",
     color: colorInput ? colorInput.value : null,
     tags: tagCategory.tags,
   };
 }
 
-class TodoTags extends Component<Props, {}> {
+class TodoTagsView extends Component<Props, {}> {
   node: HTMLInputElement;
 
   componentWillReceiveProps(nextProps: Props) {
@@ -88,8 +93,19 @@ class TodoTags extends Component<Props, {}> {
   }
 
   render() {
+    const { params } = this.props;
+    const className = ["todo-tags"];
+
+    if (params.categoryID) {
+      className.push("todo-tags--category-id");
+    }
+
+    if (params.todoID) {
+      className.push("todo-tags--todo-id");
+    }
+
     return (
-      <div className="todo-tags">
+      <div className={className.join(" ")}>
         <Viewport
           titlebar={
             <Titlebar>
@@ -102,7 +118,7 @@ class TodoTags extends Component<Props, {}> {
                 onSubmit={(name) => dispatch("CREATE_TAG", {
                   name,
                   color: this.props.color,
-                  categoryID: this.props.categoryID,
+                  categoryID: params.categoryID,
                 } as Partial<Props>)}
               />
             </Titlebar>
@@ -124,7 +140,7 @@ class TodoTags extends Component<Props, {}> {
                     control={<Button icon="close" onClick={() => dispatch("TAG", {
                       type: "DELETE",
                       value: {
-                        categoryID: this.props.categoryID,
+                        categoryID: params.categoryID,
                         tagID: tag.id,
                       }
                     })}/>}
@@ -141,4 +157,4 @@ class TodoTags extends Component<Props, {}> {
   }
 }
 
-export default withStore(TodoTags, mapStateToProps)() as React.ComponentClass<any>;
+export const TodoTags = withStore(TodoTagsView, mapStateToProps)() as React.ComponentClass<any>;
