@@ -1,5 +1,4 @@
 import React, { Fragment } from "react";
-import curry from "@curry";
 
 interface FilterProps extends Partial<JSX.ElementChildrenAttribute> {
   id?: string;
@@ -12,7 +11,7 @@ interface FilterProps extends Partial<JSX.ElementChildrenAttribute> {
 
 function isVisible(props: FilterProps, child: JSX.Element): boolean {
   for (var k in props) {
-    if (props[k] !== child.props[k]) {
+    if (k !== "children" && props[k] !== child.props[k]) {
       return false;
     }
   }
@@ -23,7 +22,7 @@ export function Filter(props: FilterProps) {
   const children = React.Children.toArray(props.children);
   return (
     <Fragment>
-      {children.filter(curry(isVisible, props))}
+      {children.filter((child: JSX.Element) => isVisible(props, child))}
     </Fragment>
   );
 }
