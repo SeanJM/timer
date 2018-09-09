@@ -14,7 +14,7 @@
   }
 
   .menu-item,
-  .titlebar {
+  .titlebar:after {
     border-bottom-color: $black;
   }
 
@@ -35,15 +35,11 @@
   }
 }
 
-.app-type {
-  .category-list {
-    padding-left: $u53;
-  }
+.category-list--type {
+  padding-left: $u53;
 }
 
-.app-category-id {
-  .category-list {
-    padding-left: $u12;
-    width: $u76;
-  }
+.category-list--category-id {
+  padding-left: $u12;
+  width: $u76;
 }
