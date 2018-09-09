@@ -2,10 +2,11 @@ import * as React from "react";
 
 interface TitlebarProps extends Partial<JSX.ElementChildrenAttribute> {
   left?: JSX.Element;
-  right?: JSX.Element;
+  primaryAction?: JSX.Element;
+  secondaryAction?: JSX.Element;
   center?: JSX.Element;
   className?: string;
-  onClose?: (e: React.MouseEvent) => void
+  onClose?: (e: React.MouseEvent) => void;
 }
 
 function Test() {
@@ -14,11 +15,23 @@ function Test() {
 
 React.createElement(Test);
 
-export default function Titlebar(props: TitlebarProps) {
+export function Titlebar(props: TitlebarProps) {
   const className = ["titlebar"];
 
   if (props.className) {
     className.push(props.className);
+  }
+
+  if (props.primaryAction) {
+    className.push("titlebar--primary-action");
+  }
+
+  if (props.secondaryAction) {
+    className.push("titlebar--secondary-action");
+  }
+
+  if (props.left) {
+    className.push("titlebar--left");
   }
 
   return (
@@ -38,10 +51,17 @@ export default function Titlebar(props: TitlebarProps) {
             </div>
           )
           : null}
-        {props.right
+        {props.primaryAction
           ? (
-            <div className="titlebar_right">
-              {props.right}
+            <div className="titlebar_primary-action">
+              {props.primaryAction}
+            </div>
+          )
+          : null}
+        {props.secondaryAction
+          ? (
+            <div className="titlebar_secondary-action">
+              {props.secondaryAction}
             </div>
           )
           : null}

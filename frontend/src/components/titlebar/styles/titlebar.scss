@@ -1,6 +1,21 @@
 .titlebar {
-  padding: $u2;
-  border-bottom: 1px solid $grey-light;
+  position: relative;
+  padding: $u2 $u2;
+
+  &:after {
+    position: absolute;
+    content: "";
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-bottom: 1px solid $grey-light;
+  }
+
+  h6 {
+    margin-top: 0;
+    margin-left: $u2;
+    line-height: $input-size;
+  }
 }
 
 .titlebar_content {
@@ -8,29 +23,22 @@
   height: $titlebar-size - $u4;
   display: inline-block;
   width: 100%;
-
-  h5 {
-    padding-top: $u3;
-    line-height: $input-size - $u2;
-  }
-
-  h6 {
-    padding-top: $u3;
-    line-height: $input-size - $u2;
-  }
 }
 
 .titlebar_left {
   position: absolute;
   left: 0;
   top: 0;
-
-  h6 {
-    margin-left: $u2;
-  }
 }
 
-.titlebar_right {
+.titlebar_primary-action {
+  text-align: right;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.titlebar_secondary-action {
   text-align: right;
   position: absolute;
   right: 0;
@@ -40,4 +48,16 @@
 .titlebar_center {
   text-align: center;
   width: 100%;
+}
+
+.titlebar--secondary-action {
+  .titlebar_content {
+    padding-right: $input-size;
+  }
+}
+
+.titlebar--primary-action {
+  .titlebar_content {
+    padding-left: $input-size;
+  }
 }
