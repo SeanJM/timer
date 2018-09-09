@@ -14,6 +14,7 @@ interface ListItemProps extends Partial<JSX.ElementChildrenAttribute> {
   to?: string;
   title?: string | number;
   passive?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 export function List(props: ListProps) {
@@ -43,7 +44,9 @@ export function ListItem(props: ListItemProps) {
     <div className={className.join(" ")}>
       {props.to
         ? <Link className="list-item_link" to={props.to} />
-        : null}
+        : props.onClick
+          ? <div className="list-item_link" onClick={props.onClick} />
+          : null}
       {props.control
         ? <div className="list-item_control">{props.control}</div>
         : null}
