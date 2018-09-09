@@ -10,10 +10,11 @@
 
   h6 {
     color: #fff;
+    transition: font-size 0.3s;
   }
 
   label {
-    transition: opacity 0.3s;
+    transition: opacity 0.3s, font-size 0.3s;
   }
 
   .titlebar {
@@ -57,33 +58,68 @@
   position: relative;
   width: 100%;
 
+  &:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 1px;
+    background: $black-light;
+  }
+
   .icon {
-    width: $u6;
-    height: $u6;
+    width: $u5;
+    height: $u5;
     fill: $grey;
+    margin-top: -$u5/2;
+    position: absolute;
+    margin-left: $u;
+    top: 50%;
   }
 
   label {
-    position: absolute;
-    left: 0;
-    padding-left: $u13;
-    top: $u4;
+    padding-top: $u;
+    padding-left: $u10;
     color: $grey-light;
+    white-space: nowrap;
   }
 }
 
-.app-type {
-  .type-menu {
-    width: $u53;
+.type-menu--type {
+  width: $u53;
+  .type-menu_categories_item {
+    display: inline-block;
+    padding: $u3;
+    position: relative;
+    width: 100%;
   }
 }
 
-.app-category-id {
-  .type-menu {
-    width: $u12;
-  }
+.type-menu--category-id {
+  width: $u12;
 
   label {
     opacity: 0;
+  }
+}
+
+.type-menu_categories_item-select {
+  &:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: $u;
+    background: $primary;
+  }
+
+  .icon {
+    fill: $primary;
+  }
+
+  label {
+    color: $primary;
   }
 }

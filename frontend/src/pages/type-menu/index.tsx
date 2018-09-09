@@ -9,20 +9,24 @@ import {
   RouterHistory,
   RouterLocation,
   withRouter,
+  RouteComponentProps,
 } from "@frontend/components/router";
 
-export interface AppMenuProps {
-  history: RouterHistory;
-  location: RouterLocation;
-  params: MenuParams;
+interface MenuParams {
+  type: string;
+  categoryID?: string;
+}
+
+export interface AppMenuProps extends
+  Pick<RouteComponentProps,
+  | "history"
+  | "location"
+  > {
+  params: PathParams<MenuParams>;
 }
 
 export interface AppMenuMappedProps extends AppMenuProps {
   todo: StoreState["todo"];
-}
-
-interface MenuParams extends PathParams {
-  type: string;
 }
 
 function mapStateToProps(state: StoreState, props: AppMenuProps): AppMenuMappedProps {
@@ -30,14 +34,23 @@ function mapStateToProps(state: StoreState, props: AppMenuProps): AppMenuMappedP
     todo: state.todo,
     history: props.history,
     location: props.location,
-    params: path.params(props.location.pathname, "/todo/:type") as MenuParams,
+    params: path.params(props.location.pathname, routes.pathname) as MenuParams,
   };
 }
 
 export class AppMenuView extends React.Component<AppMenuMappedProps, {}> {
   render() {
+    const { params } = this.props;
+    const className = ["type-menu"];
+
+    if (params.categoryID) {
+      className.push("type-menu--category-id");
+    } else if (params.type) {
+      className.push("type-menu--type");
+    }
+
     return (
-      <div className="type-menu">
+      <div className={className.join(" ")}>
         <AppMenuCategories
           params={this.props.params}
           location={this.props.location}
