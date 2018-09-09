@@ -1,0 +1,27 @@
+.tab {
+  font-size: $font-size;
+  display: inline-block;
+  line-height: $line-height;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: $u4 $u4 $u2;
+  cursor: default;
+  border-right: 1px solid $grey-light;
+  position: relative;
+  user-select: none;
+}
+
+.tab--active {
+  color: $primary;
+
+  &:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    background: $primary;
+  }
+}
