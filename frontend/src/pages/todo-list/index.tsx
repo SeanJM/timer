@@ -1,22 +1,31 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { dispatch } from "@frontend/action";
-import { RouterProps } from "@frontend/components/router";
-import Titlebar from "@frontend/components/titlebar";
+import { RouteComponentProps } from "@frontend/components/router";
+import { Titlebar } from "@frontend/components/titlebar";
+import { TabBar, Tab } from "@frontend/components/tab-bar";
 import { Viewport } from "@frontend/components/viewport";
 import generateId from "@generate-id";
 import { withStore, StoreState } from "@frontend/store";
 import { StoreForm, StoreFormInput } from "@types";
-import Todo from "@frontend/components/todo";
-import path from "@path";
+import { Todo } from "@frontend/components/todo";
+import path, { PathQueryValue, PathParams } from "@path";
 import { routes } from "@frontend/routes";
 import { TodoResponse } from "types";
 import { emptyForm } from "@frontend/action/form";
 import { TitleAndInput } from "@frontend/components/title-and-input";
 import { InputText } from "@frontend/components";
+import { Filter } from "@frontend/components/filter";
 
 const FORM_ID = generateId();
 
-interface TodoProps {
+interface TodoParams {
+  categoryID?: string;
+  todoID?: string;
+}
+
+interface TodoProps extends Pick<RouteComponentProps, "location" | "history" | "query" | "params"> {
+  query: PathQueryValue<{ view?: string}>;
+  params: PathParams<TodoParams>;
   categoryID: any;
   form: StoreForm;
   controlPressed: boolean;
@@ -35,7 +44,7 @@ function isIncomplete(todo: TodoResponse) {
   return !isComplete(todo);
 }
 
-function mapStateToProps(state: StoreState, props: RouterProps): TodoProps {
+function mapStateToProps(state: StoreState, props: RouteComponentProps): TodoProps {
   const form = state.form[FORM_ID] || emptyForm(FORM_ID);
   const categoryID = props.params.categoryID;
 
@@ -47,6 +56,8 @@ function mapStateToProps(state: StoreState, props: RouterProps): TodoProps {
     path.params(props.location.pathname, routes.pathname);
 
   return {
+    ...props,
+    params,
     categoryID,
     form,
     controlPressed: state.keys.control,
@@ -55,15 +66,36 @@ function mapStateToProps(state: StoreState, props: RouterProps): TodoProps {
     incompleteTodos: category && category.todos.filter(isIncomplete),
     input: form.input.todo_value || { name: "todo_value", value: undefined },
     todoID: params.todoID,
-  };
+  } as TodoProps;
 }
 
-class TodoList extends Component<TodoProps, {}> {
+class TodoListView extends Component<TodoProps, {}> {
   node: HTMLInputElement;
 
+  componentDidMount() {
+    if (!this.props.query.view) {
+      this.props.history.push({
+        query: {
+          view: "incomplete"
+        }
+      });
+    }
+  }
+
   render() {
+    const className = ["todo-list"];
+    const { history, query, params } = this.props;
+
+    if (params.categoryID) {
+      className.push("todo-list--category-id");
+    }
+
+    if (params.todoID) {
+      className.push("todo-list--todo-id");
+    }
+
     return (
-      <div className="todo-list">
+      <div className={className.join(" ")}>
         <Viewport
           titlebar={
             <Titlebar>
@@ -77,33 +109,55 @@ class TodoList extends Component<TodoProps, {}> {
               />
             </Titlebar>
           }
+          toolbar={
+            <TabBar>
+              <Tab
+                isActive={query.view === "complete"}
+                onClick={() => history.push({
+                query: {
+                  view: "complete"
+                }
+              })}>Complete</Tab>
+              <Tab
+                isActive={query.view === "incomplete"}
+                onClick={() => history.push({
+                query: {
+                  view: "incomplete"
+                }
+              })}>Incomplete</Tab>
+            </TabBar>
+          }
           body={
-            <Fragment>
-              <Titlebar><h6>Complete</h6></Titlebar>
-              {this.props.completeTodos.map((todo) => (
-                <Todo
-                key={todo.id}
-                state={todo.state}
-                name={todo.name}
-                created={todo.created}
-                id={todo.id}
-                categoryID={this.props.categoryID}
-                showAlt={this.props.controlPressed}
-                />
-              ))}
-              <Titlebar><h6>Incomplete</h6></Titlebar>
-              {this.props.incompleteTodos.map((todo) => (
-                <Todo
-                  key={todo.id}
-                  state={todo.state}
-                  name={todo.name}
-                  created={todo.created}
-                  id={todo.id}
-                  categoryID={this.props.categoryID}
-                  showAlt={this.props.controlPressed}
-                />
-              ))}
-            </Fragment>
+            <Filter id={query.view}>
+              <div id="complete">
+                {this.props.completeTodos.map((todo) => (
+                  <Todo
+                    history={history}
+                    key={todo.id}
+                    state={todo.state}
+                    name={todo.name}
+                    created={todo.created}
+                    id={todo.id}
+                    categoryID={this.props.categoryID}
+                    showAlt={this.props.controlPressed}
+                    />
+                    ))}
+              </div>
+              <div id="incomplete">
+                {this.props.incompleteTodos.map((todo) => (
+                  <Todo
+                    history={history}
+                    key={todo.id}
+                    state={todo.state}
+                    name={todo.name}
+                    created={todo.created}
+                    id={todo.id}
+                    categoryID={this.props.categoryID}
+                    showAlt={this.props.controlPressed}
+                  />
+                ))}
+              </div>
+            </Filter>
           }
         />
       </div>
@@ -111,4 +165,4 @@ class TodoList extends Component<TodoProps, {}> {
   }
 }
 
-export default withStore(TodoList, mapStateToProps)() as React.ComponentClass<any>;
+export const TodoList = withStore(TodoListView, mapStateToProps)();
