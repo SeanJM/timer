@@ -1,14 +1,13 @@
 import React, { Component } from "react";
 import { withStore, StoreState } from "@frontend/store";
 import { Button } from "@frontend/components/button";
-import Titlebar from "@frontend/components/titlebar";
+import { Titlebar } from "@frontend/components/titlebar";
 import { MenuItem } from "@frontend/components/menu";
 import { dispatch } from "@frontend/action/";
 
 import {
-  RouterHistory,
-  RouterLocation,
   withRouter,
+  RouteComponentProps,
 } from "@frontend/components/router";
 
 import path, { PathParams } from "@path";
@@ -16,23 +15,26 @@ import { routes } from "@frontend/routes";
 import { TitleAndInput } from "@frontend/components/title-and-input";
 import { InputText } from "@frontend/components";
 
-export interface AppMenuProps {
-  history: RouterHistory;
-  location: RouterLocation;
-  params: MenuParams;
+interface MenuParams extends PathParams {
+  type: "todo" | "tags";
+  categoryID?: string;
+}
+
+export interface CategoryListProps extends
+  Pick<RouteComponentProps,
+  | "history"
+  | "location"
+  | "params"
+  > {
+  params: PathParams<MenuParams>;
   setCategoryName: boolean;
 }
 
-export interface AppMenuMappedProps extends AppMenuProps {
+export interface AppMenuMappedProps extends CategoryListProps {
   todo: StoreState["todo"];
 }
 
-interface MenuParams extends PathParams {
-  type: "todo" | "tags";
-  categoryID: string;
-}
-
-function mapStateToProps(state: StoreState, props: AppMenuProps): AppMenuMappedProps {
+function mapStateToProps(state: StoreState, props: CategoryListProps): AppMenuMappedProps {
   return {
     todo: state.todo,
     history: props.history,
@@ -44,15 +46,25 @@ function mapStateToProps(state: StoreState, props: AppMenuProps): AppMenuMappedP
 
 export class CategoryList extends Component<AppMenuMappedProps, {}> {
   render() {
+    const className = ["category-list"];
     const { todo, params } = this.props;
+
+    if (params.type) {
+      className.push("category-list--type");
+    }
+
+    if (params.categoryID) {
+      className.push("category-list--category-id");
+    }
+
     return (
-      <div className="category-list">
+      <div className={className.join(" ")}>
         <Titlebar
           left={
             <TitleAndInput
               component={InputText}
               title="Category"
-              onSubmit={value => dispatch("CATEGORY", {
+              onSubmit={(value) => dispatch("CATEGORY", {
                 type: "CREATE",
                 value,
               })}
@@ -96,4 +108,4 @@ export class CategoryList extends Component<AppMenuMappedProps, {}> {
 }
 
 export const CategoryListConnect =
-  withStore<AppMenuProps>(CategoryList, mapStateToProps)(withRouter);
+  withStore<CategoryListProps>(CategoryList, mapStateToProps)(withRouter);
