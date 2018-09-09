@@ -4,20 +4,17 @@
   right: 0;
   bottom: 0;
   top: 0;
+  transition: right 0.3s;
 }
 
-.app-category-id {
-  .todo-list {
-    padding-left: $u76;
+.todo-list--category-id {
+  padding-left: $u76;
 
-    .viewport {
-      border-left: 1px solid $grey-light;
-    }
+  .viewport {
+    border-left: 1px solid $grey-light;
   }
 }
 
-.app-todo-id {
-  .todo-list {
-    right: $u90;
-  }
+.todo-list--todo-id {
+  right: $u90;
 }
