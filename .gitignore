@@ -3,3 +3,4 @@ node_modules
 database.json
 public/
 index.js
+test/public/
