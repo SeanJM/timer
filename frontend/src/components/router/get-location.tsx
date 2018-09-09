@@ -4,6 +4,7 @@ import getHash from "@frontend/components/router/get-hash";
 
 export default function getLocation(href: string) {
   return {
+    href: href,
     pathname: getPathname(href),
     search: getSearch(href),
     hash: getHash(href),

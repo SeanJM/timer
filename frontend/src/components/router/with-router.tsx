@@ -15,20 +15,20 @@ export interface WithRouterProps extends
 
 interface State extends Pick<WithRouterProps, "location" | "query"> {}
 
-export function withRouter<P>(C: React.ComponentType<P>) {
+export function withRouter<P extends {}>(C: React.ComponentType<P>) {
   return class extends React.Component<P, State> {
     constructor(props) {
       const location = getLocation(window.location.hash.substring(1));
       super(props);
       this.state = {
         location,
-        query: {}
+        query: path.query(location.href).value
       };
     }
 
     handleEvent() {
       const location = getLocation(window.location.hash.substring(1));
-      let query = path.query(location.pathname).value;
+      let query = path.query(location.href).value;
       this.setState({
         location,
         query,
@@ -44,11 +44,7 @@ export function withRouter<P>(C: React.ComponentType<P>) {
     }
 
     render() {
-      const props = Object.assign({},
-        this.props,
-        this.state,
-        { history }
-      );
+      const props = Object.assign({}, this.props, this.state, { history });
       return (
         <C {...props}>
           {this.props.children}
