@@ -1,11 +1,9 @@
 // tslint:disable:no-default-export
 
-export interface PathQueryValue {
-  [key: string]: string | string[];
-}
+export type PathQueryValue<T extends {[key: string]: string | string[]} = {}> = T;
 
-export class PathQuery {
-  value: PathQueryValue;
+export class PathQuery<T extends {} = {}> {
+  value: Partial<PathQueryValue<T>>;
 
   constructor(pathname: string = "") {
     const pathSplit = pathname.split("?");
@@ -52,7 +50,7 @@ export class PathQuery {
     this.forEach((value, key) => {
       let property = encodeURI(key);
       if (Array.isArray(value)) {
-        value.forEach(member => {
+        value.forEach((member) => {
           res.push(property + "[]=" + encodeURI(member));
         });
       } else {
