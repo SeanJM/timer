@@ -4,7 +4,7 @@ import { Control } from "@frontend/components/control";
 import { ListItem } from "@frontend/components/list";
 import path from "@path";
 import { dispatch } from "@frontend/action/";
-import Timestamp from "@frontend/components/timestamp";
+import { Timestamp } from "@frontend/components/timestamp";
 import { routes } from "@frontend/routes";
 import { RouterHistory } from "@frontend/components/router";
 
@@ -16,6 +16,7 @@ interface TodoProps {
   id: string;
   created: number;
   showAlt: boolean;
+  isActive: boolean;
 }
 
 function ButtonDone(props: { id: string, categoryID: string }) {
@@ -68,6 +69,7 @@ export function Todo(props: TodoProps) {
   className.push("todo-" + props.state);
   return (
     <ListItem
+      isActive={props.isActive}
       passive={props.state === "complete"}
       title={props.name}
       timestamp={<Timestamp>{props.created}</Timestamp>}
