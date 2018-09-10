@@ -38,4 +38,4 @@ export function Modal(props: ModalProps) {
   );
 }
 
-export const ModalConnect = withStore(Modal as StatelessComponent, mapStateToProps)();
+export const ModalContainerConnect = withStore(Modal as StatelessComponent, mapStateToProps)();
