@@ -11,9 +11,10 @@ const BYTYPE = {
 };
 
 export type InputType =
-  | "text"
-  | "switch"
   | "chip-select"
+  | "slide"
+  | "switch"
+  | "text"
   ;
 
 export type InputEvents = {
@@ -24,7 +25,7 @@ export type InputEvents = {
   onKeyDown?: (e: React.FormEvent) => void;
   onValue?: (value: any) => void;
   onRef?: (node: HTMLElement) => void;
-}
+};
 
 interface InputProps extends InputEvents {
   type: InputType;
