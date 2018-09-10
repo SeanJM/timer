@@ -1,2 +1,1 @@
-import DragMe from "./drag-me";
-export default DragMe;
+export * from "./drag-me";
