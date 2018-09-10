@@ -11,6 +11,7 @@ export type IconType =
   | "folder"
   | "history-back"
   | "save"
+  | "search"
   | "tag"
   ;
 
