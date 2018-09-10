@@ -30,8 +30,8 @@ export class InputSwitch extends Component<InputSwitchProps, InputSwitchState> {
       value,
     });
 
-    onInput && onInput(value);
-    onValue && onValue(value);
+    if (onInput) { onInput(value); }
+    if (onValue) { onValue(value); }
   }
 
   render() {
@@ -50,13 +50,13 @@ export class InputSwitch extends Component<InputSwitchProps, InputSwitchState> {
         <Switch
           check={this.state.value}
           onFocus={(e) => {
-            onFocus && onFocus(e);
+            if (onFocus) { onFocus(e); }
             this.setState({
               focus: true
             });
           }}
           onBlur={(e) => {
-            onBlur && onBlur(e);
+            if (onBlur) { onBlur(e); }
             this.setState({
               focus: false
             });
