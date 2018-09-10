@@ -1,6 +1,16 @@
 .input-wrapper {
   position: relative;
 
+  .input-wrapper_icon {
+    width: $u4;
+    height: $u4;
+    position: absolute;
+    left: $u;
+    top: 50%;
+    margin-top: $u4/-2;
+    fill: $grey-light;
+  }
+
   .button {
     position: absolute;
     right: 0;
@@ -45,7 +55,6 @@
   right: 0;
   top: 0;
   bottom: 0;
-  background: #fff;
 }
 
 .input-wrapper_input {
