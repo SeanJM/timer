@@ -5,32 +5,38 @@ import path from "@path";
 import getPathname from "@frontend/components/router/get-pathname";
 import { WithRouterProps } from "@frontend/components/router";
 
-export interface RouterProps {
-  baseurl?: string;
+export interface RouterIncomingProps {
+  basename?: string;
+  notfound?: React.ComponentType;
 }
 
-interface MergedRouterProps extends WithRouterProps, RouterProps {}
+type RouterProps = WithRouterProps & RouterIncomingProps;
+type RouteElement = ReactElement<RouteProps>;
 
-function routeIsMatch(element: ReactElement<RouteProps>) {
+function getRoutePathname(baseurl: string, pathname: string) {
+  return baseurl ? path.join(baseurl, pathname) : pathname;
+}
+
+const routeIsMatch = (routerProps: RouterProps) => (element: RouteElement) => {
   const { exact } = element.props;
   const pathname = getPathname(window.location.hash.substring(1));
-  const params = path.params(pathname, element.props.pathname);
+  const routePathname = getRoutePathname(routerProps.basename, element.props.pathname);
+  const params = path.params(pathname, routePathname);
   const show = exact ? params._isExact : params._isMatch;
-  return element.props.pathname === "/" ? true : show;
-}
+  return routePathname === "/" ? true : show;
+};
 
 const getRoutedComponent =
-  (routerProps: MergedRouterProps) =>
-  (routeElement: ReactElement<RouteProps>, index?: number) => {
+  (routerProps: RouterProps) =>
+  (routeElement: RouteElement, index?: number) => {
     const RoutedComponent =
       routeElement.props.component;
 
-    const pathname = routerProps.baseurl
-      ? path.join(routerProps.baseurl, routeElement.props.pathname)
-      : routeElement.props.pathname;
+    const routePathname =
+      getRoutePathname(routerProps.basename, routeElement.props.pathname);
 
     const params =
-      path.params(routerProps.location.pathname, pathname);
+      path.params(routerProps.location.pathname, routePathname);
 
     return (
       <RoutedComponent
@@ -46,17 +52,15 @@ const getRoutedComponent =
 export function RouterView(props: WithRouterProps) {
   const routes = React.Children.toArray(props.children).filter((element) => {
     return (element as JSX.Element).type === Route;
-  }) as ReactElement<RouteProps>[];
+  }) as RouteElement[];
 
   const partialGetRouted = getRoutedComponent(props);
-  const displayedRoutes = routes.filter(routeIsMatch).map(partialGetRouted);
+  const partialIsMatch = routeIsMatch(props);
+  const displayedRoutes = routes.filter(partialIsMatch).map(partialGetRouted);
 
   return (
     <Fragment>
-      {displayedRoutes.length
-        ? displayedRoutes
-        : partialGetRouted(routes.slice(-1)[0])
-      }
+      {displayedRoutes}
     </Fragment>
   );
 }
@@ -68,4 +72,4 @@ export function RouterView(props: WithRouterProps) {
  * it has an optional 'baseurl' property so that routers can be
  * more modular
  */
-export const Router = withRouter<RouterProps>(RouterView);
+export const Router = withRouter<RouterIncomingProps>(RouterView);
