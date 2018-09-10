@@ -22,13 +22,13 @@ export function withRouter<P extends {}>(C: React.ComponentType<P>) {
       super(props);
       this.state = {
         location,
-        query: path.query(location.href).value
+        query: path.query(location.search).value
       };
     }
 
     handleEvent() {
       const location = getLocation(window.location.hash.substring(1));
-      let query = path.query(location.href).value;
+      let query = path.query(location.search).value;
       this.setState({
         location,
         query,
