@@ -10,27 +10,30 @@ export interface HistoryLocation extends Partial<RouterLocation> {
 
 export type RouterHistory = typeof history;
 
+function pushObject(location: HistoryLocation) {
+  let prevLocation = history.last();
+  const newLocation: HistoryLocation = {...prevLocation, ...location};
+  let newUrl = newLocation.pathname;
+
+  if (newLocation.query) {
+    newUrl += path.query().assign(newLocation.query).toString();
+  } else if (newLocation.search) {
+    newUrl += (newLocation.search[0] === "?" ? "" : "?") + newLocation.search;
+  }
+
+  if (newLocation.hash) {
+    newUrl += "#" + newLocation.hash;
+  }
+  window.location.hash = "#" + newUrl;
+}
+
 function push(url: HistoryLocation): void;
 function push(url: string): void;
 function push(url: any) {
   if (typeof url === "string") {
     window.location.hash = url;
   } else {
-    let location = history.stack.slice(-1)[0];
-    const newLocation: HistoryLocation = {...location, ...url};
-    let newUrl = newLocation.pathname;
-
-    if (newLocation.query) {
-      newUrl += path.query().assign(newLocation.query).toString();
-    } else if (newLocation.search) {
-      newUrl += (newLocation.search[0] === "?" ? "" : "?") + newLocation.search;
-    }
-
-    if (newLocation.hash) {
-      newUrl += "#" + newLocation.hash;
-    }
-
-    window.location.hash = "#" + newUrl;
+    pushObject(url);
   }
 }
 
