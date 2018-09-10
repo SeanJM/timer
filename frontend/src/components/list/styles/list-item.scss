@@ -72,3 +72,34 @@
   top: 0;
   bottom: 0;
 }
+
+.list-item {
+  &:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: $primary;
+    transition: width 0.2s, opacity 0.3s;
+    opacity: 0;
+    width: 0;
+  }
+
+  &.list-item--active {
+    &:after {
+      width: 2px;
+      opacity: 1;
+    }
+
+    &:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: -1px;
+      bottom: -1px;
+      right: 0;
+      border: 1px solid $primary;
+    }
+  }
+}

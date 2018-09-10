@@ -14,6 +14,7 @@ interface ListItemProps extends Partial<JSX.ElementChildrenAttribute> {
   to?: string;
   title?: string | number;
   passive?: boolean;
+  isActive?: boolean;
   onClick?: (e: React.MouseEvent) => void;
 }
 
@@ -38,6 +39,10 @@ export function ListItem(props: ListItemProps) {
 
   if (props.passive) {
     className.push("list-item-passive");
+  }
+
+  if (props.isActive) {
+    className.push("list-item--active");
   }
 
   return (
