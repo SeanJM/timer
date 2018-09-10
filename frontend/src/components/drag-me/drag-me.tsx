@@ -22,44 +22,78 @@ interface DragMeState {
   pageY: number;
 }
 
-export default class DragMe extends React.Component<DragMeProps, DragMeState> {
-  onmove: (e: MouseEvent) => void;
+export class DragMe extends React.Component<DragMeProps, DragMeState> {
   node: HTMLDivElement;
 
   constructor(props) {
     super(props);
-
     this.state = {
       isMouseDown: false,
       isDragStart: false,
       pageX: 0,
       pageY: 0,
     };
+  }
 
-    this.onmove = (e) => {
-      if (this.state.isMouseDown && !this.state.isDragStart) {
-        this.setState({
-          isDragStart: true
-        });
-        props.onDragStart &&
-        props.onDragStart(this.getDragMeEvent(e));
-      } else if (this.state.isMouseDown) {
-        props.onDragMove &&
-        props.onDragMove(this.getDragMeEvent(e));
+  componentDidMount() {
+    document.body.addEventListener("mousemove", this);
+    document.body.addEventListener("mouseup", this);
+  }
+
+  componentWillUnmount() {
+    document.body.removeEventListener("mousemove", this);
+    document.body.removeEventListener("mouseup", this);
+  }
+
+  onMouseMove(e) {
+    if (this.state.isMouseDown && !this.state.isDragStart) {
+      this.setState({
+        isDragStart: true
+      });
+      if (this.props.onDragStart) {
+        this.props.onDragStart(this.getDragMeEvent(e));
+      }
+    } else if (this.state.isMouseDown) {
+      if (this.props.onDragMove) {
+        this.props.onDragMove(this.getDragMeEvent(e));
       }
     }
+  }
 
-    document.body.addEventListener("mousemove", this.onmove);
-    document.body.addEventListener("mouseup", (e) => {
-      if (this.state.isMouseDown) {
-        this.setState({
-          isMouseDown: false,
-          isDragStart: false,
-        });
-        this.props.onDragEnd &&
+  onMouseDown(e: React.MouseEvent) {
+    this.setState({
+      isMouseDown: true,
+      pageX: e.pageX,
+      pageY: e.pageY,
+    });
+    if (this.props.onMouseDown) {
+      this.props.onMouseDown(this.getDragMeEvent(e));
+    }
+  }
+
+  onMouseUp(e) {
+    if (this.state.isMouseDown) {
+      this.setState({
+        isMouseDown: false,
+        isDragStart: false,
+      });
+      if (this.props.onDragEnd) {
         this.props.onDragEnd(this.getDragMeEvent(e));
       }
-    });
+    }
+  }
+
+  handleEvent(e) {
+    switch (e.type) {
+      case "mousemove": {
+        this.onMouseMove(e);
+        break;
+      }
+
+      case "mouseup": {
+        this.onMouseUp(e);
+      }
+    }
   }
 
   getDragMeEvent(e: MouseEvent | React.MouseEvent): DragMeEvent {
@@ -74,20 +108,11 @@ export default class DragMe extends React.Component<DragMeProps, DragMeState> {
     };
   }
 
-  onMouseDown(e: React.MouseEvent) {
-    this.setState({
-      isMouseDown: true,
-      pageX: e.pageX,
-      pageY: e.pageY,
-    });
-    this.props.onMouseDown && this.props.onMouseDown(this.getDragMeEvent(e));
-  }
-
   render() {
     return (
       <div
         className={this.props.className}
-        ref={node => { this.node = node; }}
+        ref={(node) => { this.node = node; }}
         onMouseDown={(e) => this.onMouseDown(e)}>
         {this.props.children}
       </div>
