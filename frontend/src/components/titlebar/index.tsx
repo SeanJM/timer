@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { Component } from "react";
 
 interface TitlebarProps extends Partial<JSX.ElementChildrenAttribute> {
   left?: JSX.Element;
@@ -15,58 +15,91 @@ function Test() {
 
 React.createElement(Test);
 
-export function Titlebar(props: TitlebarProps) {
-  const className = ["titlebar"];
+export class Titlebar extends Component<TitlebarProps> {
+  primaryActionNode: HTMLDivElement;
+  secondaryActionNode: HTMLDivElement;
+  contentNode: HTMLDivElement;
 
-  if (props.className) {
-    className.push(props.className);
+  getNodeWith(node: HTMLElement) {
+    return node
+      ? node.getBoundingClientRect().width
+      : 0;
   }
 
-  if (props.primaryAction) {
-    className.push("titlebar--primary-action");
+  componentDidMount() {
+    const primaryActionWidth =
+      this.getNodeWith(this.primaryActionNode);
+    const secondaryActionWidth =
+      this.getNodeWith(this.secondaryActionNode);
+    this.contentNode.setAttribute("style", `
+      padding-left: ${primaryActionWidth}px;
+      padding-right: ${secondaryActionWidth}px;
+    `);
   }
 
-  if (props.secondaryAction) {
-    className.push("titlebar--secondary-action");
-  }
+  render() {
+    const className = ["titlebar"];
+    const props = this.props;
 
-  if (props.left) {
-    className.push("titlebar--left");
-  }
+    if (props.className) {
+      className.push(props.className);
+    }
 
-  return (
-    <div className={className.join(" ")}>
-      <div className="titlebar_content">
-        {props.left
-          ? (
-            <div className="titlebar_left">
-              {props.left}
-            </div>
-          )
-          : null}
-        {props.center
-          ? (
-            <div className="titlebar_center">
-              {props.center}
-            </div>
-          )
-          : null}
-        {props.primaryAction
-          ? (
-            <div className="titlebar_primary-action">
-              {props.primaryAction}
-            </div>
-          )
-          : null}
-        {props.secondaryAction
-          ? (
-            <div className="titlebar_secondary-action">
-              {props.secondaryAction}
-            </div>
-          )
-          : null}
-        {props.children}
+    if (props.primaryAction) {
+      className.push("titlebar--primary-action");
+    }
+
+    if (props.secondaryAction) {
+      className.push("titlebar--secondary-action");
+    }
+
+    if (props.left) {
+      className.push("titlebar--left");
+    }
+
+    return (
+      <div className={className.join(" ")}>
+        <div
+          ref={(node) => { this.contentNode = node; }}
+          className="titlebar_content"
+        >
+          {props.left
+            ? (
+              <div className="titlebar_left">
+                {props.left}
+              </div>
+            )
+            : null}
+          {props.center
+            ? (
+              <div className="titlebar_center">
+                {props.center}
+              </div>
+            )
+            : null}
+          {props.primaryAction
+            ? (
+              <div
+                ref={(node) => { this.primaryActionNode = node; }}
+                className="titlebar_primary-action"
+              >
+                {props.primaryAction}
+              </div>
+            )
+            : null}
+          {props.secondaryAction
+            ? (
+              <div
+                ref={(node) => { this.secondaryActionNode = node; }}
+                className="titlebar_secondary-action"
+              >
+                {props.secondaryAction}
+              </div>
+            )
+            : null}
+          {props.children}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
