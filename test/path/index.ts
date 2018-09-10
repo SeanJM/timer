@@ -12,6 +12,10 @@ export function pathTest(test) {
   test("path.replace (/a/:b/:c/)", path.replace("/a/:b/:c/", {b: "t"})).isEqual("/a/t/:c/");
   test("path.reduce (/a/:b/:c/)", path.reduce("/a/:b/:c/", {b: "t"})).isEqual("/a/t/");
 
+  test("path.join", function () {
+    return path.join("/todo", "/");
+  }).isDeepEqual("/todo/");
+
   test("PathQuery \"?test=this\"", function () {
     const query = new PathQuery("?test=this");
     return query.value;
