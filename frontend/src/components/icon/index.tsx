@@ -22,8 +22,12 @@ interface IconProps {
 }
 
 export function Icon(props: IconProps) {
+  const className = ["icon"];
+  if (props.className) {
+    className.push(props.className);
+  }
   return (
-    <svg className="icon" style={{fill: props.fill}}>
+    <svg className={className.join(" ")} style={{fill: props.fill}}>
       <use href={"#icon-" + props.type}></use>
     </svg>
   );
