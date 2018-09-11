@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "@frontend/components/router";
 
 interface ListProps extends Partial<JSX.ElementChildrenAttribute> {
-
+  id?: string;
 }
 
 interface ListItemProps extends Partial<JSX.ElementChildrenAttribute> {
@@ -15,11 +15,16 @@ interface ListItemProps extends Partial<JSX.ElementChildrenAttribute> {
   title?: string | number;
   passive?: boolean;
   isActive?: boolean;
+  id?: string;
   onClick?: (e: React.MouseEvent) => void;
 }
 
-export function List(props: ListProps) {
-  return (<div className="list">{props.children}</div>);
+export class List extends React.Component<ListProps> {
+  render() {
+    return (
+      <div id={this.props.id} className="list">{this.props.children}</div>
+    );
+  }
 }
 
 export function ListItem(props: ListItemProps) {
@@ -46,7 +51,7 @@ export function ListItem(props: ListItemProps) {
   }
 
   return (
-    <div className={className.join(" ")}>
+    <div id={props.id} className={className.join(" ")}>
       {props.to
         ? <Link className="list-item_link" to={props.to} />
         : props.onClick
