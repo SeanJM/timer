@@ -1,14 +1,15 @@
-import Element from "@backend/class/element";
+import { DatabaseElement } from "@backend/class/element";
+import "./verified";
 
 export type CategoryElementAttributes =
-  Pick<Element["attributes"],
+  Pick<DatabaseElement["attributes"],
   | "id"
   | "created"
   | "name"
   >;
 
 export interface CategoryElement extends
-  Element {
+  DatabaseElement {
     type: "category";
     attributes: CategoryElementAttributes;
     children: TodoElement[];
@@ -63,7 +64,7 @@ export interface TagResponse {
   created: number;
 }
 
-export interface TagElement extends Element {
+export interface TagElement extends DatabaseElement {
   type: "tag";
   attributes: {
     name: string;
@@ -74,23 +75,28 @@ export interface TagElement extends Element {
   children: any[];
 }
 
-export interface TodoElement extends
-  Element {
+export interface TodoElement extends DatabaseElement {
   type: "todo";
-  attributes: Pick<Element["attributes"],
+  attributes: {
+    progress: number;
+    priority: number;
+    tags: string[];
+  } & Pick<DatabaseElement["attributes"],
   | "id"
   | "created"
   | "name"
   | "state"
-  > & { tags: string[] };
+  >;
   children: any[];
 }
 
 export type TodoResponse =
   Pick<TodoElement["attributes"],
-    | "id"
     | "created"
+    | "id"
     | "name"
+    | "priority"
+    | "progress"
     | "state"
     | "tags"
   >;
