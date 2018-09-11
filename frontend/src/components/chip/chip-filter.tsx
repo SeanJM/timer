@@ -3,10 +3,15 @@ import { ChipData } from "./chip-types";
 import { ChipSelect } from "./chip-select";
 import _ from "lodash";
 
+export interface ChipFilterInputEvent {
+  value: string[];
+}
+
 export interface ChipFilterProps {
   data: ChipData[];
   defaultValue?: string[];
   onValue?: (value: string[]) => void;
+  onInput?: (e: ChipFilterInputEvent) => void;
 }
 
 export interface ChipFilterState {
@@ -41,9 +46,10 @@ export class ChipFilter extends Component<ChipFilterProps, ChipFilterState> {
   }
 
   render() {
+    const { onValue, onInput, data } = this.props;
     return (
       <div className="chip-filter">
-        {this.props.data.map((data) => {
+        {data.map((data) => {
           const isChecked = this.state.value.indexOf(data.id) > -1;
           return (
             <ChipSelect
@@ -55,15 +61,21 @@ export class ChipFilter extends Component<ChipFilterProps, ChipFilterState> {
               onClick={() => {
                 const value =
                   isChecked
-                    ? this.state.value.filter(a => a !== data.id)
+                    ? this.state.value.filter((a) => a !== data.id)
                     : this.state.value.concat(data.id);
 
-                if (this.props.onValue) {
-                  this.props.onValue(value);
+                if (onValue) {
+                  onValue(value);
                 }
 
                 this.setState({
                   value
+                }, () => {
+                  if (onInput) {
+                    onInput({
+                      value: this.state.value
+                    });
+                  }
                 });
               }}
             />
