@@ -1,6 +1,6 @@
-import Element, { ElementAttributes } from "@backend/class/element";
+import { DatabaseElement, ElementAttributes } from "@backend/class/element";
 
-type QueryObject = Partial<Element>;
+type QueryObject = Partial<DatabaseElement>;
 
 export default function querySelectorToObjectList(selector: string) {
   const queryList: QueryObject[] = [];
