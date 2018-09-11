@@ -6,7 +6,6 @@ import Validate from "verified";
 import generateHash from "@generate-hash";
 import { TodoElement, TodoResponse } from "@types";
 import path from "@path";
-import _ from "lodash";
 
 const TODO_NOT_FOUND = "TODO__ID_DOES_NOT_EXIST";
 const CATEGORY_NOT_FOUND = "CATEGORY_ID_DOES_NOT_EXIST";
@@ -15,6 +14,8 @@ export function toTodoResponse(todoElement: TodoElement): TodoResponse {
   return {
     id: todoElement.attributes.id,
     created: todoElement.attributes.created,
+    progress: todoElement.attributes.progress,
+    priority: todoElement.attributes.priority,
     name: todoElement.attributes.name,
     state: todoElement.attributes.state,
     tags: todoElement.attributes.tags,
@@ -23,6 +24,9 @@ export function toTodoResponse(todoElement: TodoElement): TodoResponse {
 
 export interface TodoRequestQuery {
   name?: string;
+  progress?: string;
+  priority?: string;
+  tags?: string[];
   state?: "incomplete" | "complete";
   action:
     | "create"
@@ -50,6 +54,7 @@ function createTodo(req: TodoRequest, res: Response, database: Database) {
       id: generateHash(6),
       name: req.query.name,
       state: "incomplete",
+      progress: 0,
       tags: [],
       created: new Date().getTime(),
     });
@@ -134,9 +139,12 @@ function editTodo(req: TodoRequest, res, database: Database) {
     database.getElementById<TodoElement>(req.params.todoID);
 
   if (todoElement) {
-    todoElement.setAttributes(
-      _.pick(req.query, ["name", "tags"])
-    );
+    todoElement.setAttributes({
+      name: req.query.name || todoElement.attributes.name,
+      tags: req.query.tags || todoElement.attributes.tags,
+      progress: isNaN(Number(req.query.progress)) ? todoElement.attributes.progress : Number(req.query.progress),
+      priority: isNaN(Number(req.query.priority)) ? todoElement.attributes.priority : Number(req.query.priority),
+    });
     res.send(toTodoResponse(todoElement));
     database.save();
   } else if (!categoryElement) {
@@ -152,10 +160,20 @@ function onPost(req: TodoRequest, res, database: Database) {
       "name?": "string",
       "tags?": "Array<string|undefined>",
       "id?": "string",
-      action: "create|delete|complete|incomplete|edit",
+      "progress?": "string",
+      "priority?": "string",
+      action: `
+        | complete
+        | create
+        | delete
+        | edit
+        | incomplete
+      `,
     });
 
-  if (queryValidator.validate(req.query).isValid) {
+  const validated = queryValidator.validate(req.query);
+
+  if (validated.isValid) {
     if (req.query.action === "create") {
       createTodo(req, res, database);
     } else if (req.query.action === "delete") {
@@ -182,7 +200,6 @@ export default function (database: Database, app) {
     switch (req.method) {
       case "POST": {
         onPost(req, res, database);
-        break;
       }
     }
 
