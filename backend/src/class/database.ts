@@ -1,20 +1,20 @@
 import * as fs from "fs";
 import { promisify } from "util";
 import { readFileSync } from "fs";
-import Element, { ElementChild, ElementAttributes } from "./element";
+import { DatabaseElement, ElementChild, ElementAttributes } from "./element";
 
 const writeFile = promisify(fs.writeFile);
 
 interface IDList {
-  [key: string]: Element;
+  [key: string]: DatabaseElement;
 }
 
 function toElement(node: ElementChild, idList: IDList) {
-  if ((node as Partial<Element>).children) {
-    let element = new Element(
-      (node as Partial<Element>).type,
-      (node as Partial<Element>).attributes,
-      (node as Partial<Element>).children.map((child) => toElement(child, idList))
+  if ((node as Partial<DatabaseElement>).children) {
+    let element = new DatabaseElement(
+      (node as Partial<DatabaseElement>).type,
+      (node as Partial<DatabaseElement>).attributes,
+      (node as Partial<DatabaseElement>).children.map((child) => toElement(child, idList))
     );
 
     if (element.attributes.id) {
@@ -27,7 +27,7 @@ function toElement(node: ElementChild, idList: IDList) {
 }
 
 export default class Database {
-  body: Element;
+  body: DatabaseElement;
   filename: string;
   idList: IDList;
 
@@ -40,14 +40,14 @@ export default class Database {
       : this.createElement({ id: "body" });
   }
 
-  createElement<T extends Element>(): T;
-  createElement<T extends Element>(tagName: string): T;
-  createElement<T extends Element>(props: ElementAttributes): T;
-  createElement<T extends Element>(props: ElementAttributes, children: ElementChild[]): T;
-  createElement<T extends Element>(children: ElementChild[]): T;
-  createElement<T extends Element>(tagName: string, props: ElementAttributes): T;
-  createElement<T extends Element>(tagName: string, props: ElementAttributes, children: ElementChild[]): T;
-  createElement<T extends Element>(...args: any[]): T {
+  createElement<T extends DatabaseElement = DatabaseElement>(): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(tagName: string): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(props: ElementAttributes): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(props: ElementAttributes, children: ElementChild[]): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(children: ElementChild[]): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(tagName: string, props: ElementAttributes): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(tagName: string, props: ElementAttributes, children: ElementChild[]): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(...args: any[]): T {
     let type = "element";
     let attributes: Partial<T["attributes"]> = {};
     let children = [];
@@ -68,7 +68,7 @@ export default class Database {
       }
     }
 
-    let element = new Element(type, attributes, children);
+    let element = new DatabaseElement(type, attributes, children);
 
     if (element.attributes.id) {
       this.idList[element.attributes.id] = element;
@@ -83,7 +83,7 @@ export default class Database {
       .catch((e) => console.error(e));
   }
 
-  getElementById<T extends Element>(id: string): T | null {
+  getElementById<T extends DatabaseElement = DatabaseElement>(id: string): T | null {
     return this.idList[id] as T;
   }
 }
