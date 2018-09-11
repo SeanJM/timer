@@ -1,11 +1,11 @@
 .title-and-input {
+  display: inline-block;
+  height: $input-size;
   position: relative;
 
   h6 {
     transition: opacity 0.3s;
-    position: absolute;
-    left: 0;
-    top: 0;
+    user-select: none;
   }
 
   .input-wrapper {
@@ -33,6 +33,16 @@
     right: 0;
     top: 0;
   }
+}
+
+.title-and-input_title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding-right: $u10;
+  display: inline-block;
 }
 
 .title-and-input--show-input {

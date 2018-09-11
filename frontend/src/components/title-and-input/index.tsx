@@ -48,7 +48,9 @@ export class TitleAndInput extends Component<Props, State> {
 
     return (
       <div className={className.join(" ")}>
-        <h6>{this.props.title}</h6>
+        <div className="title-and-input_title">
+          <h6>{this.props.title}</h6>
+        </div>
         {this.state.showAdd
           ? null
           : React.createElement(this.props.component, {
