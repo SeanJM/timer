@@ -11,10 +11,18 @@
     border-bottom: 1px solid $grey-light;
   }
 
+  .title-and-input {
+    width: 100%;
+  }
+
   h6 {
     margin-top: 0;
     margin-left: $u2;
-    line-height: $input-size;
+    padding: $u2 0;
+    line-height: $input-size - $u4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -43,9 +51,53 @@
   position: absolute;
   right: 0;
   top: 0;
+  padding-left: $u;
 }
 
 .titlebar_center {
   text-align: center;
   width: 100%;
+}
+
+.titlebar {
+  .input-wrapper_face::after {
+    content: "";
+    position: absolute;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    top: -5px;
+    border-radius: 2px;
+    opacity: 0;
+    border: 2px solid $primary;
+    transition: opacity 0.2s, left 0.2s, top 0.2s, right 0.2s, bottom 0.2s;
+  }
+
+  .input-wrapper--focus {
+    .input-wrapper_face::after {
+      left: -1px;
+      right: -1px;
+      bottom: -1px;
+      top: -1px;
+      content: "";
+      opacity: 1;
+    }
+  }
+
+  .input-wrapper_input input {
+    padding-left: $u9;
+  }
+
+  .input-wrapper_face {
+    background: $grey-lightest;
+    border-radius: 2px;
+  }
+
+  .input-wrapper_icon {
+    left: $u3;
+  }
+
+  .input-wrapper:after {
+    background: none;
+  }
 }
