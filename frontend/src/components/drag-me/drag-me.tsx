@@ -1,10 +1,12 @@
 import React from "react";
 
-interface DragMeEvent {
+export interface DragMeEvent {
   pageX: number;
   pageY: number;
   positionX: number;
   positionY: number;
+  width: number;
+  height: number;
 }
 
 interface DragMeProps extends Partial<JSX.ElementChildrenAttribute> {
@@ -69,6 +71,7 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
     if (this.props.onMouseDown) {
       this.props.onMouseDown(this.getDragMeEvent(e));
     }
+    document.body.style.userSelect = "none";
   }
 
   onMouseUp(e) {
@@ -81,6 +84,7 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
         this.props.onDragEnd(this.getDragMeEvent(e));
       }
     }
+    document.body.style.userSelect = null;
   }
 
   handleEvent(e) {
@@ -105,6 +109,8 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
       pageY: nextPageY,
       positionX: nextPageX / offset.width,
       positionY: nextPageY / offset.height,
+      width: offset.width,
+      height: offset.height,
     };
   }
 
