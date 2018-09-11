@@ -4,7 +4,7 @@ import Database from "@backend/class/database";
 import generateHash from "@generate-hash";
 import express from "express";
 import { TagResponse, TodoElement } from "@types";
-import Element from "@backend/class/element";
+import { DatabaseElement } from "@backend/class/element";
 import path from "@path";
 
 interface TagPostRequest extends Request {
@@ -25,7 +25,7 @@ interface TagGetRequest extends Request {
   };
 }
 
-export function toTagResponse(tagElement: Partial<Element>): TagResponse {
+export function toTagResponse(tagElement: Partial<DatabaseElement>): TagResponse {
   return {
     name: tagElement.attributes.name,
     id: tagElement.attributes.id,
@@ -45,8 +45,8 @@ function deleteTag(req: TagPostRequest, res: Response, database: Database) {
     const tagElement = categoryElement.querySelector("#" + req.query.id);
     const todos = categoryElement.querySelectorAll<TodoElement>("todo");
 
-    todos.forEach(todo => {
-      todo.attributes.tags = todo.attributes.tags.filter(tagID => {
+    todos.forEach((todo) => {
+      todo.attributes.tags = todo.attributes.tags.filter((tagID) => {
         return tagElement.attributes.id !== tagID;
       });
     });

@@ -12,9 +12,9 @@ export interface ElementAttributes {
   [key: string]: any;
 }
 
-export type ElementChild = Partial<Element> | string | boolean;
+export type ElementChild = Partial<DatabaseElement> | string | boolean;
 
-function findElementFromQuery(node: Element, index: number, queryObject: Partial<Element>[]) {
+function findElementFromQuery(node: DatabaseElement, index: number, queryObject: Partial<DatabaseElement>[]) {
   let i = -1;
   const query = queryObject[index];
   const n = node.children
@@ -22,8 +22,8 @@ function findElementFromQuery(node: Element, index: number, queryObject: Partial
     : 0;
 
   while (++i < n) {
-    if (node.children[i] instanceof Element) {
-      let child = node.children[i] as Element;
+    if (node.children[i] instanceof DatabaseElement) {
+      let child = node.children[i] as DatabaseElement;
       if (child.is(query)) {
         if (index === queryObject.length - 1) {
           return child;
@@ -45,15 +45,15 @@ function findElementFromQuery(node: Element, index: number, queryObject: Partial
   return null;
 }
 
-function findElementsFromQuery(node: Element, index: number, queryObject: Partial<Element>[]) {
+function findElementsFromQuery(node: DatabaseElement, index: number, queryObject: Partial<DatabaseElement>[]) {
   const n = node.children ? node.children.length : 0;
   const children = [];
   const query = queryObject[index];
   let i = -1;
 
   while (++i < n) {
-    let child = node.children[i] as Element;
-    if (child instanceof Element) {
+    let child = node.children[i] as DatabaseElement;
+    if (child instanceof DatabaseElement) {
       if (child.is(query)) {
         if (index === queryObject.length - 1) {
           children.push(child);
@@ -76,11 +76,11 @@ function findElementsFromQuery(node: Element, index: number, queryObject: Partia
   return children;
 }
 
-export default class Element {
+export class DatabaseElement {
   type: string;
   attributes: ElementAttributes;
   children: Array<ElementChild | undefined>;
-  parentNode: Element;
+  parentNode: DatabaseElement;
 
   constructor(type: string, attributes: ElementAttributes, children: Array<ElementChild>) {
     let i = -1;
@@ -89,8 +89,8 @@ export default class Element {
     this.attributes = attributes;
     this.children = children;
     while (++i < n) {
-      if (children[i] instanceof Element) {
-        (children[i] as Element).parentNode = this;
+      if (children[i] instanceof DatabaseElement) {
+        (children[i] as DatabaseElement).parentNode = this;
       }
     }
   }
@@ -106,7 +106,7 @@ export default class Element {
     return this;
   }
 
-  is(query: Partial<Element>): boolean {
+  is(query: Partial<DatabaseElement>): boolean {
     if (query.type && query.type !== this.type) {
       return false;
     }
@@ -138,12 +138,12 @@ export default class Element {
     return true;
   }
 
-  querySelectorAll<T extends Element>(selector: string): T[] {
+  querySelectorAll<T extends DatabaseElement>(selector: string): T[] {
     const queryObjectList = querySelectorToObjectList(selector);
     return findElementsFromQuery(this, 0, queryObjectList);
   }
 
-  querySelector<T extends Element>(selector: string): null | T {
+  querySelector<T extends DatabaseElement>(selector: string): null | T {
     const queryObjectList = querySelectorToObjectList(selector);
     return findElementFromQuery(this, 0, queryObjectList);
   }
@@ -153,13 +153,13 @@ export default class Element {
       type: this.type,
       attributes: this.attributes,
       children: this.children,
-    } as Partial<Element>;
+    } as Partial<DatabaseElement>;
   }
 
   appendChild(child: ElementChild) {
     this.children.push(child);
-    if (child instanceof Element) {
-      (child as Element).parentNode = this;
+    if (child instanceof DatabaseElement) {
+      (child as DatabaseElement).parentNode = this;
     }
     return this;
   }
