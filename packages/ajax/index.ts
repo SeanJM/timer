@@ -122,13 +122,13 @@ function wrapXMLRequest(url: string, req: XMLHttpRequest, resolve: (any) => void
         reject(res);
       }
     }
-  }
+  };
 }
 
 function getURL(url: string, data?: Params["data"]) {
   const paramsString = [];
   for (var k in data) {
-    if (data[k]) {
+    if (typeof data[k] !== "undefined") {
       if (data[k].constructor === Array) {
         data[k].forEach((member) => paramsString.push(k + "[]=" + member));
       } else {
