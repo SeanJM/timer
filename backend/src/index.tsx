@@ -24,6 +24,13 @@ if (!database.getElementById("categories")) {
     id: "color",
     created: new Date().getTime(),
   }));
+
+  database.body.appendChild(database.createElement({
+    id: "todoAttributes",
+    created: new Date().getTime(),
+    progressLength: 5,
+    priorityLength: 3,
+  }));
 }
 
 page(__root);
