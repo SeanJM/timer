@@ -1,0 +1,25 @@
+.slide-shadow {
+  position: absolute;
+  height: $u3;
+  top: 50%;
+  margin-top: $u3/-2;
+  left: 0;
+  right: 0;
+  border-radius: $u3/2;
+  overflow: hidden;
+  opacity: 0.3;
+}
+
+.slide-shadow_element {
+  display: inline-block;
+  height: 100%;
+}
+
+.slide-shadow_element_inner {
+  background: $primary;
+  height: 100%;
+}
+
+.slide-shadow_element + .slide-shadow_element {
+  padding-left: 2px;
+}

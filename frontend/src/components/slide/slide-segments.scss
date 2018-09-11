@@ -1,0 +1,31 @@
+.slide-segments {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  right: 0;
+  height: $u3;
+  margin-top: $u3/-2;
+  border-radius: $u3/2;
+  overflow: hidden;
+}
+
+.slide-segment_inner,
+.slide-segment {
+  height: 100%;
+  width: 100%;
+  display: inline-block;
+}
+
+.slide-segment_inner {
+  background: $grey-lightest;
+}
+
+.slide-segment--active {
+  .slide-segment_inner {
+    background: $primary;
+  }
+}
+
+.slide-segment + .slide-segment {
+  padding-left: 2px;
+}

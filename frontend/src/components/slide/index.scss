@@ -1,0 +1,32 @@
+@import "slide-shadow";
+@import "slide-segments";
+
+.slide {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: $input-size;
+}
+
+.slide_thumb {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: $u4;
+  height: $u4;
+  margin-top: $u4/-2;
+  border-radius: 50%;
+  border: 2px solid $grey;
+  background: $grey-lightest;
+}
+
+.slide_thumb--active {
+  border-color: $primary;
+}
+
+.slide_thumb-container {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  right: $u4;
+}
