@@ -15,6 +15,7 @@ import { emptyForm } from "@frontend/action/form";
 import { TitleAndInput } from "@frontend/components/title-and-input";
 import { InputText } from "@frontend/components";
 import { Filter } from "@frontend/components/filter";
+import { List } from "@frontend/components/list";
 
 const FORM_ID = generateId();
 
@@ -72,7 +73,7 @@ function mapStateToProps(state: StoreState, props: RouteComponentProps): TodoPro
 class TodoListView extends Component<TodoProps, {}> {
   node: HTMLInputElement;
 
-  componentDidMount() {
+  handleChange() {
     if (!this.props.query.view) {
       this.props.history.push({
         query: {
@@ -80,6 +81,14 @@ class TodoListView extends Component<TodoProps, {}> {
         }
       });
     }
+  }
+
+  componentDidUpdate() {
+    this.handleChange();
+  }
+
+  componentDidMount() {
+    this.handleChange();
   }
 
   render() {
@@ -98,7 +107,11 @@ class TodoListView extends Component<TodoProps, {}> {
       <div className={className.join(" ")}>
         <Viewport
           titlebar={
-            <Titlebar>
+            <Titlebar
+              secondaryAction={
+                <InputText icon="search"/>
+              }
+            >
               <TitleAndInput
                 component={InputText}
                 title={this.props.name}
@@ -129,23 +142,10 @@ class TodoListView extends Component<TodoProps, {}> {
           }
           body={
             <Filter id={query.view}>
-              <div id="complete">
+              <List id="complete">
                 {this.props.completeTodos.map((todo) => (
                   <Todo
-                    history={history}
-                    key={todo.id}
-                    state={todo.state}
-                    name={todo.name}
-                    created={todo.created}
-                    id={todo.id}
-                    categoryID={this.props.categoryID}
-                    showAlt={this.props.controlPressed}
-                    />
-                    ))}
-              </div>
-              <div id="incomplete">
-                {this.props.incompleteTodos.map((todo) => (
-                  <Todo
+                    isActive={params.todoID === todo.id}
                     history={history}
                     key={todo.id}
                     state={todo.state}
@@ -156,7 +156,22 @@ class TodoListView extends Component<TodoProps, {}> {
                     showAlt={this.props.controlPressed}
                   />
                 ))}
-              </div>
+              </List>
+              <List id="incomplete">
+                {this.props.incompleteTodos.map((todo) => (
+                  <Todo
+                    isActive={params.todoID === todo.id}
+                    history={history}
+                    key={todo.id}
+                    state={todo.state}
+                    name={todo.name}
+                    created={todo.created}
+                    id={todo.id}
+                    categoryID={this.props.categoryID}
+                    showAlt={this.props.controlPressed}
+                  />
+                ))}
+              </List>
             </Filter>
           }
         />
