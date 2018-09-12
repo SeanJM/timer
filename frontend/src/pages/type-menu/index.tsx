@@ -1,13 +1,11 @@
 import * as React from "react";
 import { withStore, StoreState } from "@frontend/store";
-import { routes } from "@frontend/routes";
 import { Icon , IconType } from "@frontend/components/icon";
 import { AppMenuMappedProps } from "@frontend/pages/type-menu";
 import path, { PathParams } from "@path";
 
 import {
   RouterHistory,
-  RouterLocation,
   withRouter,
   RouteComponentProps,
 } from "@frontend/components/router";
@@ -25,16 +23,19 @@ export interface AppMenuProps extends
   params: PathParams<MenuParams>;
 }
 
-export interface AppMenuMappedProps extends AppMenuProps {
+export interface AppMenuMappedProps extends
+  AppMenuProps,
+  Pick<StoreState, "routes"> {
   todo: StoreState["todo"];
 }
 
 function mapStateToProps(state: StoreState, props: AppMenuProps): AppMenuMappedProps {
   return {
+    routes: state.routes,
     todo: state.todo,
     history: props.history,
     location: props.location,
-    params: path.params(props.location.pathname, routes.pathname) as MenuParams,
+    params: path.params(props.location.pathname, state.routes.schema),
   };
 }
 
@@ -52,6 +53,7 @@ export class AppMenuView extends React.Component<AppMenuMappedProps, {}> {
     return (
       <div className={className.join(" ")}>
         <AppMenuCategories
+          routes={this.props.routes}
           params={this.props.params}
           location={this.props.location}
           history={this.props.history}/>
@@ -61,40 +63,26 @@ export class AppMenuView extends React.Component<AppMenuMappedProps, {}> {
 }
 
 interface AppMenuCategoriesItemProps {
+  history: RouterHistory;
+  to: string;
+  label: string;
   isSelected: boolean;
   icon: IconType;
-  history: RouterHistory;
-  location: RouterLocation;
-  label: string;
-  type: "todo" | "tags";
 }
 
 function AppMenuCategoriesItem(props: AppMenuCategoriesItemProps) {
-  const history = props.history;
-  const location = props.location;
+  const { history, to, isSelected } = props;
 
-  const className = [
-    "type-menu_categories_item"
-  ];
+  const className = [ "type-menu_categories_item" ];
 
-  if (props.isSelected) {
-    className.push("type-menu_categories_item-select");
+  if (isSelected) {
+    className.push("type-menu_categories_item--select");
   }
 
   return (
     <div
       className={className.join(" ")}
-      onClick={() => {
-        const params =
-          path.params(location.pathname, routes.pathname);
-
-        let url = path.reduce(routes.pathname, {
-          type: props.type,
-          categoryID: params.categoryID,
-        });
-
-        history.push(url);
-      }}
+      onClick={() => history.push(to)}
     >
       <Icon type={props.icon}/>
       <label>{props.label}</label>
@@ -102,25 +90,33 @@ function AppMenuCategoriesItem(props: AppMenuCategoriesItemProps) {
   );
 }
 
-export function AppMenuCategories(props: Pick<AppMenuMappedProps, "params" | "history" | "location">) {
-  const location = props.location;
-  const params = path.params(location.pathname, routes.pathname);
+export function AppMenuCategories(props: Pick<AppMenuMappedProps,
+  | "params"
+  | "history"
+  | "location"
+  | "routes"
+  >) {
+  const { params, routes } = props;
   return (
     <div className="type-menu_categories">
       <AppMenuCategoriesItem
         history={props.history}
-        location={props.location}
-        type="todo"
+        to={path.reduce(routes.schema, { type: "todo", categoryID: params.categoryID })}
         label="Todo list"
         isSelected={params.type === "todo"}
         icon="book"/>
       <AppMenuCategoriesItem
-        location={props.location}
         history={props.history}
-        type="tags"
+        to={path.reduce(routes.schema, { type: "tags", categoryID: params.categoryID })}
         label="Tag editor"
         isSelected={params.type === "tags"}
         icon="tag"/>
+      <AppMenuCategoriesItem
+        history={props.history}
+        to={path.reduce(routes.schema, { type: "filters", categoryID: params.categoryID })}
+        label="Filters"
+        isSelected={params.type === "filters"}
+        icon="tag-filter"/>
     </div>
   );
 }

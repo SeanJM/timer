@@ -18,6 +18,10 @@ export interface Category extends TodoNode {
 export interface StoreState {
   keys: Keys;
 
+  routes: {
+    schema: string
+  };
+
   categories: {
     setName: boolean;
   };
@@ -47,6 +51,10 @@ export interface StoreState {
 
 export const store = new Persistore<StoreState>(
   {
+    routes: {
+      schema: ":type/:categoryID/:elementID/"
+    },
+
     keys: {
       control: false,
     },

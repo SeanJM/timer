@@ -16,7 +16,6 @@ import { emptyForm } from "@frontend/action/form";
 import { TitleAndInput, TitleAndInputPassedProps } from "@frontend/components/title-and-input";
 import { Titlebar } from "@frontend/components/titlebar";
 import { Button } from "@frontend/components/button";
-import { routes } from "@frontend/components/app";
 
 const FORM_ID = generateHash();
 const COLOR_PICKER_ID = "tag_name";
@@ -26,7 +25,10 @@ interface TagParams {
   todoID?: string;
 }
 
-interface Props extends Partial<TagResponse>, Pick<WithRouterProps, "history"> {
+interface Props extends
+  Partial<TagResponse>,
+  Pick<WithRouterProps, "history">,
+  Pick<StoreState, "routes"> {
   params: PathParams<TagParams>;
   categoryName: string;
   colorPicker: Partial<ColorPicker>;
@@ -70,6 +72,7 @@ function mapStateToProps(state: StoreState, props: WithRouterProps): Props {
   const colorInput: StoreFormInput = form.input.color;
 
   return {
+    routes: state.routes,
     params,
     history: props.history,
     colorPicker: state.color.colorPickers.find((a) => a.id === COLOR_PICKER_ID) || {},
@@ -95,7 +98,7 @@ class TagListView extends Component<Props, {}> {
   }
 
   render() {
-    const { params, history } = this.props;
+    const { params, history, routes } = this.props;
     const className = ["todo-tags"];
 
     if (params.categoryID) {
@@ -133,7 +136,7 @@ class TagListView extends Component<Props, {}> {
                     title={tag.name}
                     onClick={() => {
                       history.push({
-                        pathname: path.reduce(routes.pathname, {
+                        pathname: path.reduce(routes.schema, {
                           type: "tags",
                           categoryID: params.categoryID,
                           todoID: tag.id,

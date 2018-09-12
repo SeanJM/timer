@@ -11,7 +11,6 @@ import {
 } from "@frontend/components/router";
 
 import path, { PathParams } from "@path";
-import { routes } from "@frontend/routes";
 import { TitleAndInput } from "@frontend/components/title-and-input";
 import { InputText } from "@frontend/components";
 
@@ -25,7 +24,8 @@ export interface CategoryListProps extends
   | "history"
   | "location"
   | "params"
-  > {
+  >,
+  Pick<StoreState, | "routes"> {
   params: PathParams<MenuParams>;
   setCategoryName: boolean;
 }
@@ -36,6 +36,7 @@ export interface AppMenuMappedProps extends CategoryListProps {
 
 function mapStateToProps(state: StoreState, props: CategoryListProps): AppMenuMappedProps {
   return {
+    routes: state.routes,
     todo: state.todo,
     history: props.history,
     location: props.location,
@@ -47,7 +48,7 @@ function mapStateToProps(state: StoreState, props: CategoryListProps): AppMenuMa
 export class CategoryList extends Component<AppMenuMappedProps, {}> {
   render() {
     const className = ["category-list"];
-    const { todo, params } = this.props;
+    const { todo, params, routes } = this.props;
 
     if (params.type) {
       className.push("category-list--type");
@@ -79,9 +80,9 @@ export class CategoryList extends Component<AppMenuMappedProps, {}> {
               isSelected={params.categoryID === a.id}
               onClick={() => {
                 const pathname = this.props.location.pathname;
-                const params = path.params(pathname, routes.pathname);
+                const params = path.params(pathname, routes.schema);
 
-                const url = path.reduce(routes.pathname, {
+                const url = path.reduce(routes.schema, {
                   type: params.type,
                   categoryID: a.id,
                 });
