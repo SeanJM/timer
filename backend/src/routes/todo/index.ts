@@ -12,11 +12,12 @@ const CATEGORY_NOT_FOUND = "CATEGORY_ID_DOES_NOT_EXIST";
 
 export function toTodoResponse(todoElement: TodoElement): TodoResponse {
   return {
-    id: todoElement.attributes.id,
     created: todoElement.attributes.created,
-    progress: todoElement.attributes.progress,
-    priority: todoElement.attributes.priority,
+    id: todoElement.attributes.id,
     name: todoElement.attributes.name,
+    notes: todoElement.attributes.notes,
+    priority: todoElement.attributes.priority,
+    progress: todoElement.attributes.progress,
     state: todoElement.attributes.state,
     tags: todoElement.attributes.tags,
   };
@@ -25,6 +26,7 @@ export function toTodoResponse(todoElement: TodoElement): TodoResponse {
 export interface TodoRequestQuery {
   name?: string;
   progress?: string;
+  notes?: string;
   priority?: string;
   tags?: string[];
   state?: "incomplete" | "complete";
@@ -55,6 +57,7 @@ function createTodo(req: TodoRequest, res: Response, database: Database) {
       name: req.query.name,
       state: "incomplete",
       progress: 0,
+      priority: 0,
       tags: [],
       created: new Date().getTime(),
     });
@@ -142,6 +145,7 @@ function editTodo(req: TodoRequest, res, database: Database) {
     todoElement.setAttributes({
       name: req.query.name || todoElement.attributes.name,
       tags: req.query.tags || todoElement.attributes.tags,
+      notes: req.query.notes || todoElement.attributes.notes,
       progress: isNaN(Number(req.query.progress)) ? todoElement.attributes.progress : Number(req.query.progress),
       priority: isNaN(Number(req.query.priority)) ? todoElement.attributes.priority : Number(req.query.priority),
     });
@@ -160,6 +164,7 @@ function onPost(req: TodoRequest, res, database: Database) {
       "name?": "string",
       "tags?": "Array<string|undefined>",
       "id?": "string",
+      "notes?": "string",
       "progress?": "string",
       "priority?": "string",
       action: `
