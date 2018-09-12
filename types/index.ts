@@ -80,6 +80,7 @@ export interface TodoElement extends DatabaseElement {
   attributes: {
     progress: number;
     priority: number;
+    notes: null | string;
     tags: string[];
   } & Pick<DatabaseElement["attributes"],
   | "id"
@@ -95,6 +96,7 @@ export type TodoResponse =
     | "created"
     | "id"
     | "name"
+    | "notes"
     | "priority"
     | "progress"
     | "state"
