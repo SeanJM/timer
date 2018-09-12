@@ -27,18 +27,22 @@ export class InputSlide extends Component<InputSlideProps, InputSlideState> {
     };
   }
 
-  componentDidMount() {
+  onValue() {
     const { onValue } = this.props;
     if (onValue) {
       onValue(this.state.value, "number");
     }
   }
 
+  componentDidMount() {
+    this.onValue();
+  }
+
   componentDidUpdate(prevProps) {
     if (this.props.defaultValue !== prevProps.defaultValue) {
       this.setState({
         value: this.props.defaultValue
-      });
+      }, () => this.onValue());
     }
   }
 
@@ -65,6 +69,9 @@ export class InputSlide extends Component<InputSlideProps, InputSlideState> {
             });
           }}
           onInput={(value) => {
+            this.setState({
+              value
+            });
             if (onValue) {
               onValue(value, "number");
             }
