@@ -57,7 +57,7 @@ export class InputTextarea extends Component<InputTextareaProps, InputTextareaSt
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.defaultValue !== this.props.defaultValue) {
+    if (this.props.defaultValue && prevProps.defaultValue !== this.props.defaultValue) {
       this.node.value = this.props.defaultValue;
     }
   }
