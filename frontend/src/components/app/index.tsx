@@ -7,7 +7,7 @@ import { ColorPickerSpawnConnect } from "@frontend/components/color-picker";
 import { dispatch } from "@frontend/action/";
 import { TodoList } from "@frontend/pages/todo-list";
 import { TagList } from "@frontend/pages/tag-list";
-import { routes } from "@frontend/routes";
+import { FilterList } from "@frontend/pages/filter-list";
 import { CategoryListConnect } from "@frontend/pages/category-list";
 import { TodoEditorConnect } from "@frontend/pages/todo-editor";
 import { NotFound } from "@frontend/pages/not-found";
@@ -55,6 +55,12 @@ export class App extends Component {
             component={TagList} />
         </Router>
 
+        <Router basename="filters/">
+          <Route
+            pathname={"/"}
+            component={FilterList} />
+        </Router>
+
         <Router notfound={NotFound}>
           <Route
             pathname={"/"}
@@ -71,5 +77,3 @@ export class App extends Component {
     );
   }
 }
-
-export { routes };
