@@ -15,6 +15,7 @@ export type InputType =
   | "slide"
   | "switch"
   | "text"
+  | "textarea"
   ;
 
 export type InputEvents = {

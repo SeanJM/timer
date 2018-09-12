@@ -17,11 +17,15 @@
     top: 0;
   }
 
+  textarea,
   input {
-    height: $input-size;
     width: 100%;
     border: 0;
     background: none;
+  }
+
+  input {
+    height: $input-size;
   }
 
   input[type=text] {
@@ -30,9 +34,19 @@
     border-radius: 2px;
   }
 
+  textarea:active,
+  textarea:focus,
   input:active,
   input:focus {
     outline: none;
+  }
+
+  textarea {
+    height: $input-size * 4;
+    font-family: $font-family;
+    font-size: $font-size;
+    line-height: $line-height;
+    color: $black;
   }
 
   &:after {
