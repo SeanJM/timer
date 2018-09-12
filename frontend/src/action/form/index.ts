@@ -16,7 +16,6 @@ export function form(subscribe) {
 
       case "VALIDATE": {
         service.validate(value);
-        break;
       }
     }
   });
