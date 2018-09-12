@@ -15,6 +15,9 @@ interface DragMeProps extends Partial<JSX.ElementChildrenAttribute> {
   onDragMove?: (e: DragMeEvent) => void;
   onDragEnd?: (e: DragMeEvent) => void;
   onDragStart?: (e: DragMeEvent) => void;
+  onFocus?: (e: React.FocusEvent) => void;
+  onBlur?: (e: React.FocusEvent) => void;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
 }
 
 interface DragMeState {
@@ -87,6 +90,24 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
     document.body.style.userSelect = null;
   }
 
+  onKeyDown(e) {
+    if (this.props.onKeyDown) {
+      this.props.onKeyDown(e);
+    }
+  }
+
+  onFocus(e) {
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
+  }
+
+  onBlur(e) {
+    if (this.props.onBlur) {
+      this.props.onBlur(e);
+    }
+  }
+
   handleEvent(e) {
     switch (e.type) {
       case "mousemove": {
@@ -117,6 +138,10 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
   render() {
     return (
       <div
+        tabIndex={0}
+        onKeyDown={(e) => this.onKeyDown(e)}
+        onFocus={(e) => this.onFocus(e)}
+        onBlur={(e) => this.onBlur(e)}
         className={this.props.className}
         ref={(node) => { this.node = node; }}
         onMouseDown={(e) => this.onMouseDown(e)}>
