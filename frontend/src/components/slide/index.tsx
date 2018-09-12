@@ -13,6 +13,7 @@ export interface SlideProps {
 }
 
 export interface SlideState {
+  isFocus: boolean;
   isDragging: boolean;
   shadowPositionX: number;
 }
@@ -21,6 +22,7 @@ export class Slide extends Component<SlideProps, SlideState> {
   constructor(props) {
     super(props);
     this.state = {
+      isFocus: false,
       isDragging: false,
       shadowPositionX: 0
     };
@@ -58,20 +60,51 @@ export class Slide extends Component<SlideProps, SlideState> {
     });
   }
 
+  onFocus(e) {
+    this.setState({
+      isFocus: true
+    });
+  }
+
+  onBlur(e) {
+    this.setState({
+      isFocus: false
+    });
+  }
+
+  onKeyDown(e) {
+    if (e.which === 37) {
+      let value = Math.max(0, this.props.value - 1);
+      this.props.onInput(value);
+    } else if (e.which === 39) {
+      let value = Math.min(this.props.length, this.props.value + 1);
+      this.props.onInput(value);
+    }
+  }
+
   render() {
     const value = this.props.value;
     const length = this.props.length || 10;
+    const className = ["slide"];
+
+    if (this.state.isFocus) {
+      className.push("slide--focus");
+    }
 
     return (
       <DragMe
-        className="slide"
+        className={className.join(" ")}
+        onFocus={(e) => this.onFocus(e)}
+        onBlur={(e) => this.onBlur(e)}
         onDragStart={(e) => this.onDragStart(e)}
         onDragMove={(e) => this.onDragMove(e)}
         onDragEnd={(e) => this.onDragEnd(e)}
+        onKeyDown={(e) => this.onKeyDown(e)}
       >
         <SlideSegments
           length={length}
           value={value}/>
+        <div className="slide-focus"/>
         {this.state.isDragging
           ? <SlideShadow
               length={length}
@@ -81,7 +114,7 @@ export class Slide extends Component<SlideProps, SlideState> {
           <div
             className={"slide_thumb" + (this.state.isDragging ? " slide_thumb--active" : "")}
             style={{
-              left: ((this.props.value / this.props.length) * 100) + "%"
+              left: ((value / length) * 100) + "%"
             }}
           />
         </div>
