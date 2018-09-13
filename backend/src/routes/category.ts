@@ -1,6 +1,6 @@
 import express, { Request, Express } from "express";
 import Validate from "verified";
-import Database from "@backend/class/database";
+import { Database } from "@backend/class/database";
 import generateHash from "@generate-hash";
 import { CategoryElement, CategoryResponse, TodoElement, TagElement } from "@types";
 import { toTodoResponse } from "@backend/routes/todo";

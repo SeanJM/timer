@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Validate from "verified";
-import Database from "@backend/class/database";
+import { Database } from "@backend/class/database";
 import generateHash from "@generate-hash";
 import express from "express";
 import { DatabaseElement } from "@backend/class/element";

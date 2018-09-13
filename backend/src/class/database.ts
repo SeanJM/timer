@@ -26,7 +26,7 @@ function toElement(node: ElementChild, idList: IDList) {
   return node;
 }
 
-export default class Database {
+export class Database {
   body: DatabaseElement;
   filename: string;
   idList: IDList;

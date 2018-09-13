@@ -1,5 +1,5 @@
 import express from "express";
-import Database from "@backend/class/database";
+import { Database } from "@backend/class/database";
 
 import { Request, Response } from "express";
 import Validate from "verified";

@@ -4,7 +4,7 @@ import bodyParser = require("body-parser");
 import express = require("express");
 import { routes } from "@backend/routes";
 import page from "@backend/page";
-import Database from "@backend/class/database";
+import { Database } from "@backend/class/database";
 
 const __root = path.join(__dirname, "../../");
 const app = express();
