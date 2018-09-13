@@ -1,9 +1,9 @@
 import { Request, Response, Express } from "express";
 import Validate from "verified";
-import Database from "@backend/class/database";
+import { Database } from "@backend/class/database";
 import generateHash from "@generate-hash";
 import express from "express";
-import { TagResponse, TodoElement } from "@types";
+import { TagResponse, TodoElement, TagElement } from "@types";
 import { DatabaseElement } from "@backend/class/element";
 import path from "@path";
 
@@ -12,7 +12,7 @@ interface TagPostRequest extends Request {
     categoryID: string;
   };
   query: {
-    action: "create" | "delete";
+    action: "create" | "delete" | "edit";
     name: string;
     color: string;
     id: string;
@@ -42,7 +42,7 @@ function deleteTag(req: TagPostRequest, res: Response, database: Database) {
 
   if (validateDelete.validate(req.query).isValid) {
     const categoryElement = database.getElementById(req.params.categoryID);
-    const tagElement = categoryElement.querySelector("#" + req.query.id);
+    const tagElement = categoryElement.querySelector<TagElement>("#" + req.query.id);
     const todos = categoryElement.querySelectorAll<TodoElement>("todo");
 
     todos.forEach((todo) => {
@@ -78,11 +78,29 @@ function createTag(req: TagPostRequest, res: Response, database: Database) {
   }
 }
 
+function editTag(req: TagPostRequest, res: Response, database: Database) {
+  const category = database.getElementById(req.params.categoryID);
+  const tagElement = category && category.querySelector<TagElement>("#" + req.query.id);
+  if (category && tagElement) {
+    tagElement.setAttributes({
+      name: tagElement.attributes.name || req.query.name,
+      color: tagElement.attributes.color || req.query.color,
+    });
+    res.send(toTagResponse(tagElement));
+    database.save();
+  } else if (!category) {
+    res.status(404).send("CATEGORY_NOT_FOUND");
+  } else {
+    res.status(404).send("TAG_NOT_FOUND");
+  }
+}
+
 function onPost(req: TagPostRequest, res, database) {
   const validateQuery = new Validate({
-    action: "create|delete",
-    "id?": "string",
+    action: "create|delete|edit",
+    "categoryID?": "string",
     "color?": "string",
+    "id?": "string",
     "name?": "string",
   });
 
@@ -91,6 +109,8 @@ function onPost(req: TagPostRequest, res, database) {
       createTag(req, res, database);
     } else if (req.query.action === "delete") {
       deleteTag(req, res, database);
+    } else if (req.query.action === "edit") {
+      editTag(req, res, database);
     }
   } else {
     res.status(404).send("TAG__INVALID_REQUEST");
