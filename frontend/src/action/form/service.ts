@@ -22,10 +22,20 @@ interface FormValueEvent {
   name: string;
 }
 
-export function emptyForm(id: string): StoreForm {
+export function emptyForm(id: string, members: string[] = []): StoreForm {
+  const input = {};
+  let i = -1;
+  const n = members.length;
+
+  while (++i < n) {
+    input[members[i]] = {
+      value: null
+    };
+  }
+
   return {
     id: id,
-    input: {},
+    input,
     isValid: true,
     showValidation: false,
   };
