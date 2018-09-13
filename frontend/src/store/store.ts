@@ -109,6 +109,6 @@ export const store = new Persistore<StoreState>(
       console.log(validator);
       return validator.isValid;
     },
-    ignore: [/^form\./, /^slideOut\./, /^color\.items/, /^categories\.setName/]
+    ignore: [/^form\./, /^slideOut\./, /^color\.colorPickers/, /^categories\.setName/]
   }
 );
