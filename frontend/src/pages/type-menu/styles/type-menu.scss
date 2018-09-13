@@ -8,6 +8,7 @@
   z-index: 2;
   width: 100%;
 
+
   h6 {
     color: #fff;
     transition: font-size 0.3s;
@@ -57,6 +58,7 @@
   padding: $u3;
   position: relative;
   width: 100%;
+  height: $u11;
 
   &:before {
     content: "";
@@ -66,6 +68,7 @@
     right: 0;
     height: 1px;
     background: $black-light;
+    z-index: -1;
   }
 
   .icon {
@@ -76,6 +79,7 @@
     position: absolute;
     margin-left: $u;
     top: 50%;
+    transition: fill 0.3s;
   }
 
   label {
@@ -83,28 +87,11 @@
     padding-left: $u10;
     color: $grey-light;
     white-space: nowrap;
+    line-height: $u3;
   }
 }
 
-.type-menu--type {
-  width: $u53;
-  .type-menu_categories_item {
-    display: inline-block;
-    padding: $u3;
-    position: relative;
-    width: 100%;
-  }
-}
-
-.type-menu--category-id {
-  width: $u12;
-
-  label {
-    opacity: 0;
-  }
-}
-
-.type-menu_categories_item-select {
+.type-menu_categories_item--select {
   &:after {
     content: "";
     position: absolute;
@@ -113,6 +100,8 @@
     bottom: 0;
     width: $u;
     background: $primary;
+    z-index: -1;
+    transition: width 0.3s;
   }
 
   .icon {
@@ -121,5 +110,35 @@
 
   label {
     color: $primary;
+  }
+}
+
+.type-menu--type {
+  width: $u53;
+
+  .type-menu_categories_item {
+    display: inline-block;
+    padding: $u3;
+    position: relative;
+    width: 100%;
+  }
+
+}
+
+.type-menu--category-id {
+  width: $u12;
+
+  label {
+    opacity: 0;
+  }
+
+  .icon {
+    fill: #fff;
+  }
+
+  .type-menu_categories_item--select {
+    &:after {
+      width: 100%;
+    }
   }
 }
