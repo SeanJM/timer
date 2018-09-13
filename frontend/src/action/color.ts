@@ -22,7 +22,7 @@ function attributesToSwatch(swatch: SwatchAttributes): SwatchAttributes {
 
 function addToPalette(value: string) {
   const swatch = swatchToAttributes(value);
-  const indexOf = store.value.color.palette.findIndex(a => a.value === value);
+  const indexOf = store.value.color.palette.findIndex((a) => a.value === value);
 
   if (indexOf === -1) {
     store.set({
@@ -38,7 +38,7 @@ function addToPalette(value: string) {
       }
     }).then((res: SwatchAttributes) => {
       const palette = store.value.color.palette.slice();
-      const indexOf = palette.findIndex(a => a.id === swatch.id);
+      const indexOf = palette.findIndex((a) => a.id === swatch.id);
 
       palette.splice(indexOf, 1, {...res, value: "#" + res.value});
 
@@ -62,9 +62,9 @@ function getPalette() {
 }
 
 function deleteSwatch(id: string) {
-  const swatchIndex = store.value.color.palette.findIndex(a => a.id === id);
+  const swatchIndex = store.value.color.palette.findIndex((a) => a.id === id);
   const swatch = store.value.color.palette[swatchIndex];
-  const palette = store.value.color.palette.filter(a => a.id !== id);
+  const palette = store.value.color.palette.filter((a) => a.id !== id);
 
   store.set({
     color: {
