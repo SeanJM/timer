@@ -6,7 +6,7 @@ import keydown from "@frontend/action/keydown";
 import modal from "@frontend/action/modal";
 import slideOut from "@frontend/action/slide-out";
 import todo from "@frontend/action/todo";
-import { todoTags } from "@frontend/action/todo-tags";
+import { tags } from "@frontend/action/tags";
 
 const action = new Action();
 action.debug = process.env.NODE_ENV === "development";
@@ -24,4 +24,4 @@ keydown(subscribe);
 modal(subscribe);
 slideOut(subscribe);
 todo(subscribe);
-todoTags(subscribe);
+tags(subscribe);
