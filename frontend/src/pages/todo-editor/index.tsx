@@ -16,6 +16,8 @@ import { dispatch } from "@frontend/action";
 import { Titlebar } from "@frontend/components/titlebar";
 import path from "@path";
 import { InputSlide } from "@frontend/components/input/input-slide";
+import { InputTextarea } from "@frontend/components/input/input-textarea";
+import _ from "lodash";
 
 const FORM_ID = generateHash();
 
@@ -24,11 +26,13 @@ interface TodoEditorProps
   todoName: string;
   todoTags: string[];
 
-  todoProgress: number;
+  todoProgressIndex: number;
   todoProgressLength: number;
 
   todoPriorityIndex: number;
   todoPriorityLength: number;
+
+  todoNotes: string;
 
   categoryName: string;
   categoryID: string;
@@ -40,22 +44,24 @@ interface TodoEditorProps
   formInputTodoTags: string[] | null;
   formInputTodoProgress: number | null;
   formInputTodoPriority: number | null;
+  formInputTodoNotes: string | null;
 }
 
 function mapStateToProps(state: StoreState, props: RouteComponentProps): TodoEditorProps {
   const { categoryID, todoID } = props.params;
   const category = state.todo.categories.find((a) => a.id === categoryID);
   const form = state.form[FORM_ID] || emptyForm(FORM_ID);
-  const todo = category.todos.find((a) => a.id === todoID) || { name: null, tags: null, progress: null, priority: null };
+  const todo = category.todos.find((a) => a.id === todoID) || { name: null, tags: null, progress: null, priority: null, notes: null };
   return {
     history: props.history,
     location: props.location,
     params: props.params,
     query: props.query,
 
+    todoNotes: todo.notes,
     todoName: todo.name,
     todoTags: todo.tags,
-    todoProgress: todo.progress,
+    todoProgressIndex: todo.progress,
     todoProgressLength: 5,
 
     todoPriorityIndex: todo.priority,
@@ -71,16 +77,23 @@ function mapStateToProps(state: StoreState, props: RouteComponentProps): TodoEdi
     formInputTodoProgress: form.input.todoProgress ? form.input.todoProgress.value : null,
     formInputTodoPriority: form.input.todoPriority ? form.input.todoPriority.value : null,
     formInputTodoTags: form.input.todoTags ? form.input.todoTags.value : null,
+    formInputTodoNotes: form.input.todoNotes ? form.input.todoNotes.value : null,
   };
 }
 
 class TodoEditor extends React.Component<TodoEditorProps> {
+  constructor(props) {
+    super(props);
+    this.save = _.debounce(this.save.bind(this), 500);
+  }
+
   save() {
     const {
       formInputTodoName,
-      formInputTodoTags,
+      formInputTodoNotes,
+      formInputTodoPriority,
       formInputTodoProgress,
-      formInputTodoPriority
+      formInputTodoTags,
     } = this.props;
 
     dispatch("TODO", {
@@ -90,6 +103,7 @@ class TodoEditor extends React.Component<TodoEditorProps> {
         todoID: this.props.todoID,
         name: formInputTodoName || this.props.todoName,
         tags: formInputTodoTags,
+        notes: formInputTodoNotes,
         progress: formInputTodoProgress,
         priority: formInputTodoPriority,
       }
@@ -110,31 +124,32 @@ class TodoEditor extends React.Component<TodoEditorProps> {
   }
 
   componentDidUpdate(prevProps) {
-    const saveTags = (this.props.formInputTodoTags || []).length !== (prevProps.formInputTodoTags || []).length;
-    const saveName = this.props.formInputTodoName !== prevProps.formInputTodoName;
-    if (saveName) {
-      dispatch("TODO", {
-        type: "EDIT",
-        value: {
-          categoryID: this.props.categoryID,
-          todoID: this.props.todoID,
-          name: this.props.formInputTodoName || this.props.todoName,
-        }
-      });
-    } else if (saveTags) {
-      dispatch("TODO", {
-        type: "EDIT",
-        value: {
-          categoryID: this.props.categoryID,
-          todoID: this.props.todoID,
-          tags: this.props.formInputTodoTags,
-        }
-      });
+    const saveTags = prevProps.formInputTodoTags && this.props.formInputTodoTags.length !== prevProps.formInputTodoTags.length;
+    const saveName = prevProps.formInputTodoName && this.props.formInputTodoName !== prevProps.formInputTodoName;
+    if (prevProps.todoID === this.props.todoID) {
+      if (saveName) {
+        dispatch("TODO", {
+          type: "EDIT",
+          value: {
+            categoryID: this.props.categoryID,
+            todoID: this.props.todoID,
+            name: this.props.formInputTodoName,
+          }
+        });
+      } else if (saveTags) {
+        dispatch("TODO", {
+          type: "EDIT",
+          value: {
+            categoryID: this.props.categoryID,
+            todoID: this.props.todoID,
+            tags: this.props.formInputTodoTags,
+          }
+        });
+      }
     }
   }
 
   render() {
-    const todoNameValue = this.props.formInputTodoName;
     const { history, location } = this.props;
     return (
       <div className="todo-editor">
@@ -155,9 +170,10 @@ class TodoEditor extends React.Component<TodoEditorProps> {
               <TitleAndInput
                 icon="edit"
                 defaultValue={this.props.todoName}
-                title={todoNameValue || this.props.todoName}
+                title={this.props.formInputTodoName || this.props.todoName}
                 component={InputText}
-                onSubmit={(value) => {
+                onSubmit={() => this.save()}
+                onValue={(value) => {
                   dispatch("FORM_VALUE", {
                     id: FORM_ID,
                     name: "todoName",
@@ -189,7 +205,7 @@ class TodoEditor extends React.Component<TodoEditorProps> {
                   <InputSlide
                     onInput={() => this.save()}
                     length={this.props.todoProgressLength}
-                    defaultValue={this.props.todoProgress}
+                    defaultValue={this.props.todoProgressIndex}
                   />
                 </InputGroup>
                 <InputGroup name="todoPriority" formid={FORM_ID}>
@@ -198,6 +214,13 @@ class TodoEditor extends React.Component<TodoEditorProps> {
                     onInput={() => this.save()}
                     length={this.props.todoPriorityLength}
                     defaultValue={this.props.todoPriorityIndex}
+                  />
+                </InputGroup>
+                <InputGroup name="todoNotes" formid={FORM_ID}>
+                  <label>Notes</label>
+                  <InputTextarea
+                    onInput={() => this.save()}
+                    defaultValue={this.props.todoNotes}
                   />
                 </InputGroup>
               </FormConnect>
