@@ -1,6 +1,6 @@
 import querySelectorToObjectList from "@query-selector-to-object";
 
-export interface ElementAttributes {
+export type ElementAttributes<T = {}> = T & {
   id?: string;
   name?: string;
   description?: string;
@@ -10,7 +10,7 @@ export interface ElementAttributes {
   completed?: number;
   color?: string;
   [key: string]: any;
-}
+};
 
 export type ElementChild = Partial<DatabaseElement> | string | boolean;
 
@@ -76,7 +76,7 @@ function findElementsFromQuery(node: DatabaseElement, index: number, queryObject
   return children;
 }
 
-export class DatabaseElement {
+export class DatabaseElement<U extends Partial<DatabaseElement> = {}> {
   type: string;
   attributes: ElementAttributes;
   children: Array<ElementChild | undefined>;
@@ -95,8 +95,8 @@ export class DatabaseElement {
     }
   }
 
-  setAttributes(value: { [key in keyof ElementAttributes]: ElementAttributes[key] });
-  setAttributes<T extends keyof ElementAttributes>(name: T, value: ElementAttributes[T]);
+  setAttributes(value: { [key in keyof Partial<ElementAttributes<U["attributes"]>>]: ElementAttributes<U["attributes"]>[key] });
+  setAttributes<T extends keyof ElementAttributes<U["attributes"]>>(name: T, value: ElementAttributes<U["attributes"]>[T]);
   setAttributes() {
     if (typeof arguments[0] === "object") {
       Object.assign(this.attributes, arguments[0]);
@@ -138,12 +138,12 @@ export class DatabaseElement {
     return true;
   }
 
-  querySelectorAll<T extends DatabaseElement>(selector: string): T[] {
+  querySelectorAll<T>(selector: string): DatabaseElement<T>[] {
     const queryObjectList = querySelectorToObjectList(selector);
     return findElementsFromQuery(this, 0, queryObjectList);
   }
 
-  querySelector<T extends DatabaseElement>(selector: string): null | T {
+  querySelector<T>(selector: string): null | DatabaseElement<T> {
     const queryObjectList = querySelectorToObjectList(selector);
     return findElementFromQuery(this, 0, queryObjectList);
   }
