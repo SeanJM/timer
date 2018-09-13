@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import Database from "@backend/class/database";
+import { Database } from "@backend/class/database";
 import Validate from "verified";
 
 fs.writeFileSync(path.resolve(__dirname, "test.json"), "");
