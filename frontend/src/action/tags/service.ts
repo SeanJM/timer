@@ -36,7 +36,7 @@ export class Service {
     ajax.post(path.join("/tags/", e.categoryID), {
       data: {
         action: "create",
-        color: e.color.substring(1),
+        color: e.color ? e.color.substring(1) : null,
         name: e.name,
       } as Pick<TagResponse, "color" | "name">
     })
