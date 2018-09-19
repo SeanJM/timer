@@ -31,7 +31,7 @@ function toSwatchResponse(swatch: SwatchElement) {
   return swatch.attributes;
 }
 
-export default function (database: Database): express.Router {
+export function color(database: Database): express.Router {
   const router = express.Router();
 
   function createSwatch(req, res) {
