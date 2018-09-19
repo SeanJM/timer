@@ -1,10 +1,21 @@
-import express, { Request, Express } from "express";
+import express, { Request, Express, Response } from "express";
 import Validate from "verified";
 import { Database } from "@backend/class/database";
 import generateHash from "@generate-hash";
-import { CategoryElement, CategoryResponse, TodoElement, TagElement } from "@types";
+
+import {
+  CategoryAllResponse,
+  CategoryElement,
+  CategoryResponse,
+  CategorySortBy,
+  FilterElement,
+  TagElement,
+  TodoElement,
+} from "@types";
+
 import { toTodoResponse } from "@backend/routes/todo";
 import { toTagResponse } from "@backend/routes/tags";
+import { toFilterResponse } from "@backend/routes/filters";
 import path from "@path";
 
 interface CategoryRequestParams {
@@ -13,7 +24,12 @@ interface CategoryRequestParams {
 
 interface CategoryRequestQuery {
   name: string;
-  action?: "create" | "delete";
+  sortBy?: CategorySortBy;
+  action?:
+    | "create"
+    | "delete"
+    | "sort"
+    ;
 }
 
 interface CategoryRequest extends Request {
@@ -24,19 +40,24 @@ interface CategoryRequest extends Request {
 }
 
 function toCategoryResponse(element: CategoryElement): CategoryResponse {
-  const todoElements = (element.querySelectorAll("todo") as TodoElement[]);
-  const tagElements = (element.querySelectorAll("tag") as TagElement[]);
+  const todoElements = element.querySelectorAll<TodoElement>("todo");
+  const tagElements = element.querySelectorAll<TagElement>("tag");
+  const filterElements = element.querySelectorAll<FilterElement>("filter");
   return {
+    sortBy: element.attributes.sortBy,
     id: element.attributes.id,
     created: element.attributes.created,
     name: element.attributes.name,
     todos: todoElements.map(toTodoResponse),
     tags: tagElements.map(toTagResponse),
+    filters: filterElements.map(toFilterResponse),
   };
 }
 
 function createCategory(req: CategoryRequest, res, database: Database) {
   const element = database.createElement<CategoryElement>("category", {
+    sortBy: "date",
+    created: new Date().getTime(),
     id: generateHash(12),
     name: req.query.name,
   });
@@ -51,7 +72,7 @@ function createCategory(req: CategoryRequest, res, database: Database) {
 
 function deleteCategory(req: CategoryRequest, res, database: Database) {
   let categoryElement =
-      database.getElementById(req.params.categoryID);
+    database.getElementById(req.params.categoryID);
 
   let categoriesElement =
     database.getElementById("categories");
@@ -61,11 +82,30 @@ function deleteCategory(req: CategoryRequest, res, database: Database) {
   database.save();
 }
 
+function sortCategory(req: CategoryRequest, res: Response, database: Database) {
+  let categoryElement = database.getElementById<CategoryElement>(req.params.categoryID);
+  if (categoryElement) {
+    categoryElement.setAttributes({
+      sortBy: req.query.sortBy
+    });
+    database.save();
+    res.send();
+  } else {
+    res
+      .status(404)
+      .send(`CATEGORY__NOT_FOUND: "${req.params.categoryID}"`);
+  }
+}
+
 function onPost(req: CategoryRequest, res, database: Database) {
   const queryValidator =
     new Validate({
       "name?": "string",
-      "action": "delete|create",
+      "action": `
+        | delete
+        | create
+        | sort
+        `,
       "[string]?": "string",
     });
 
@@ -80,6 +120,8 @@ function onPost(req: CategoryRequest, res, database: Database) {
       createCategory(req, res, database);
     } else if (req.query.action === "delete") {
       deleteCategory(req, res, database);
+    } else if (req.query.action === "sort") {
+      sortCategory(req, res, database);
     }
   } else {
     res.status(500).send("CATEGORY__INVALID_REQUEST");
@@ -88,15 +130,18 @@ function onPost(req: CategoryRequest, res, database: Database) {
 
 function onGet(req: CategoryRequest, res, database: Database) {
   if (req.params.categoryID === "all") {
-    res.send(
-      database.body
-        .querySelectorAll("#categories category")
-        .map(toCategoryResponse)
-    );
+    res.send({
+      todoSettings:
+        database.getElementById("todoSettings").attributes,
+      categories:
+        database.body
+          .querySelectorAll("#categories category")
+          .map(toCategoryResponse)
+    } as CategoryAllResponse);
   }
 }
 
-export default function (database: Database, app: Express) {
+export function category(database: Database, app: Express) {
   const router = express.Router();
 
   app.use("/category", function (req: CategoryRequest, res, next) {
