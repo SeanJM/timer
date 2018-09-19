@@ -78,11 +78,11 @@ function findElementsFromQuery(node: DatabaseElement, index: number, queryObject
 
 export class DatabaseElement<U extends Partial<DatabaseElement> = {}> {
   type: string;
-  attributes: ElementAttributes;
+  attributes: ElementAttributes<U["attributes"]>;
   children: Array<ElementChild | undefined>;
   parentNode: DatabaseElement;
 
-  constructor(type: string, attributes: ElementAttributes, children: Array<ElementChild>) {
+  constructor(type: U["type"], attributes: ElementAttributes<U["attributes"]>, children: Array<ElementChild>) {
     let i = -1;
     const n = children.length;
     this.type = type;
