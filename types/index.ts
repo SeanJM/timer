@@ -1,25 +1,40 @@
 import { DatabaseElement } from "@backend/class/element";
 import "./verified";
 
-export type CategoryElementAttributes =
+export interface CategoryElementAttributes extends
   Pick<DatabaseElement["attributes"],
   | "id"
   | "created"
   | "name"
-  >;
+  > {
+  sortBy: CategorySortBy;
+}
 
-export interface CategoryElement extends
-  DatabaseElement {
-    type: "category";
-    attributes: CategoryElementAttributes;
-    children: TodoElement[];
-  }
+export interface CategoryAllResponse {
+  todoSettings: {
+    priorityLength: number,
+  };
+  categories: CategoryResponse[];
+}
+
+export type CategoryElement = DatabaseElement<{
+  type: "category";
+  attributes: CategoryElementAttributes;
+  children: TodoElement[];
+}>;
 
 export interface CategoryResponse extends
-  Pick<CategoryElementAttributes, "id" | "created" | "name"> {
-    todos: TodoResponse[];
+  Pick<CategoryElementAttributes, "id" | "created" | "name" | "sortBy"> {
+    filters: FilterResponse[];
     tags: TagResponse[];
+    todos: TodoResponse[];
   }
+
+export type CategorySortBy =
+  | "date"
+  | "priority"
+  | "name"
+  ;
 
 export interface InputOnValue {
   (value: any, name: string): void;
@@ -64,7 +79,7 @@ export interface TagResponse {
   created: number;
 }
 
-export interface TagElement extends DatabaseElement {
+export type TagElement = DatabaseElement<{
   type: "tag";
   attributes: {
     name: string;
@@ -73,23 +88,16 @@ export interface TagElement extends DatabaseElement {
     created: number;
   };
   children: any[];
-}
+}>;
 
-export interface TodoElement extends DatabaseElement {
+export type TodoElement = DatabaseElement<{
   type: "todo";
   attributes: {
-    progress: number;
     priority: number;
     notes: null | string;
     tags: string[];
-  } & Pick<DatabaseElement["attributes"],
-  | "id"
-  | "created"
-  | "name"
-  | "state"
-  >;
-  children: any[];
-}
+  };
+}>;
 
 export type TodoResponse =
   Pick<TodoElement["attributes"],
@@ -117,3 +125,19 @@ export interface ColorState {
   colorPickers?: ColorPicker[];
   palette?: SwatchAttributes[];
 }
+
+export interface FilterResponse {
+  name: string;
+  id: string;
+  created: number;
+  tags: string[];
+}
+
+export type FilterElement = DatabaseElement<{
+  type: "filter";
+  attributes: {
+    id: string;
+    name: string;
+    tags: string[]
+  };
+}>;
