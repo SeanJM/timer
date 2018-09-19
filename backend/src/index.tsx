@@ -26,9 +26,8 @@ if (!database.getElementById("categories")) {
   }));
 
   database.body.appendChild(database.createElement({
-    id: "todoAttributes",
+    id: "todoSettings",
     created: new Date().getTime(),
-    progressLength: 5,
     priorityLength: 3,
   }));
 }
