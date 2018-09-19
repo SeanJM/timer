@@ -1,0 +1,41 @@
+.context-menu-item {
+  position: relative;
+  padding-left: $u3;
+  user-select: none;
+}
+
+.context-menu-item-select {
+  padding-left: $u8;
+}
+
+.context-menu-item:hover {
+  background: $primary;
+
+  .context-menu-item_text {
+    color: #fff;
+  }
+
+  .icon {
+    fill: #fff;
+  }
+}
+
+.context-menu-item_text {
+  font-size: $font-size - 1;
+  line-height: $line-height;
+  padding: $u 0;
+  display: inline-block;
+  width: 100%;
+}
+
+.context-menu-item_check {
+  position: absolute;
+  left: $u3;
+  top: 50%;
+  margin-top: $u3/-2;
+
+  .icon {
+    width: $u3;
+    height: $u3;
+  }
+}
