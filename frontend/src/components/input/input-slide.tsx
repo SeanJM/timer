@@ -72,11 +72,11 @@ export class InputSlide extends Component<InputSlideProps, InputSlideState> {
             this.setState({
               value
             });
-            if (onValue) {
-              onValue(value, "number");
-            }
             if (onInput) {
               onInput(value);
+            }
+            if (onValue) {
+              onValue(value, "number");
             }
           }}
           onFocus={(e) => {
