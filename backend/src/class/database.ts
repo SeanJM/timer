@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { promisify } from "util";
 import { readFileSync } from "fs";
-import { DatabaseElement, ElementChild, ElementAttributes } from "./element";
+import { DatabaseElement, ElementChild } from "./element";
 
 const writeFile = promisify(fs.writeFile);
 
@@ -41,12 +41,12 @@ export class Database {
   }
 
   createElement<T extends DatabaseElement = DatabaseElement>(): T;
-  createElement<T extends DatabaseElement = DatabaseElement>(tagName: string): T;
-  createElement<T extends DatabaseElement = DatabaseElement>(props: ElementAttributes): T;
-  createElement<T extends DatabaseElement = DatabaseElement>(props: ElementAttributes, children: ElementChild[]): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(type: T["type"]): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(props: DatabaseElement<T>["attributes"]): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(props: DatabaseElement<T>["attributes"], children: ElementChild[]): T;
   createElement<T extends DatabaseElement = DatabaseElement>(children: ElementChild[]): T;
-  createElement<T extends DatabaseElement = DatabaseElement>(tagName: string, props: ElementAttributes): T;
-  createElement<T extends DatabaseElement = DatabaseElement>(tagName: string, props: ElementAttributes, children: ElementChild[]): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(type: string, props: DatabaseElement<T>["attributes"]): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(type: string, props: DatabaseElement<T>["attributes"], children: ElementChild[]): T;
   createElement<T extends DatabaseElement = DatabaseElement>(...args: any[]): T {
     let type = "element";
     let attributes: Partial<T["attributes"]> = {};
