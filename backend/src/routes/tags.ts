@@ -4,7 +4,6 @@ import { Database } from "@backend/class/database";
 import generateHash from "@generate-hash";
 import express from "express";
 import { TagResponse, TodoElement, TagElement } from "@types";
-import { DatabaseElement } from "@backend/class/element";
 import path from "@path";
 
 interface TagPostRequest extends Request {
@@ -25,7 +24,7 @@ interface TagGetRequest extends Request {
   };
 }
 
-export function toTagResponse(tagElement: Partial<DatabaseElement>): TagResponse {
+export function toTagResponse(tagElement: TagElement): TagResponse {
   return {
     name: tagElement.attributes.name,
     id: tagElement.attributes.id,
