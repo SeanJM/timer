@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import { Link } from "@frontend/components/router";
 
 interface ListProps extends Partial<JSX.ElementChildrenAttribute> {
@@ -7,7 +7,7 @@ interface ListProps extends Partial<JSX.ElementChildrenAttribute> {
 
 interface ListItemProps extends Partial<JSX.ElementChildrenAttribute> {
   primaryAction?: JSX.Element;
-  control?: JSX.Element;
+  secondaryAction?: JSX.Element;
   timestamp?: JSX.Element;
   body?: JSX.Element;
   feet?: JSX.Element;
@@ -27,55 +27,93 @@ export class List extends React.Component<ListProps> {
   }
 }
 
-export function ListItem(props: ListItemProps) {
-  const className = ["list-item"];
+export class ListItem extends Component<ListItemProps> {
+  secondaryNode: HTMLDivElement;
+  primaryNode: HTMLDivElement;
+  listItemNode: HTMLDivElement;
 
-  if (props.primaryAction) {
-    className.push("list-item-primary-action");
+  componentDidMount() {
+    if (this.secondaryNode) {
+      let secondaryOffset = this.secondaryNode.getBoundingClientRect();
+      this.listItemNode.style.paddingRight = secondaryOffset.width + "px";
+    }
+    if (this.primaryNode) {
+      let primaryOffset = this.primaryNode.getBoundingClientRect();
+      this.listItemNode.style.paddingLeft = primaryOffset.width + "px";
+    }
   }
 
-  if (props.control) {
-    className.push("list-item-secondary-action");
-  }
+  render() {
+    const {
+      body,
+      feet,
+      isActive,
+      onClick,
+      passive,
+      primaryAction,
+      secondaryAction,
+      timestamp,
+      title,
+      to,
+    } = this.props;
+    const className = ["list-item"];
 
-  if (props.timestamp) {
-    className.push("list-item-timestamp");
-  }
+    if (primaryAction) {
+      className.push("list-item-primary-action");
+    }
 
-  if (props.passive) {
-    className.push("list-item-passive");
-  }
+    if (secondaryAction) {
+      className.push("list-item-secondary-action");
+    }
 
-  if (props.isActive) {
-    className.push("list-item--active");
-  }
+    if (timestamp) {
+      className.push("list-item-timestamp");
+    }
 
-  return (
-    <div id={props.id} className={className.join(" ")}>
-      {props.to
-        ? <Link className="list-item_link" to={props.to} />
-        : props.onClick
-          ? <div className="list-item_link" onClick={props.onClick} />
+    if (passive) {
+      className.push("list-item-passive");
+    }
+
+    if (isActive) {
+      className.push("list-item--active");
+    }
+
+    return (
+      <div
+        ref={(node) => {this.listItemNode = node;}}
+        id={this.props.id}
+        className={className.join(" ")}>
+        {secondaryAction
+          ? <div
+            ref={(node) => {this.secondaryNode = node;}}
+            className="list-item_secondary-action">{secondaryAction}</div>
           : null}
-      {props.control
-        ? <div className="list-item_control">{props.control}</div>
-        : null}
-      {props.title
-        ? <div className="list-item_title"><h6>{props.title}</h6></div>
-        : null}
-      {props.timestamp
-        ? <div className="list-item_timestamp">{props.timestamp}</div>
-        : null}
-      {props.body
-        ? <div className="list-item_body">{props.body}</div>
-        : null}
-      {props.feet
-        ? <div className="list-item_feet">{props.feet}</div>
-        : null}
-      {props.primaryAction
-        ? <div className="list-item_primary-action">{props.primaryAction}</div>
-        : null}
-      {props.children}
-    </div>
-  );
+        {primaryAction
+          ? <div
+            ref={(node) => {this.primaryNode = node;}}
+            className="list-item_primary-action">{primaryAction}</div>
+          : null}
+        <div className="list-item_content">
+          {title
+            ? <div className="list-item_title"><h6>{title}</h6></div>
+            : null}
+          {timestamp
+            ? <div className="list-item_timestamp">{timestamp}</div>
+            : null}
+          {body
+            ? <div className="list-item_body">{body}</div>
+            : null}
+          {feet
+            ? <div className="list-item_feet">{feet}</div>
+            : null}
+          {to
+            ? <Link className="list-item_link" to={to} />
+            : onClick
+              ? <div className="list-item_link" onClick={onClick} />
+              : null}
+          {this.props.children}
+        </div>
+      </div>
+    );
+  }
 }
