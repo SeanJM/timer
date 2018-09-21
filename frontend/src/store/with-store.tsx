@@ -15,14 +15,15 @@ type MapStateToProps = (state: StoreState, props?: object) => object;
 export function withStore<T>(
   WrappedComponent: React.ComponentType,
   mapStateToProps?: MapStateToProps): (...args: HigherOrderFactory[]) => React.ComponentType<T> {
-  class C extends Component<T, StoreState> {
+
+  class C extends Component<T, {}> {
     handleChange: () => void;
+    mapptedState: {};
 
     constructor(props) {
       super(props);
-      this.state = store.value as StoreState;
       this.handleChange = () => {
-        this.setState(store.value);
+        this.forceUpdate();
       };
     }
 
@@ -35,12 +36,9 @@ export function withStore<T>(
     }
 
     render() {
-      return React.createElement(
-        WrappedComponent,
-        mapStateToProps(this.state, this.props)
-      );
+      return <WrappedComponent {...mapStateToProps(store.value, this.props)}/>;
     }
-  };
+  }
 
   mapStateToProps = mapStateToProps || defaultMapStateToProps;
 
