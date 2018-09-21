@@ -12,6 +12,7 @@ export type IconType =
   | "history-back"
   | "save"
   | "search"
+  | "sort"
   | "tag-filter"
   | "tag"
   ;

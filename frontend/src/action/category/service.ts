@@ -1,15 +1,56 @@
 import { store } from "@frontend/store";
 import ajax from "@ajax";
-import { CategoryResponse } from "@types";
+import { CategoryResponse, CategoryAllResponse } from "@types";
 import path from "@path";
+import _ from "lodash";
 
-export default class Service {
+export class CategoryService {
   setName() {
     store.set({
       categories: {
         setName: true,
       }
     });
+  }
+
+  sortBy(value) {
+    const categories =
+      store.value.todo.categories.slice();
+
+    const categoryIndex =
+      categories.findIndex((a)=> a.id === value.categoryID);
+
+    const prevCategoryElement: CategoryResponse =
+      _.merge({}, categories[categoryIndex]);
+
+    const nextCategoryElement: CategoryResponse =
+      _.merge({}, categories[categoryIndex], {
+        sortBy: value.sortBy
+      });
+
+    categories[categoryIndex] = nextCategoryElement;
+
+    store.set({
+      todo: {
+        categories
+      }
+    });
+
+    ajax.post(`/category/${value.categoryID}`, {
+      data: {
+        action: "sort",
+        sortBy: value.sortBy
+      }
+    })
+      .catch(() => {
+        const categories = store.value.todo.categories.slice();
+        categories[categoryIndex] = prevCategoryElement;
+        store.set({
+          todo: {
+            categories
+          }
+        });
+      });
   }
 
   getAll() {
@@ -21,13 +62,14 @@ export default class Service {
     });
 
     ajax.get("/category/all")
-      .then((categories: CategoryResponse[]) => {
+      .then((res: CategoryAllResponse) => {
         store.set({
           todo: {
-            categories: categories.map(category => {
+            todoSettings: res.todoSettings,
+            categories: res.categories.map((category) => {
               return {
                 ...category,
-                tags: category.tags.map(tag => {
+                tags: category.tags.map((tag) => {
                   return {
                     ...tag,
                     color: tag.color ? "#" + tag.color : null,
@@ -93,9 +135,9 @@ export default class Service {
         const { categories } = store.value.todo;
         store.set({
           todo: {
-            categories: categories.filter(category => category.id !== e.id)
+            categories: categories.filter((category) => category.id !== e.id)
           }
-        })
+        });
       });
   }
 }

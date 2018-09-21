@@ -1,11 +1,16 @@
-import Service from "./service";
-const service = new Service();
+import { CategoryService } from "./service";
+const service = new CategoryService();
 
-export default function (subscribe) {
+export function category(subscribe) {
   subscribe("CATEGORY", function (e) {
     switch (e.type) {
       case "SET_NAME": {
         service.setName();
+        break;
+      }
+
+      case "SORT_BY": {
+        service.sortBy(e.value);
         break;
       }
 
@@ -21,7 +26,6 @@ export default function (subscribe) {
 
       case "DELETE": {
         service.delete(e.value);
-        break;
       }
     }
   });
