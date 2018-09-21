@@ -39,7 +39,7 @@ export default class Service {
 
   getTodo(categoryID: string, todoID: string) {
     const categories = store.value.todo.categories;
-    const category = categories.find(a => a.id === categoryID);
+    const category = categories.find((a) => a.id === categoryID);
     return _.merge({}, category.todos.find((child) => child.id === todoID));
   }
 
@@ -52,31 +52,48 @@ export default class Service {
       .then((todoResponse: TodoResponse) => {
         this.mergeTodo(e.categoryID, todoResponse);
       });
-    }
+  }
 
-    complete(e) {
-      ajax.post(path.join("/todo", e.categoryID, e.id), {
-        data: {
-          action: "complete",
-        }
-      })
+  complete(e) {
+    ajax.post(path.join("/todo", e.categoryID, e.id), {
+      data: {
+        action: "complete",
+      }
+    })
       .then((todoResponse: TodoResponse) => {
         this.mergeTodo(e.categoryID, todoResponse);
       });
   }
 
   edit(e) {
-    const todo = this.getTodo(e.categoryID, e.todoID);
+    const categories: CategoryResponse[] = store.value.todo.categories.slice();
+    const category = categories.find((a) => a.id === e.categoryID);
+    const todoIndex = category.todos.findIndex((a) => a.id === e.todoID);
     const value = _.omit(e, ["categoryID", "todoID"]);
-    Object.assign(todo, value);
-    this.mergeTodo(e.categoryID, todo)
+    const prevTodoElement = _.assign({}, category.todos[todoIndex]);
+
+    Object.assign(category.todos[todoIndex], value);
+    store.set({
+      todo: {
+        categories,
+      }
+    });
+
     ajax.post(path.join("/todo", e.categoryID, e.todoID), {
       data: {
         action: "edit",
         ...value
       }
-    }).then((todoResponse: TodoResponse) => {
-      this.mergeTodo(e.categoryID, todoResponse)
+    }).catch((res) => {
+      const categories = store.value.todo.categories;
+      const category = categories.find((a) => a.id === e.categoryID);
+      category.todos[todoIndex] = prevTodoElement;
+      store.set({
+        todo: {
+          categories,
+        }
+      });
+      console.error(res);
     });
   }
 
@@ -87,7 +104,7 @@ export default class Service {
       }
     }).then(() => {
       const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
-      const category = categories.find(a => a.id === e.categoryID);
+      const category = categories.find((a) => a.id === e.categoryID);
       category.todos = category.todos.filter((child) => child.id !== e.id);
       store.set({
         todo: {
