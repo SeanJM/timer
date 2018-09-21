@@ -43,10 +43,10 @@ const ajax = {
     return new Promise(function (resolve, reject) {
       const req = new XMLHttpRequest();
       wrapXMLRequest(url, req, resolve, reject);
-      req.open("POST", getURL(url, params && params.data));
-      req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      req.open("POST", getURL(url));
+      req.setRequestHeader("Content-type", "application/json");
       // Send the proper header information along with the request
-      req.send();
+      req.send(JSON.stringify(params && params.data));
     });
   },
 
@@ -128,7 +128,7 @@ function wrapXMLRequest(url: string, req: XMLHttpRequest, resolve: (any) => void
 function getURL(url: string, data?: Params["data"]) {
   const paramsString = [];
   for (var k in data) {
-    if (typeof data[k] !== "undefined") {
+    if (typeof data[k] !== "undefined" && data[k] != null) {
       if (data[k].constructor === Array) {
         data[k].forEach((member) => paramsString.push(k + "[]=" + member));
       } else {
