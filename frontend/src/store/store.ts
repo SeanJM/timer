@@ -1,5 +1,5 @@
 import Persistore from "@frontend/class/persistore";
-import { Keys, ColorState, CategoryResponse, TagsByCategory, StoreForm } from "@types";
+import { Keys, ColorState, CategoryResponse, StoreForm, FilterResponse, CategoryAllResponse } from "@types";
 import Validator from "verified";
 
 export interface TodoNode {
@@ -18,6 +18,8 @@ export interface Category extends TodoNode {
 export interface StoreState {
   keys: Keys;
 
+  contextMenu: string[];
+
   routes: {
     schema: string
   };
@@ -27,6 +29,7 @@ export interface StoreState {
   };
 
   todo: {
+    todoSettings?: CategoryAllResponse["todoSettings"],
     categories?: CategoryResponse[];
     isRequest?: null | boolean;
     isSuccess?: null | boolean;
@@ -34,11 +37,10 @@ export interface StoreState {
 
   color: ColorState;
 
-  tags: TagsByCategory;
-
-  slideOut: {
-    type: string | null;
-    value: any | null;
+  filters: {
+    elements: FilterResponse[];
+    isRequest?: null | boolean;
+    isSuccess?: null | boolean;
   };
 
   modal: {
@@ -55,6 +57,8 @@ export const store = new Persistore<StoreState>(
       schema: ":type/:categoryID/:elementID/"
     },
 
+    contextMenu: [],
+
     keys: {
       control: false,
     },
@@ -63,7 +67,14 @@ export const store = new Persistore<StoreState>(
       setName: false,
     },
 
+    filters: {
+      elements: [],
+      isRequest: null,
+      isSuccess: null,
+    },
+
     todo: {
+      todoSettings: {},
       categories: [],
       isRequest: null,
       isSuccess: null,
@@ -74,17 +85,8 @@ export const store = new Persistore<StoreState>(
       palette: [],
     },
 
-    tags: {
-      categories: [],
-    },
-
     modal: {
       name: null,
-      value: {}
-    },
-
-    slideOut: {
-      type: null,
       value: {}
     },
 
@@ -95,6 +97,12 @@ export const store = new Persistore<StoreState>(
       const validator = new Validator({
         keys: {
           control: "boolean",
+        },
+
+        filters: {
+          elements: [],
+          isRequest: null,
+          isSuccess: null,
         },
 
         categories: {
@@ -109,6 +117,6 @@ export const store = new Persistore<StoreState>(
       console.log(validator);
       return validator.isValid;
     },
-    ignore: [/^form\./, /^slideOut\./, /^color\.colorPickers/, /^categories\.setName/]
+    ignore: [/^form\./, /^slideOut\./, /^color\.colorPickers/, /^categories\.setName/, /^contextMenu/]
   }
 );
