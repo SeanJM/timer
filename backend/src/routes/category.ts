@@ -34,7 +34,7 @@ interface CategoryRequestQuery {
 
 interface CategoryRequest extends Request {
   params: CategoryRequestParams;
-  query: CategoryRequestQuery;
+  body: CategoryRequestQuery;
   url: string;
   method: "POST" | "GET";
 }
@@ -59,7 +59,7 @@ function createCategory(req: CategoryRequest, res, database: Database) {
     sortBy: "date",
     created: new Date().getTime(),
     id: generateHash(12),
-    name: req.query.name,
+    name: req.body.name,
   });
 
   database
@@ -86,7 +86,7 @@ function sortCategory(req: CategoryRequest, res: Response, database: Database) {
   let categoryElement = database.getElementById<CategoryElement>(req.params.categoryID);
   if (categoryElement) {
     categoryElement.setAttributes({
-      sortBy: req.query.sortBy
+      sortBy: req.body.sortBy
     });
     database.save();
     res.send();
@@ -98,7 +98,7 @@ function sortCategory(req: CategoryRequest, res: Response, database: Database) {
 }
 
 function onPost(req: CategoryRequest, res, database: Database) {
-  const queryValidator =
+  const bodyValidator =
     new Validate({
       "name?": "string",
       "action": `
@@ -110,17 +110,17 @@ function onPost(req: CategoryRequest, res, database: Database) {
     });
 
   const isValidQuery =
-    queryValidator.validate(req.query).isValid;
+    bodyValidator.validate(req.body).isValid;
 
   req.params =
     path(req.url).params("/:categoryID");
 
   if (isValidQuery) {
-    if (req.query.action === "create") {
+    if (req.body.action === "create") {
       createCategory(req, res, database);
-    } else if (req.query.action === "delete") {
+    } else if (req.body.action === "delete") {
       deleteCategory(req, res, database);
-    } else if (req.query.action === "sort") {
+    } else if (req.body.action === "sort") {
       sortCategory(req, res, database);
     }
   } else {

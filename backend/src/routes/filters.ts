@@ -12,7 +12,7 @@ interface FilterGetRequest {
 }
 
 interface FilterPostRequest {
-  query: {
+  body: {
     action: "create" | "delete" | "edit",
     name?: string,
     tags?: string[],
@@ -34,7 +34,7 @@ function createFilter(req: FilterPostRequest, res: Response, database: Database)
   const category = database.getElementById(categoryID);
 
   const filterElement = database.createElement<FilterElement>("filter", {
-    name: req.query.name,
+    name: req.body.name,
     created: new Date().getTime(),
     id: generateHash(7),
     tags: []
@@ -61,8 +61,8 @@ function editFilter(req: FilterPostRequest, res, database) {
   const filterElement = category.querySelector<FilterElement>(`#${filterID}`);
   if (category && filterElement) {
     filterElement.setAttributes({
-      name: req.query.name || filterElement.attributes.name,
-      tags: req.query.tags || filterElement.attributes.tags,
+      name: req.body.name || filterElement.attributes.name,
+      tags: req.body.tags || filterElement.attributes.tags,
     });
 
     res.send(toFilterResponse(filterElement));
@@ -81,12 +81,12 @@ function onPost(req: FilterPostRequest, res: Response, database) {
     "tags?": "string[]",
   });
 
-  if (validateQuery.validate(req.query).isValid) {
-    if (req.query.action === "create") {
+  if (validateQuery.validate(req.body).isValid) {
+    if (req.body.action === "create") {
       createFilter(req, res, database);
-    } else if (req.query.action === "delete") {
+    } else if (req.body.action === "delete") {
       deleteFilter(req, res, database);
-    } else if (req.query.action === "edit") {
+    } else if (req.body.action === "edit") {
       editFilter(req, res, database);
     }
   } else {

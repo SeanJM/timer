@@ -10,7 +10,7 @@ interface TagPostRequest extends Request {
   params: {
     categoryID: string;
   };
-  query: {
+  body: {
     action: "create" | "delete" | "edit";
     name: string;
     color: string;
@@ -39,9 +39,9 @@ function deleteTag(req: TagPostRequest, res: Response, database: Database) {
     "id": "string",
   });
 
-  if (validateDelete.validate(req.query).isValid) {
+  if (validateDelete.validate(req.body).isValid) {
     const categoryElement = database.getElementById(req.params.categoryID);
-    const tagElement = categoryElement.querySelector<TagElement>("#" + req.query.id);
+    const tagElement = categoryElement.querySelector<TagElement>("#" + req.body.id);
     const todos = categoryElement.querySelectorAll<TodoElement>("todo");
 
     todos.forEach((todo) => {
@@ -63,8 +63,8 @@ function createTag(req: TagPostRequest, res: Response, database: Database) {
 
   const tag = database.createElement("tag", {
     id: generateHash(7),
-    name: req.query.name,
-    color: req.query.color,
+    name: req.body.name,
+    color: req.body.color,
     created: new Date().getTime(),
   } as TagResponse);
 
@@ -79,11 +79,11 @@ function createTag(req: TagPostRequest, res: Response, database: Database) {
 
 function editTag(req: TagPostRequest, res: Response, database: Database) {
   const category = database.getElementById(req.params.categoryID);
-  const tagElement = category && category.querySelector<TagElement>("#" + req.query.id);
+  const tagElement = category && category.querySelector<TagElement>("#" + req.body.id);
   if (category && tagElement) {
     tagElement.setAttributes({
-      name: tagElement.attributes.name || req.query.name,
-      color: tagElement.attributes.color || req.query.color,
+      name: tagElement.attributes.name || req.body.name,
+      color: tagElement.attributes.color || req.body.color,
     });
     res.send(toTagResponse(tagElement));
     database.save();
@@ -103,12 +103,12 @@ function onPost(req: TagPostRequest, res, database) {
     "name?": "string",
   });
 
-  if (validateQuery.validate(req.query).isValid) {
-    if (req.query.action === "create") {
+  if (validateQuery.validate(req.body).isValid) {
+    if (req.body.action === "create") {
       createTag(req, res, database);
-    } else if (req.query.action === "delete") {
+    } else if (req.body.action === "delete") {
       deleteTag(req, res, database);
-    } else if (req.query.action === "edit") {
+    } else if (req.body.action === "edit") {
       editTag(req, res, database);
     }
   } else {

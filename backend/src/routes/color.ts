@@ -9,7 +9,7 @@ interface PalettePostRequest extends Request {
   params: {
     categoryID: string;
   };
-  query: {
+  body: {
     action: "create" | "delete",
     value?: string;
     id?: string;
@@ -50,7 +50,7 @@ export function color(database: Database): express.Router {
 
   function deleteSwatch(req: PalettePostRequest, res) {
     const color = database.body.querySelector("#color");
-    const swatch = color.querySelector("#" + req.query.id);
+    const swatch = color.querySelector("#" + req.body.id);
     color.removeChild(swatch);
     res.send();
     database.save();
@@ -63,10 +63,10 @@ export function color(database: Database): express.Router {
       "id?": "string",
     });
 
-    if (v.validate(req.query)) {
-      if (req.query.action === "create") {
+    if (v.validate(req.body)) {
+      if (req.body.action === "create") {
         createSwatch(req, res);
-      } else if (req.query.action === "delete") {
+      } else if (req.body.action === "delete") {
         deleteSwatch(req, res);
       }
     }
