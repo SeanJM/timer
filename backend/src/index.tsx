@@ -33,10 +33,9 @@ if (!database.getElementById("categories")) {
 }
 
 page(__root);
-
-routes(app, database);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/", express.static(path.resolve(__root, "frontend/public/")));
 app.listen(port);
+routes(app, database);
 console.log("Proxy is running on http://localhost:" + port);
