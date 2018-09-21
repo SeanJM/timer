@@ -40,6 +40,12 @@ export interface InputOnValue {
   (value: any, name: string): void;
 }
 
+export interface InputValueEvent {
+  value: any;
+  name: string;
+  type: string;
+}
+
 export interface SwatchAttributes {
   value: string;
   created: number;
@@ -93,6 +99,7 @@ export type TagElement = DatabaseElement<{
 export type TodoElement = DatabaseElement<{
   type: "todo";
   attributes: {
+    completedDate: null | number;
     priority: number;
     notes: null | string;
     tags: string[];
@@ -101,6 +108,7 @@ export type TodoElement = DatabaseElement<{
 
 export type TodoResponse =
   Pick<TodoElement["attributes"],
+    | "completedDate"
     | "created"
     | "id"
     | "name"
