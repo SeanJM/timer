@@ -12,6 +12,7 @@ const CATEGORY_NOT_FOUND = "CATEGORY_ID_DOES_NOT_EXIST";
 
 export function toTodoResponse(todoElement: TodoElement): TodoResponse {
   return {
+    completedDate: todoElement.attributes.completedDate,
     created: todoElement.attributes.created,
     id: todoElement.attributes.id,
     name: todoElement.attributes.name,
@@ -23,19 +24,19 @@ export function toTodoResponse(todoElement: TodoElement): TodoResponse {
   };
 }
 
-export interface TodoRequestQuery {
+export interface TodoRequestBody {
   name?: string;
-  progress?: string;
+  progress?: number;
   notes?: string;
-  priority?: string;
+  priority?: number;
   tags?: string[];
   state?: "incomplete" | "complete";
   action:
+    | "complete"
     | "create"
     | "delete"
-    | "complete"
-    | "incomplete"
     | "edit"
+    | "incomplete"
     ;
 }
 
@@ -46,7 +47,7 @@ export interface TodoRequestParams {
 
 export interface TodoRequest extends Request {
   params: TodoRequestParams;
-  query: TodoRequestQuery;
+  body: TodoRequestBody;
   path: string;
 }
 
@@ -54,12 +55,14 @@ function createTodo(req: TodoRequest, res: Response, database: Database) {
   const todoElement =
     database.createElement<TodoElement>("todo", {
       id: generateHash(6),
-      name: req.query.name,
+      name: req.body.name,
       state: "incomplete",
       progress: 0,
       priority: 0,
       tags: [],
       created: new Date().getTime(),
+      completedDate: null,
+      notes: null
     });
 
   let categoryElement =
@@ -96,12 +99,13 @@ function completeTodo(req: TodoRequest, res, database) {
   let categoryElement =
     database.getElementById(req.params.categoryID);
 
-  let todoElement =
+  let todoElement: TodoElement =
     database.getElementById(req.params.todoID);
 
   if (categoryElement && todoElement) {
     todoElement.setAttributes({
-      state: "complete"
+      state: "complete",
+      completedDate: new Date().getTime(),
     });
 
     res.send(toTodoResponse(todoElement));
@@ -143,11 +147,17 @@ function editTodo(req: TodoRequest, res, database: Database) {
 
   if (todoElement) {
     todoElement.setAttributes({
-      name: req.query.name || todoElement.attributes.name,
-      tags: req.query.tags || todoElement.attributes.tags,
-      notes: req.query.notes || todoElement.attributes.notes,
-      progress: isNaN(Number(req.query.progress)) ? todoElement.attributes.progress : Number(req.query.progress),
-      priority: isNaN(Number(req.query.priority)) ? todoElement.attributes.priority : Number(req.query.priority),
+      name: req.body.name || todoElement.attributes.name,
+      tags: req.body.tags || todoElement.attributes.tags,
+      notes: req.body.notes || todoElement.attributes.notes,
+      progress:
+        isNaN(req.body.progress)
+          ? todoElement.attributes.progress
+          : req.body.progress,
+      priority:
+        isNaN(req.body.priority)
+          ? todoElement.attributes.priority
+          : req.body.priority,
     });
     res.send(toTodoResponse(todoElement));
     database.save();
@@ -159,14 +169,14 @@ function editTodo(req: TodoRequest, res, database: Database) {
 }
 
 function onPost(req: TodoRequest, res, database: Database) {
-  const queryValidator =
+  const bodyValidator =
     new Validate({
       "name?": "string",
       "tags?": "Array<string|undefined>",
       "id?": "string",
-      "notes?": "string",
-      "progress?": "string",
-      "priority?": "string",
+      "notes?": "string|null",
+      "progress?": "number",
+      "priority?": "number",
       action: `
         | complete
         | create
@@ -176,18 +186,18 @@ function onPost(req: TodoRequest, res, database: Database) {
       `,
     });
 
-  const validated = queryValidator.validate(req.query);
+  const validated = bodyValidator.validate(req.body);
 
   if (validated.isValid) {
-    if (req.query.action === "create") {
+    if (req.body.action === "create") {
       createTodo(req, res, database);
-    } else if (req.query.action === "delete") {
+    } else if (req.body.action === "delete") {
       deleteTodo(req, res, database);
-    } else if (req.query.action === "complete") {
+    } else if (req.body.action === "complete") {
       completeTodo(req, res, database);
-    } else if (req.query.action === "incomplete") {
+    } else if (req.body.action === "incomplete") {
       incompleteTodo(req, res, database);
-    } else if (req.query.action === "edit") {
+    } else if (req.body.action === "edit") {
       editTodo(req, res, database);
     }
   } else {
@@ -195,7 +205,7 @@ function onPost(req: TodoRequest, res, database: Database) {
   }
 }
 
-export default function (database: Database, app) {
+export function todo(database: Database, app) {
   const router = express.Router();
 
   app.use("/todo/", function (req: TodoRequest, res, next) {
