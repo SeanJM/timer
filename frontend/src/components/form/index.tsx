@@ -37,7 +37,14 @@ export function Form(props: FormProps) {
         }
       }}
     >
-      {props.children}
+      {React.Children.toArray(props.children).map((child: JSX.Element) => {
+        if (typeof child.type === "function") {
+          return React.cloneElement(child, {
+            formid: props.id
+          });
+        }
+        return child;
+      })}
     </form>
   );
 }
