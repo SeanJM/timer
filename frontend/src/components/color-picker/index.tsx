@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { withStore, StoreState } from "@frontend/store";
-import { ColorPicker, ColorState } from "@types";
+import { ColorPicker } from "@types";
 import { dispatch } from "@frontend/action/";
 import blush from "blush";
 import { Button } from "@frontend/components/button";
@@ -9,7 +9,7 @@ import ColorPickerSwatch from "./color-picker-swatch";
 import ColorPickerPalette from "@frontend/components/color-picker/color-picker-palette";
 import { HueSlider, LightnessSlider, SaturationSlider } from "./hsl-sliders";
 
-interface PickerProps extends Partial<ColorState> {
+interface PickerProps {
   colorPickers: ColorPicker[];
 }
 
@@ -25,11 +25,13 @@ interface ColorPickerProps extends Partial<ColorPicker>, Partial<ColorPickerStat
 
 function mapStateToProps(state: StoreState): PickerProps {
   return {
-    colorPickers: state.color.colorPickers,
+    colorPickers: state.color.colorPickers
   };
 }
 
 class ColorPickerView extends React.Component<ColorPickerProps, ColorPickerState> {
+  node: HTMLDivElement;
+
   constructor(props: ColorPickerProps) {
     super(props);
     this.state = {
@@ -37,6 +39,20 @@ class ColorPickerView extends React.Component<ColorPickerProps, ColorPickerState
       pageY: props.pageY,
       value: props.value,
     };
+  }
+
+  componentDidMount() {
+    const offset = this.node.getBoundingClientRect();
+    if (this.state.pageX + offset.width > window.innerWidth) {
+      this.setState({
+        pageX: window.innerWidth - offset.width - 20
+      });
+    }
+    if (this.state.pageY + offset.height > window.innerHeight) {
+      this.setState({
+        pageY: window.innerHeight - offset.height + 10
+      });
+    }
   }
 
   onAddToPalette() {
@@ -72,10 +88,14 @@ class ColorPickerView extends React.Component<ColorPickerProps, ColorPickerState
 
   render() {
     return  (
-      <div className="color-picker" style={{
-        left: this.state.pageX - 4,
-        top: this.state.pageY + 4,
-      }}>
+      <div
+        ref={(node) => { this.node = node; }}
+        className="color-picker"
+        style={{
+          left: this.state.pageX - 4,
+          top: this.state.pageY + 4,
+        }}
+      >
         <div className="color-picker_head">
           <div className="color-picker_title"></div>
         </div>
