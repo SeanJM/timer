@@ -1,0 +1,12 @@
+@import url("~codemirror/lib/codemirror.css");
+
+.code-mirror {
+  height: $u90;
+}
+
+.CodeMirror {
+  border-top: 1px solid $grey-light;
+  font-size: $font-size - 2;
+  font-family: "Source Code Pro", "monospace";
+  border-bottom: 1px solid $grey-light;
+}
