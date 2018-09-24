@@ -1,0 +1,32 @@
+@keyframes TodoEditor {
+  0% {
+    right: -$u90;
+    opacity: 0.5;
+  }
+
+  100% {
+    right: 0;
+    opacity: 1;
+  }
+}
+
+.app-todo-id {
+  .tag-editor {
+    width: $u90;
+  }
+}
+
+.tag-editor {
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  z-index: 5;
+
+  .viewport {
+    border-left: 1px solid $grey-light;
+    animation: TodoEditor 0.3s;
+    width: $u90;
+  }
+}
