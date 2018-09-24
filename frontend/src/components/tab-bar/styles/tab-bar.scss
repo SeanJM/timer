@@ -1,11 +1,6 @@
 .tab {
-  font-size: $font-size;
   display: inline-block;
-  line-height: $line-height;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding: $u4 $u4 $u2;
+  height: $titlebar-size;
   cursor: default;
   border-right: 1px solid $grey-light;
   position: relative;
@@ -24,4 +19,13 @@
     height: 4px;
     background: $primary;
   }
+}
+
+.tab_text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: $font-size;
+  line-height: $line-height;
+  padding: $u4 $u4;
 }

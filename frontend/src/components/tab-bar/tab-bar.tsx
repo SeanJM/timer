@@ -19,7 +19,11 @@ export function Tab(props: TabProps) {
     className.push("tab--active");
   }
   return (
-    <div onClick={props.onClick} className={className.join(" ")}>{props.children}</div>
+    <div onClick={props.onClick} className={className.join(" ")}>
+      <div className="tab_text">
+        {props.children}
+      </div>
+    </div>
   );
 }
 
