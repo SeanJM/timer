@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { InputText } from "@frontend/components/input";
 import { WithRouterProps } from "@frontend/components/router";
-import Swatch from "@frontend/components/swatch";
+import { Swatch } from "@frontend/components/swatch";
 import generateHash from "@generate-hash";
 import { Viewport } from "@frontend/components/viewport";
 import { withStore, StoreState } from "@frontend/store";
@@ -75,7 +75,7 @@ function mapStateToProps(state: StoreState, props: WithRouterProps): Props {
     routes: state.routes,
     params,
     history: props.history,
-    colorPicker: state.color.colorPickers.find((a) => a.id === COLOR_PICKER_ID) || {},
+    colorPicker: state.color.colorPickers[COLOR_PICKER_ID] || {},
     categoryName: category && category.name,
     name: tagNameInput ? tagNameInput.value : "",
     color: colorInput ? colorInput.value : null,
@@ -118,7 +118,7 @@ class TagListView extends Component<Props, {}> {
                 title="Tags"
                 component={
                   (props: TitleAndInputPassedProps) =>
-                    InputTagName({ ...props, color: this.props.color })
+                    <InputTagName { ...props } color={this.props.color}/>
                 }
                 onSubmit={(name) => dispatch("CREATE_TAG", {
                   name,
@@ -139,7 +139,7 @@ class TagListView extends Component<Props, {}> {
                         pathname: path.reduce(routes.schema, {
                           type: "tags",
                           categoryID: params.categoryID,
-                          todoID: tag.id,
+                          elementID: tag.id,
                         })
                       });
                     }}
@@ -148,7 +148,7 @@ class TagListView extends Component<Props, {}> {
                         background={tag.color}
                       />
                     }
-                    control={<Button icon="close" onClick={() => dispatch("TAG", {
+                    secondaryAction={<Button icon="close" onClick={() => dispatch("TAG", {
                       type: "DELETE",
                       value: {
                         categoryID: params.categoryID,
