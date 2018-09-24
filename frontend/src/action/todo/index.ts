@@ -7,7 +7,6 @@ export default function (subscribe) {
     switch (e.type) {
       case "EDIT": {
         service.edit(e.value);
-        break;
       }
     }
   });
