@@ -40,7 +40,7 @@ export class ChipFilter extends Component<ChipFilterProps, ChipFilterState> {
   componentDidUpdate(prevProps) {
     if (!_.isEqual(prevProps.defaultValue, this.props.defaultValue)) {
       this.setState({
-        value: this.props.defaultValue
+        value: this.props.defaultValue || []
       }, () => this.onValue());
     }
   }
