@@ -7,7 +7,7 @@ export interface SwatchProps extends Partial<JSX.ElementChildrenAttribute> {
   className?: string;
 }
 
-export default function Swatch(props: SwatchProps) {
+export function Swatch(props: SwatchProps) {
   const className = ["swatch"];
 
   if (props.isSelected) {
