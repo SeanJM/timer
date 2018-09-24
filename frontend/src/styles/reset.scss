@@ -6,10 +6,13 @@ body {
   height: 100%;
 }
 
+body, input {
+  font-family: 'Helvetica', 'Arial';
+}
+
 * {
   box-sizing: border-box;
-  vertical-align: top;
-  font-family: 'Helvetica', 'Arial';
   margin: 0;
   padding: 0;
+  vertical-align: top;
 }
