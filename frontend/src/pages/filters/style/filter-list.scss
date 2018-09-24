@@ -1,0 +1,30 @@
+.filters {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}
+
+.filters-input {
+  .swatch {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+  }
+
+  .filters_tag-input {
+    input {
+      padding-left: $u9;
+    }
+  }
+}
+
+.filters--category-id {
+  padding-left: $u76;
+}
+
+.filters--filter-id {
+  right: $u90;
+}
