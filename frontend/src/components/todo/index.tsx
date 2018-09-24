@@ -7,16 +7,20 @@ import { dispatch } from "@frontend/action/";
 import { Timestamp } from "@frontend/components/timestamp";
 import { routes } from "@frontend/routes";
 import { RouterHistory } from "@frontend/components/router";
+import { TodoPriority } from "./todo-priority";
 
 interface TodoProps {
-  history: RouterHistory;
-  state: string;
-  name: string;
   categoryID: string;
-  id: string;
+  completedDate?: null | number;
   created: number;
-  showAlt: boolean;
+  history: RouterHistory;
+  id: string;
   isActive: boolean;
+  name: string;
+  priority: number;
+  priorityLength: number;
+  showAlt: boolean;
+  state: string;
 }
 
 function ButtonDone(props: { id: string, categoryID: string }) {
@@ -28,7 +32,6 @@ function ButtonDone(props: { id: string, categoryID: string }) {
           categoryID: props.categoryID,
         });
       }}
-      type="positive"
       icon="check"
     />
   );
@@ -66,7 +69,9 @@ function ButtonUndone(props: { id: string, categoryID: string }) {
 export function Todo(props: TodoProps) {
   const className = ["todo"];
   const { history } = props;
+
   className.push("todo-" + props.state);
+
   return (
     <ListItem
       isActive={props.isActive}
@@ -80,6 +85,12 @@ export function Todo(props: TodoProps) {
           todoID: props.id
         })
       })}
+      secondaryAction={
+        <TodoPriority
+          priority={props.priority}
+          priorityLength={props.priorityLength}
+        />
+      }
       primaryAction={
         <Control>
           {props.state === "complete"
