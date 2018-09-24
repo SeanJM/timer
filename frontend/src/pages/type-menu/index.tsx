@@ -116,7 +116,7 @@ export function AppMenuCategories(props: Pick<AppMenuMappedProps,
         to={path.reduce(routes.schema, { type: "filters", categoryID: params.categoryID })}
         label="Filters"
         isSelected={params.type === "filters"}
-        icon="tag-filter"/>
+        icon="filter"/>
     </div>
   );
 }
