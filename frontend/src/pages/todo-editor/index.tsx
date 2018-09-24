@@ -6,6 +6,7 @@ import { TagResponse, StoreForm } from "types";
 import generateHash from "@generate-hash";
 import { emptyForm } from "@frontend/action/form";
 import { InputText } from "@frontend/components";
+import { CodeMirror } from "@frontend/components/code-mirror";
 import { Button } from "@frontend/components/button";
 import { ChipData } from "@frontend/components/chip";
 import { InputChipSelect } from "@frontend/components/input/input-chip-select";
@@ -16,7 +17,6 @@ import { dispatch } from "@frontend/action";
 import { Titlebar } from "@frontend/components/titlebar";
 import path from "@path";
 import { InputSlide } from "@frontend/components/input/input-slide";
-import { InputTextarea } from "@frontend/components/input/input-textarea";
 import _ from "lodash";
 
 const FORM_ID = generateHash();
@@ -42,7 +42,6 @@ interface TodoEditorProps
   form: StoreForm;
   formInputTodoName: string | null;
   formInputTodoTags: string[] | null;
-  formInputTodoProgress: number | null;
   formInputTodoPriority: number | null;
   formInputTodoNotes: string | null;
 }
@@ -74,7 +73,6 @@ function mapStateToProps(state: StoreState, props: RouteComponentProps): TodoEdi
 
     form: state.form[FORM_ID] || emptyForm(FORM_ID),
     formInputTodoName: form.input.todoName ? form.input.todoName.value : null,
-    formInputTodoProgress: form.input.todoProgress ? form.input.todoProgress.value : null,
     formInputTodoPriority: form.input.todoPriority ? form.input.todoPriority.value : null,
     formInputTodoTags: form.input.todoTags ? form.input.todoTags.value : null,
     formInputTodoNotes: form.input.todoNotes ? form.input.todoNotes.value : null,
@@ -92,7 +90,6 @@ class TodoEditor extends React.Component<TodoEditorProps> {
       formInputTodoName,
       formInputTodoNotes,
       formInputTodoPriority,
-      formInputTodoProgress,
       formInputTodoTags,
     } = this.props;
 
@@ -104,7 +101,6 @@ class TodoEditor extends React.Component<TodoEditorProps> {
         name: formInputTodoName || this.props.todoName,
         tags: formInputTodoTags,
         notes: formInputTodoNotes,
-        progress: formInputTodoProgress,
         priority: formInputTodoPriority,
       }
     });
@@ -125,18 +121,8 @@ class TodoEditor extends React.Component<TodoEditorProps> {
 
   componentDidUpdate(prevProps) {
     const saveTags = prevProps.formInputTodoTags && this.props.formInputTodoTags.length !== prevProps.formInputTodoTags.length;
-    const saveName = prevProps.formInputTodoName && this.props.formInputTodoName !== prevProps.formInputTodoName;
     if (prevProps.todoID === this.props.todoID) {
-      if (saveName) {
-        dispatch("TODO", {
-          type: "EDIT",
-          value: {
-            categoryID: this.props.categoryID,
-            todoID: this.props.todoID,
-            name: this.props.formInputTodoName,
-          }
-        });
-      } else if (saveTags) {
+      if (saveTags) {
         dispatch("TODO", {
           type: "EDIT",
           value: {
@@ -166,28 +152,28 @@ class TodoEditor extends React.Component<TodoEditorProps> {
                   icon="close"
                 />
               }
-              >
+            >
               <TitleAndInput
                 icon="edit"
+                name="todoName"
                 defaultValue={this.props.todoName}
                 title={this.props.formInputTodoName || this.props.todoName}
                 component={InputText}
                 onSubmit={() => this.save()}
-                onValue={(value) => {
+                onValue={(e) => {
+                  console.log(e);
                   dispatch("FORM_VALUE", {
                     id: FORM_ID,
-                    name: "todoName",
-                    type: "text",
-                    value: value,
+                    ...e,
                   });
-                }}
+              }}
               />
             </Titlebar>
           }
           body={
             <div>
               <FormConnect type="borderless" id={FORM_ID}>
-                <InputGroup name="todoTags" formid={FORM_ID}>
+                <InputGroup name="todoTags">
                   <label>Todo tags</label>
                   <InputChipSelect
                     defaultValue={this.props.todoTags}
@@ -200,15 +186,7 @@ class TodoEditor extends React.Component<TodoEditorProps> {
                     })}
                   />
                 </InputGroup>
-                <InputGroup name="todoProgress" formid={FORM_ID}>
-                  <label>Progress</label>
-                  <InputSlide
-                    onInput={() => this.save()}
-                    length={this.props.todoProgressLength}
-                    defaultValue={this.props.todoProgressIndex}
-                  />
-                </InputGroup>
-                <InputGroup name="todoPriority" formid={FORM_ID}>
+                <InputGroup name="todoPriority">
                   <label>Priority</label>
                   <InputSlide
                     onInput={() => this.save()}
@@ -216,9 +194,10 @@ class TodoEditor extends React.Component<TodoEditorProps> {
                     defaultValue={this.props.todoPriorityIndex}
                   />
                 </InputGroup>
-                <InputGroup name="todoNotes" formid={FORM_ID}>
+                <InputGroup name="todoNotes">
                   <label>Notes</label>
-                  <InputTextarea
+                  <CodeMirror
+                    mode="markdown"
                     onInput={() => this.save()}
                     defaultValue={this.props.todoNotes}
                   />
