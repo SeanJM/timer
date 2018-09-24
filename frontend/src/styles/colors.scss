@@ -1,8 +1,14 @@
 $red: #bb2248;
 $red-light: lighten($red, 15%);
+
+$pink: adjust-hue($red, -20deg);
+$pink-dark: darken($pink, 15%);
+$pink-light: lighten($pink, 15%);
+
 $blue: adjust-hue($red, 200deg);
 $blue-dark: darken($blue, 15%);
 $blue-light: lighten($blue, 15%);
+
 $green: adjust-hue($red, 175deg);
 $green-light: lighten($green, 15%);
 
@@ -12,7 +18,7 @@ $yellow-light: lighten($yellow, 15%);
 $yellow: adjust-hue($red, 70deg);
 $yellow-light: lighten($yellow, 15%);
 
-$orange: adjust-hue($red, 40deg);
+$orange: lighten(adjust-hue($red, 35deg), 5%);
 $orange-light: lighten($orange, 15%);
 
 $black: darken(desaturate($blue, 5%), 36%);
