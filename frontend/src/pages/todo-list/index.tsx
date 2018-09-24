@@ -1,37 +1,47 @@
 import React, { Component } from "react";
 import { dispatch } from "@frontend/action";
-import { RouteComponentProps } from "@frontend/components/router";
-import { Titlebar } from "@frontend/components/titlebar";
-import { TabBar, Tab } from "@frontend/components/tab-bar";
-import { Viewport } from "@frontend/components/viewport";
-import generateId from "@generate-id";
-import { withStore, StoreState } from "@frontend/store";
-import { StoreForm, StoreFormInput } from "@types";
-import { Todo } from "@frontend/components/todo";
-import path, { PathQueryValue, PathParams } from "@path";
-import { routes } from "@frontend/routes";
-import { TodoResponse } from "types";
+import { Button } from "@frontend/components/button";
 import { emptyForm } from "@frontend/action/form";
-import { TitleAndInput } from "@frontend/components/title-and-input";
-import { InputText } from "@frontend/components";
 import { Filter } from "@frontend/components/filter";
+import { InputText } from "@frontend/components/input";
 import { List } from "@frontend/components/list";
+import { RouteComponentProps } from "@frontend/components/router";
+import { routes } from "@frontend/routes";
+import { StoreForm, StoreFormInput, CategorySortBy } from "@types";
+import { TabBar, Tab } from "@frontend/components/tab-bar";
+import { TitleAndInput } from "@frontend/components/title-and-input";
+import { Titlebar } from "@frontend/components/titlebar";
+import { Todo } from "@frontend/components/todo";
+import { TodoResponse } from "types";
+import { Viewport } from "@frontend/components/viewport";
+import { withStore, StoreState } from "@frontend/store";
+import { ContextMenuSort } from "./context-menu-sort";
+import { ContextMenuFilterConnect } from "./context-menu-filter";
+import { contextMenuPush } from "@frontend/components/context-menu";
 
-const FORM_ID = generateId();
+import generateHash from "@generate-hash";
+import path, { PathQueryValue, PathParams } from "@path";
+import { Control } from "@frontend/components";
+
+const FORM_ID = generateHash();
+const CONTEXT_MENU_SORT = generateHash();
+const CONTEXT_MENU_FILTER = generateHash();
 
 interface TodoParams {
   categoryID?: string;
   todoID?: string;
 }
 
-interface TodoProps extends Pick<RouteComponentProps, "location" | "history" | "query" | "params"> {
-  query: PathQueryValue<{ view?: string}>;
+interface TodoListProps extends Pick<RouteComponentProps, "location" | "history" | "query" | "params"> {
+  query: PathQueryValue<{ view?: string }>;
   params: PathParams<TodoParams>;
   categoryID: any;
   form: StoreForm;
   controlPressed: boolean;
   name: string;
+  priorityLength: number;
   completeTodos: TodoResponse[];
+  sortBy: CategorySortBy;
   incompleteTodos: TodoResponse[];
   input: StoreFormInput;
   todoID: null | string;
@@ -45,7 +55,7 @@ function isIncomplete(todo: TodoResponse) {
   return !isComplete(todo);
 }
 
-function mapStateToProps(state: StoreState, props: RouteComponentProps): TodoProps {
+function mapStateToProps(state: StoreState, props: RouteComponentProps): TodoListProps {
   const form = state.form[FORM_ID] || emptyForm(FORM_ID);
   const categoryID = props.params.categoryID;
 
@@ -59,18 +69,20 @@ function mapStateToProps(state: StoreState, props: RouteComponentProps): TodoPro
   return {
     ...props,
     params,
+    priorityLength: state.todo.todoSettings.priorityLength,
     categoryID,
     form,
     controlPressed: state.keys.control,
     name: category && category.name,
+    sortBy: category.sortBy,
     completeTodos: category && category.todos.filter(isComplete),
     incompleteTodos: category && category.todos.filter(isIncomplete),
     input: form.input.todo_value || { name: "todo_value", value: undefined },
     todoID: params.todoID,
-  } as TodoProps;
+  };
 }
 
-class TodoListView extends Component<TodoProps, {}> {
+class TodoListView extends Component<TodoListProps, {}> {
   node: HTMLInputElement;
 
   handleChange() {
@@ -91,6 +103,20 @@ class TodoListView extends Component<TodoProps, {}> {
     this.handleChange();
   }
 
+  sortBy(a, b) {
+    const sortBy = this.props.sortBy;
+    if (sortBy === "date") {
+      return b.created - a.created;
+    } else if (sortBy === "name") {
+      return a.name > b.name ? 1 : -1;
+    } else if (sortBy === "priority") {
+      return b.priority === a.priority
+        ? b.created - a.created
+        : b.priority - a.priority;
+    }
+    return 1;
+  }
+
   render() {
     const className = ["todo-list"];
     const { history, query, params } = this.props;
@@ -109,7 +135,7 @@ class TodoListView extends Component<TodoProps, {}> {
           titlebar={
             <Titlebar
               secondaryAction={
-                <InputText icon="search"/>
+                <InputText name="search" icon="search" />
               }
             >
               <TitleAndInput
@@ -123,54 +149,94 @@ class TodoListView extends Component<TodoProps, {}> {
             </Titlebar>
           }
           toolbar={
-            <TabBar>
-              <Tab
-                isActive={query.view === "complete"}
-                onClick={() => history.push({
-                query: {
-                  view: "complete"
-                }
-              })}>Complete</Tab>
-              <Tab
-                isActive={query.view === "incomplete"}
-                onClick={() => history.push({
-                query: {
-                  view: "incomplete"
-                }
-              })}>Incomplete</Tab>
-            </TabBar>
+            <Titlebar
+              secondaryAction={
+                <Control>
+                  <Button
+                    icon="filter"
+                    onClick={() => {
+                      dispatch("CONTEXT_MENU", {
+                        type: "OPEN",
+                        value: {
+                          id: CONTEXT_MENU_FILTER
+                        }
+                      });
+                    }}
+                  />
+                  <Button
+                    icon="sort"
+                    onClick={() => {
+                      dispatch("CONTEXT_MENU", {
+                        type: "OPEN",
+                        value: {
+                          id: CONTEXT_MENU_SORT
+                        }
+                      });
+                    }}
+                  />
+                </Control>
+              }
+            >
+              <TabBar>
+                <Tab
+                  isActive={query.view === "complete"}
+                  onClick={() => history.push({
+                    query: {
+                      view: "complete"
+                    }
+                  })}>Complete</Tab>
+                <Tab
+                  isActive={query.view === "incomplete"}
+                  onClick={() => history.push({
+                    query: {
+                      view: "incomplete"
+                    }
+                  })}>Incomplete</Tab>
+              </TabBar>
+            </Titlebar>
           }
           body={
             <Filter id={query.view}>
               <List id="complete">
-                {this.props.completeTodos.map((todo) => (
-                  <Todo
-                    isActive={params.todoID === todo.id}
-                    history={history}
-                    key={todo.id}
-                    state={todo.state}
-                    name={todo.name}
-                    created={todo.created}
-                    id={todo.id}
-                    categoryID={this.props.categoryID}
-                    showAlt={this.props.controlPressed}
-                  />
-                ))}
+                {this.props.completeTodos
+                  .sort((a, b) => this.sortBy(a, b))
+                  .map((todo) => (
+                    <Todo
+                      categoryID={this.props.categoryID}
+                      created={todo.created}
+                      completedDate={todo.completedDate}
+                      history={history}
+                      id={todo.id}
+                      isActive={params.todoID === todo.id}
+                      key={todo.id}
+                      name={todo.name}
+                      priorityLength={this.props.priorityLength}
+                      priority={todo.priority}
+                      showAlt={this.props.controlPressed}
+                      state={todo.state}
+                    />
+                  ))
+                }
               </List>
               <List id="incomplete">
-                {this.props.incompleteTodos.map((todo) => (
-                  <Todo
-                    isActive={params.todoID === todo.id}
-                    history={history}
-                    key={todo.id}
-                    state={todo.state}
-                    name={todo.name}
-                    created={todo.created}
-                    id={todo.id}
-                    categoryID={this.props.categoryID}
-                    showAlt={this.props.controlPressed}
-                  />
-                ))}
+                {this.props.incompleteTodos
+                  .sort((a, b) => this.sortBy(a, b))
+                  .map((todo) => (
+                    <Todo
+                      categoryID={this.props.categoryID}
+                      created={todo.created}
+                      history={history}
+                      id={todo.id}
+                      isActive={params.todoID === todo.id}
+                      key={todo.id}
+                      name={todo.name}
+                      priorityLength={this.props.priorityLength}
+                      priority={todo.priority}
+                      showAlt={this.props.controlPressed}
+                      state={todo.state}
+                    />
+                  ))
+                }
               </List>
             </Filter>
           }
@@ -179,5 +245,10 @@ class TodoListView extends Component<TodoProps, {}> {
     );
   }
 }
+
+contextMenuPush({
+  [CONTEXT_MENU_SORT]: ContextMenuSort,
+  [CONTEXT_MENU_FILTER]: ContextMenuFilterConnect,
+});
 
 export const TodoList = withStore(TodoListView, mapStateToProps)();
