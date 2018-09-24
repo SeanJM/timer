@@ -1,6 +1,12 @@
 .titlebar {
   position: relative;
-  padding: $u2 $u2;
+  padding: $u $u2;
+  height: $titlebar-size;
+
+  .tab-bar {
+    margin-left: -$u;
+    margin-top: -$u;
+  }
 
   &:after {
     position: absolute;
@@ -52,6 +58,16 @@
   right: 0;
   top: 0;
   padding-left: $u;
+
+  .button_face {
+    background: none;
+  }
+
+  .button {
+    .icon {
+      fill: $grey-light;
+    }
+  }
 }
 
 .titlebar_center {
@@ -84,7 +100,7 @@
     }
   }
 
-  .input-wrapper_input input {
+  .input-wrapper--icon .input-wrapper_input input {
     padding-left: $u9;
   }
 
