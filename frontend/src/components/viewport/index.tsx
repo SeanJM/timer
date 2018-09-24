@@ -7,48 +7,63 @@ interface ViewPortProps {
   titlebar?: JSX.Element;
   toolbar?: JSX.Element;
   scopebar?: JSX.Element;
+  className?: string;
 }
 
 export class Viewport extends Component<ViewPortProps> {
   render() {
-    const className = ["viewport"];
-    if (this.props.head) {
-      className.push("viewport--head")
+    const classList = ["viewport"];
+    const {
+      body,
+      className,
+      feet,
+      head,
+      scopebar,
+      titlebar,
+      toolbar,
+    } = this.props;
+
+    if (head) {
+      classList.push("viewport--head");
     }
 
-    if (this.props.titlebar) {
-      className.push("viewport--titlebar")
+    if (titlebar) {
+      classList.push("viewport--titlebar");
     }
 
-    if (this.props.toolbar) {
-      className.push("viewport--toolbar")
+    if (toolbar) {
+      classList.push("viewport--toolbar");
     }
 
-    if (this.props.scopebar) {
-      className.push("viewport--scopebar")
+    if (scopebar) {
+      classList.push("viewport--scopebar");
     }
 
-    if (this.props.feet) {
-      className.push("viewport--feet")
+    if (feet) {
+      classList.push("viewport--feet");
+    }
+
+    if (className) {
+      classList.push(className);
     }
 
     return (
-      <div className={className.join(" ")}>
-        {this.props.head
-          ? <div className="viewport_head">{this.props.head}</div>
+      <div className={classList.join(" ")}>
+        {head
+          ? <div className="viewport_head">{head}</div>
           : null}
-        {this.props.titlebar
-          ? <div className="viewport_titlebar">{this.props.titlebar}</div>
+        {titlebar
+          ? <div className="viewport_titlebar">{titlebar}</div>
           : null}
-        {this.props.toolbar
-          ? <div className="viewport_toolbar">{this.props.toolbar}</div>
+        {toolbar
+          ? <div className="viewport_toolbar">{toolbar}</div>
           : null}
-        {this.props.scopebar
-          ? <div className="viewport_scopebar">{this.props.scopebar}</div>
+        {scopebar
+          ? <div className="viewport_scopebar">{scopebar}</div>
           : null}
-        <div className="viewport_body">{this.props.body}</div>
-        {this.props.feet
-          ? <div className="viewport_feet">{this.props.feet}</div>
+        <div className="viewport_body">{body}</div>
+        {feet
+          ? <div className="viewport_feet">{feet}</div>
           : null}
       </div>
     );

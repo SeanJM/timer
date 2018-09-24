@@ -15,12 +15,12 @@
 
 .viewport--titlebar {
   .viewport_body {
-    top: $u13;
+    top: $titlebar-size;
   }
 }
 
 .viewport_titlebar {
-  height: $u13;
+  height: $titlebar-size;
 
   .button_face {
     background: none;
@@ -33,6 +33,8 @@
 
 .viewport_toolbar {
   position: relative;
+  height: $titlebar-size;
+
   &:after {
     content: "";
     position: absolute;
@@ -46,6 +48,6 @@
 
 .viewport--titlebar.viewport--toolbar {
   .viewport_body {
-    top: $u24 - 3;
+    top: ($titlebar-size * 2);
   }
 }
