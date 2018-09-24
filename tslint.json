@@ -9,19 +9,28 @@
     "no-duplicate-switch-case": true,
     "no-duplicate-variable": true,
     "no-trailing-whitespace": true,
-    "no-unnecessary-type-assertion": [true],
+    "no-unnecessary-type-assertion": [
+      true
+    ],
     "no-unused-expression": true,
     "no-unused-variable": true,
     "no-use-before-declare": true,
     "switch-final-break": true,
     "trailing-comma": true,
     "typeof-compare": true,
-    "space-before-function-paren": [true, {
-      "anonymous": "always",
-      "named": "never",
-      "asyncArrow": "always"
-    }],
-    "indent": [true, "spaces", 2],
+    "space-before-function-paren": [
+      true,
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
+    "indent": [
+      true,
+      "spaces",
+      2
+    ],
     "semicolon": true
   }
 }
