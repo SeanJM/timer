@@ -1,15 +1,16 @@
 import * as React from "react";
 import { Component } from "react";
-import { InputWrapper, InputEvents } from "@frontend/components/input";
+import { InputWrapper, InputDefaultProps } from "@frontend/components/input";
 import { IconType } from "@frontend/components/icon";
 
-interface InputTextareaProps extends InputEvents {
+interface InputTextareaProps extends InputDefaultProps {
   defaultValue?: string;
   label?: string;
   button?: JSX.Element;
   className?: string;
   autofocus?: boolean;
   icon?: IconType;
+  name: string;
 }
 
 interface InputTextareaState {
@@ -29,7 +30,11 @@ export class InputTextarea extends Component<InputTextareaProps, InputTextareaSt
   onValue() {
     const { onValue } = this.props;
     if (onValue) {
-      onValue(this.node.value);
+      onValue({
+        value: this.node.value,
+        type: "string",
+        name: this.props.name
+      });
     }
   }
 
@@ -57,8 +62,9 @@ export class InputTextarea extends Component<InputTextareaProps, InputTextareaSt
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.defaultValue && prevProps.defaultValue !== this.props.defaultValue) {
-      this.node.value = this.props.defaultValue;
+    if (prevProps.defaultValue !== this.props.defaultValue) {
+      this.node.value = this.props.defaultValue ? this.props.defaultValue : "";
+      this.onValue();
     }
   }
 
@@ -67,7 +73,6 @@ export class InputTextarea extends Component<InputTextareaProps, InputTextareaSt
       button,
       onInput,
       onKeyDown,
-      onValue,
       icon,
       className,
     } = this.props;
@@ -85,13 +90,10 @@ export class InputTextarea extends Component<InputTextareaProps, InputTextareaSt
             this.node = node;
           }}
           onInput={(e) => {
-            const value = (e.target as HTMLInputElement).value.trim();
             if (onInput) {
               onInput(e);
             }
-            if (onValue) {
-              onValue(value);
-            }
+            this.onValue();
           }}
           onFocus={(e) => this.onFocus(e)}
           onBlur={(e) => this.onBlur(e)}

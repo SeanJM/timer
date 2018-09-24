@@ -1,15 +1,16 @@
 import * as React from "react";
 import { Component } from "react";
-import { InputWrapper, InputEvents } from "@frontend/components/input";
+import { InputWrapper, InputDefaultProps } from "@frontend/components/input";
 import { IconType } from "@frontend/components/icon";
 
-interface InputTextProps extends InputEvents {
+interface InputTextProps extends InputDefaultProps {
   defaultValue?: string;
   label?: string;
   button?: JSX.Element;
   className?: string;
   autofocus?: boolean;
   icon?: IconType;
+  name?: string;
 }
 
 interface InputTextState {
@@ -29,7 +30,11 @@ export class InputText extends Component<InputTextProps, InputTextState> {
   onValue() {
     const { onValue } = this.props;
     if (onValue) {
-      onValue(this.node.value);
+      onValue({
+        name: this.props.name,
+        type: "string",
+        value: this.node.value,
+      });
     }
   }
 
@@ -56,12 +61,19 @@ export class InputText extends Component<InputTextProps, InputTextState> {
     this.onValue();
   }
 
+  componentDidUpdate(prevProps: InputTextProps) {
+    if (prevProps.defaultValue !== this.props.defaultValue) {
+      console.log(this.props.defaultValue);
+      this.node.value = this.props.defaultValue ? this.props.defaultValue : "";
+      this.onValue();
+    }
+  }
+
   render() {
     const {
       button,
       onInput,
       onKeyDown,
-      onValue,
       icon,
       className,
     } = this.props;
@@ -80,13 +92,10 @@ export class InputText extends Component<InputTextProps, InputTextState> {
             this.node = node;
           }}
           onInput={(e) => {
-            const value = (e.target as HTMLInputElement).value.trim();
             if (onInput) {
               onInput(e);
             }
-            if (onValue) {
-              onValue(value);
-            }
+            this.onValue();
           }}
           onFocus={(e) => this.onFocus(e)}
           onBlur={(e) => this.onBlur(e)}

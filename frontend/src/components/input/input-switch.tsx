@@ -1,11 +1,12 @@
 import * as React from "react";
 import { Component } from "react";
-import { InputWrapper, InputEvents } from "@frontend/components/input";
+import { InputWrapper, InputDefaultProps } from "@frontend/components/input";
 import Switch from "@frontend/components/switch";
 
-interface InputSwitchProps extends InputEvents {
+interface InputSwitchProps extends InputDefaultProps {
   defaultValue?: boolean;
   label?: string;
+  name?: string;
 }
 
 interface InputSwitchState {
@@ -31,7 +32,14 @@ export class InputSwitch extends Component<InputSwitchProps, InputSwitchState> {
     });
 
     if (onInput) { onInput(value); }
-    if (onValue) { onValue(value); }
+
+    if (onValue) {
+      onValue({
+        value,
+        type: "boolean",
+        name: this.props.name,
+      });
+    }
   }
 
   render() {

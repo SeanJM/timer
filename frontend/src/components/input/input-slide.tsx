@@ -2,12 +2,14 @@ import * as React from "react";
 import { Component } from "react";
 import { InputWrapper } from "@frontend/components/input";
 import { Slide } from "@frontend/components/slide";
+import { InputValueEvent } from "types";
 
 interface InputSlideProps {
   defaultValue?: number;
   label?: string;
   length?: number;
-  onValue?: (value: number, type: string) => void;
+  name?: string;
+  onValue?: (e: InputValueEvent) => void;
   onInput?: (value: number) => void;
   onFocus?: (e: React.FocusEvent) => void;
   onBlur?: (e: React.FocusEvent) => void;
@@ -30,7 +32,11 @@ export class InputSlide extends Component<InputSlideProps, InputSlideState> {
   onValue() {
     const { onValue } = this.props;
     if (onValue) {
-      onValue(this.state.value, "number");
+      onValue({
+        value: this.state.value,
+        type: "number",
+        name: this.props.name,
+      });
     }
   }
 
@@ -51,7 +57,6 @@ export class InputSlide extends Component<InputSlideProps, InputSlideState> {
       onFocus,
       onBlur,
       onInput,
-      onValue,
       label,
     } = this.props;
 
@@ -75,9 +80,7 @@ export class InputSlide extends Component<InputSlideProps, InputSlideState> {
             if (onInput) {
               onInput(value);
             }
-            if (onValue) {
-              onValue(value, "number");
-            }
+            this.onValue();
           }}
           onFocus={(e) => {
             if (onFocus) { onFocus(e); }

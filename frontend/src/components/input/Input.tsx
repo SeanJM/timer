@@ -3,6 +3,7 @@ import { InputText } from "@frontend/components/input/input-text";
 import { InputSwitch } from "@frontend/components/input/input-switch";
 import { InputChipSelect } from "@frontend/components/input/input-chip-select";
 import { dispatch } from "@frontend/action";
+import { InputValueEvent } from "@types";
 
 const BYTYPE = {
   text: InputText,
@@ -18,17 +19,17 @@ export type InputType =
   | "textarea"
   ;
 
-export type InputEvents = {
+export type InputDefaultProps = {
   onFocus?: (e: React.FormEvent) => void;
   onBlur?: (e: React.FormEvent) => void;
   onInput?: (e: React.FormEvent | any) => void;
   onChange?: (e: React.ChangeEvent | any) => void;
   onKeyDown?: (e: React.FormEvent) => void;
-  onValue?: (value: any) => void;
+  onValue?: (value: InputValueEvent) => void;
   onRef?: (node: HTMLElement) => void;
 };
 
-interface InputProps extends InputEvents {
+interface InputProps extends InputDefaultProps {
   type: InputType;
   className?: string;
   defaultValue?: string;

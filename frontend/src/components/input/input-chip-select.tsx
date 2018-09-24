@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { ChipFilter, ChipData, ChipFilterInputEvent } from "@frontend/components/chip";
 import { InputWrapper } from "@frontend/components/input";
+import { InputValueEvent } from "@types";
 
 interface State {
   focus: boolean;
@@ -10,7 +11,7 @@ export interface ChipSelectProps {
   data: ChipData[];
   formid?: string;
   name?: string;
-  onValue?: (value: any[], type: string) => void;
+  onValue?: (e: InputValueEvent) => void;
   onInput?: (e?: ChipFilterInputEvent) => void;
   defaultValue?: string[];
 }
@@ -39,7 +40,11 @@ export class InputChipSelect extends Component<ChipSelectProps, State> {
           }}
           onValue={(value) => {
             if (onValue) {
-              onValue(value, "Array<string|undefined>");
+              onValue({
+                value,
+                type: "Array<string|undefined>",
+                name: this.props.name,
+              });
             }
           }}
         />

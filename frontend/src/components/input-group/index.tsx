@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Label } from "@frontend/components/label";
 import { dispatch } from "@frontend/action";
-import { InputOnValue } from "types";
+import { InputValueEvent } from "@types";
 
 export interface InputGroupProps extends JSX.ElementChildrenAttribute {
-  formid: string;
+  formid?: string;
   name: string;
   required?: boolean;
 }
@@ -12,7 +12,8 @@ export interface InputGroupProps extends JSX.ElementChildrenAttribute {
 interface InputGroupInputChildProps {
   formid: string;
   required: boolean;
-  onValue: InputOnValue;
+  name: string;
+  onValue: (e: InputValueEvent) => void;
 }
 
 export function InputGroup(props: InputGroupProps) {
@@ -35,19 +36,21 @@ export function InputGroup(props: InputGroupProps) {
             let inputGroupInputChildProps: InputGroupInputChildProps = {
               formid,
               required,
-              onValue: (value: any, type: string) => {
+              name,
+              onValue: (e: InputValueEvent) => {
                 const { onValue } = child.props;
-                if (props.formid) {
-                  dispatch("FORM_VALUE", {
-                    type,
-                    value,
-                    name,
-                    id: formid,
-                  });
-                }
 
                 if (onValue) {
-                  onValue(value, name);
+                  onValue(e);
+                }
+
+                if (props.formid) {
+                  dispatch("FORM_VALUE", {
+                    type: e.type,
+                    value: e.value,
+                    name: e.name,
+                    id: formid,
+                  });
                 }
               }
             };
