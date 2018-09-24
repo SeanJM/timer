@@ -2,15 +2,16 @@ import React, { Component } from "react";
 import { TypeSelectionConnect } from "@frontend/pages/type-menu";
 import { Router, Route } from "@frontend/components/router";
 import { ModalContainerConnect } from "@frontend/components/modal";
-import { SlideOutContainerConnect } from "@frontend/containers/slide-out";
 import { ColorPickerSpawnConnect } from "@frontend/components/color-picker";
 import { dispatch } from "@frontend/action/";
 import { TodoList } from "@frontend/pages/todo-list";
 import { TagList } from "@frontend/pages/tag-list";
-import { FilterList } from "@frontend/pages/filter-list";
 import { CategoryListConnect } from "@frontend/pages/category-list";
 import { TodoEditorConnect } from "@frontend/pages/todo-editor";
 import { NotFound } from "@frontend/pages/not-found";
+import { TagEditorConnect } from "@frontend/pages/tag-editor/tag-editor";
+import { FilterList, FilterEditorConnect } from "@frontend/pages/filters";
+import { ContextMenuContainerConnect } from "@frontend/components/context-menu";
 
 export class App extends Component {
   handleEvent(e: KeyboardEvent) {
@@ -51,14 +52,20 @@ export class App extends Component {
 
         <Router basename="tags/">
           <Route
-            pathname={"/"}
+            pathname={"/:categoryID"}
             component={TagList} />
+          <Route
+            pathname={"/:categoryID/:elementID/"}
+            component={TagEditorConnect} />
         </Router>
 
         <Router basename="filters/">
           <Route
-            pathname={"/"}
+            pathname={"/:categoryID"}
             component={FilterList} />
+          <Route
+            pathname={"/:categoryID/:filterID"}
+            component={FilterEditorConnect} />
         </Router>
 
         <Router notfound={NotFound}>
@@ -71,8 +78,8 @@ export class App extends Component {
         </Router>
 
         <ModalContainerConnect />
-        <SlideOutContainerConnect />
         <ColorPickerSpawnConnect />
+        <ContextMenuContainerConnect />
       </div>
     );
   }
