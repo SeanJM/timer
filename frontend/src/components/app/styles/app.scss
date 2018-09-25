@@ -1,12 +1,7 @@
-.app-content {
-  padding-left: $u70;
-}
-
-.app-content_container {
+.app-main {
   position: absolute;
+  left: $u76;
   top: 0;
-  left: $u70;
-  right: 0;
   bottom: 0;
-  overflow: hidden;
+  right: 0;
 }

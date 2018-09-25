@@ -138,75 +138,73 @@ class TodoEditor extends React.Component<TodoEditorProps> {
   render() {
     const { history, location } = this.props;
     return (
-      <div className="todo-editor">
-        <Viewport
-          titlebar={
-            <Titlebar
-              primaryAction={
-                <Button
-                  onClick={() => {
-                    history.push({
-                      pathname: path(location.pathname).pop().value
-                    });
-                  }}
-                  icon="close"
-                />
-              }
-            >
-              <TitleAndInput
-                icon="edit"
-                name="todoName"
-                defaultValue={this.props.todoName}
-                title={this.props.formInputTodoName || this.props.todoName}
-                component={InputText}
-                onSubmit={() => this.save()}
-                onValue={(e) => {
-                  console.log(e);
-                  dispatch("FORM_VALUE", {
-                    id: FORM_ID,
-                    ...e,
+      <Viewport
+        titlebar={
+          <Titlebar
+            primaryAction={
+              <Button
+                onClick={() => {
+                  history.push({
+                    pathname: path(location.pathname).pop().value
                   });
-              }}
+                }}
+                icon="close"
               />
-            </Titlebar>
-          }
-          body={
-            <div>
-              <FormConnect type="borderless" id={FORM_ID}>
-                <InputGroup name="todoTags">
-                  <label>Todo tags</label>
-                  <InputChipSelect
-                    defaultValue={this.props.todoTags}
-                    data={this.props.tags.map((tag) => {
-                      return {
-                        id: tag.id,
-                        label: tag.name,
-                        color: tag.color,
-                      } as ChipData;
-                    })}
-                  />
-                </InputGroup>
-                <InputGroup name="todoPriority">
-                  <label>Priority</label>
-                  <InputSlide
-                    onInput={() => this.save()}
-                    length={this.props.todoPriorityLength}
-                    defaultValue={this.props.todoPriorityIndex}
-                  />
-                </InputGroup>
-                <InputGroup name="todoNotes">
-                  <label>Notes</label>
-                  <CodeMirror
-                    mode="markdown"
-                    onInput={() => this.save()}
-                    defaultValue={this.props.todoNotes}
-                  />
-                </InputGroup>
-              </FormConnect>
-            </div>
-          }
-        />
-      </div>
+            }
+          >
+            <TitleAndInput
+              icon="edit"
+              name="todoName"
+              defaultValue={this.props.todoName}
+              title={this.props.formInputTodoName || this.props.todoName}
+              component={InputText}
+              onSubmit={() => this.save()}
+              onValue={(e) => {
+                console.log(e);
+                dispatch("FORM_VALUE", {
+                  id: FORM_ID,
+                  ...e,
+                });
+            }}
+            />
+          </Titlebar>
+        }
+        body={
+          <div>
+            <FormConnect type="borderless" id={FORM_ID}>
+              <InputGroup name="todoTags">
+                <label>Todo tags</label>
+                <InputChipSelect
+                  defaultValue={this.props.todoTags}
+                  data={this.props.tags.map((tag) => {
+                    return {
+                      id: tag.id,
+                      label: tag.name,
+                      color: tag.color,
+                    } as ChipData;
+                  })}
+                />
+              </InputGroup>
+              <InputGroup name="todoPriority">
+                <label>Priority</label>
+                <InputSlide
+                  onInput={() => this.save()}
+                  length={this.props.todoPriorityLength}
+                  defaultValue={this.props.todoPriorityIndex}
+                />
+              </InputGroup>
+              <InputGroup name="todoNotes">
+                <label>Notes</label>
+                <CodeMirror
+                  mode="markdown"
+                  onInput={() => this.save()}
+                  defaultValue={this.props.todoNotes}
+                />
+              </InputGroup>
+            </FormConnect>
+          </div>
+        }
+      />
     );
   }
 }

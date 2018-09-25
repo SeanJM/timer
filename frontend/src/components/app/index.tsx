@@ -4,10 +4,9 @@ import { Router, Route } from "@frontend/components/router";
 import { ModalContainerConnect } from "@frontend/components/modal";
 import { ColorPickerSpawnConnect } from "@frontend/components/color-picker";
 import { dispatch } from "@frontend/action/";
-import { TodoList } from "@frontend/pages/todo-list";
+import { TodoConnect } from "@frontend/pages/todo";
 import { TagList } from "@frontend/pages/tag-list";
 import { CategoryListConnect } from "@frontend/pages/category-list";
-import { TodoEditorConnect } from "@frontend/pages/todo-editor";
 import { NotFound } from "@frontend/pages/not-found";
 import { TagEditorConnect } from "@frontend/pages/tag-editor/tag-editor";
 import { FilterList, FilterEditorConnect } from "@frontend/pages/filters";
@@ -41,24 +40,6 @@ export class App extends Component {
     const className = ["app"];
     return (
       <div className={className.join(" ")}>
-        <Router basename="todo/">
-          <Route
-            pathname={":categoryID/"}
-            component={TodoList} />
-          <Route
-            pathname={":categoryID/:todoID/"}
-            component={TodoEditorConnect} />
-        </Router>
-
-        <Router basename="tags/">
-          <Route
-            pathname={"/:categoryID"}
-            component={TagList} />
-          <Route
-            pathname={"/:categoryID/:elementID/"}
-            component={TagEditorConnect} />
-        </Router>
-
         <Router basename="filters/">
           <Route
             pathname={"/:categoryID"}
@@ -76,6 +57,23 @@ export class App extends Component {
             pathname={":type/"}
             component={CategoryListConnect}/>
         </Router>
+
+        <div className="app-main">
+          <Router basename="todo/">
+            <Route
+              pathname={":categoryID/"}
+              component={TodoConnect} />
+          </Router>
+
+          <Router basename="tags/">
+            <Route
+              pathname={"/:categoryID"}
+              component={TagList} />
+            <Route
+              pathname={"/:categoryID/:elementID/"}
+              component={TagEditorConnect} />
+          </Router>
+        </div>
 
         <ModalContainerConnect />
         <ColorPickerSpawnConnect />
