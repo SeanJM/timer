@@ -1,0 +1,34 @@
+.panel-group {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.panel {
+  position: relative;
+  display: inline-block;
+  height: 100%;
+}
+
+.panel-drag {
+  $w: $u3;
+  position: absolute;
+  left: $w / -2;
+  top: 0;
+  bottom: 0;
+  width: $u3;
+  z-index: 4;
+  cursor: ew-resize;
+  &:focus {
+    outline: none;
+  }
+}
+
+.panel-drag_thumb {
+  position: absolute;
+  left: $u3 + ($u3/-2);
+  top: 0;
+  bottom: 0;
+  background: $grey-light;
+  width: 2px;
+}
