@@ -18,6 +18,10 @@ export interface Category extends TodoNode {
 export interface StoreState {
   keys: Keys;
 
+  layout: {
+    todoEditorDefaultWidth: number
+  };
+
   contextMenu: string[];
 
   routes: {
@@ -61,6 +65,10 @@ export const store = new Persistore<StoreState>(
 
     keys: {
       control: false,
+    },
+
+    layout: {
+      todoEditorDefaultWidth: 400
     },
 
     categories: {

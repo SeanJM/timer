@@ -3,6 +3,7 @@ import { category } from "@frontend/action/category";
 import { contextMenu } from "@frontend/action/context-menu";
 import color from "@frontend/action/color";
 import { form } from "@frontend/action/form";
+import { layout } from "@frontend/action/layout";
 import keydown from "@frontend/action/keydown";
 import modal from "@frontend/action/modal";
 import todo from "@frontend/action/todo";
@@ -23,6 +24,7 @@ export function subscribe(name, callback): void {
 category(subscribe);
 color(subscribe);
 contextMenu(subscribe);
+layout(subscribe);
 filters(subscribe);
 form(subscribe);
 keydown(subscribe);
