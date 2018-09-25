@@ -1,6 +1,8 @@
 import React from "react";
 
 export interface DragMeEvent {
+  offsetX: number;
+  offsetY: number;
   pageX: number;
   pageY: number;
   positionX: number;
@@ -123,9 +125,13 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
 
   getDragMeEvent(e: MouseEvent | React.MouseEvent): DragMeEvent {
     const offset = this.node.getBoundingClientRect();
-    const nextPageX = Math.max(0, Math.min(e.pageX - offset.left, offset.width));
-    const nextPageY = Math.max(0, Math.min(e.pageY - offset.top, offset.height));
+    const offsetX = e.pageX - offset.left;
+    const offsetY = e.pageY - offset.top;
+    const nextPageX = Math.max(0, Math.min(offsetX, offset.width));
+    const nextPageY = Math.max(0, Math.min(offsetY, offset.height));
     return {
+      offsetX,
+      offsetY,
       pageX: nextPageX,
       pageY: nextPageY,
       positionX: nextPageX / offset.width,
