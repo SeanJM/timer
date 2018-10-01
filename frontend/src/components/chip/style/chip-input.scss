@@ -1,0 +1,11 @@
+.chip-input {
+  position: relative;
+  padding: $u 0;
+
+  input[type="text"].chip-input_target {
+    display: inline-block;
+    width: $u10;
+    height: $u8;
+    padding: 0 $u;
+  }
+}

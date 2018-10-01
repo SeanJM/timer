@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { ChipData } from "./chip-types";
-import { ChipSelect } from "./chip-select";
+import { Chip } from "./chip";
 import _ from "lodash";
 
 export interface ChipFilterInputEvent {
@@ -52,12 +52,13 @@ export class ChipFilter extends Component<ChipFilterProps, ChipFilterState> {
         {data.map((data) => {
           const isChecked = this.state.value.indexOf(data.id) > -1;
           return (
-            <ChipSelect
+            <Chip
               id={data.id}
               key={data.id}
               label={data.label}
               color={data.color}
               check={isChecked}
+              isSelect
               onClick={() => {
                 const value =
                   isChecked

@@ -9,12 +9,6 @@
   user-select: none;
   cursor: default;
 
-  .chip_label {
-    position: relative;
-    line-height: $line-height;
-    font-size: $font-size - 1;
-  }
-
   .chip_face {
     position: absolute;
     left: 2px;
@@ -69,8 +63,42 @@
   }
 }
 
+.chip_remove {
+  background: darken($grey-lightest, 15%);
+  border-radius: 50%;
+  display: inline-block;
+  height: $u5;
+  margin-left: $u2;
+  margin-right: -$u2;
+  margin-top: -2px;
+  position: relative;
+  width: $u5;
+  transition: background 0.3s;
+
+  .chip:hover & {
+    background: $grey-light;
+  }
+
+  .icon {
+    position: absolute;
+    width: $u3;
+    height: $u3;
+    left: 50%;
+    top: 50%;
+    margin-left: $u3/-2;
+    margin-top: $u3/-2;
+    fill: $black-light;
+  }
+}
+
 .chip-filter {
   margin: 0 -2px;
   padding: 0 0 $u2;
 }
 
+.chip_label {
+  position: relative;
+  display: inline-block;
+  line-height: $line-height;
+  font-size: $font-size - 1;
+}
