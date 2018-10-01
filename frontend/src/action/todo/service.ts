@@ -5,20 +5,22 @@ import _ from "lodash";
 import path from "@path";
 
 export default class Service {
-  addTodo(e) {
-    const url = "/todo/" + e.categoryID;
-
-    ajax.post(url, {
+  addTodo({ name, tags, categoryID }) {
+    ajax.post(`/todo/${categoryID}`, {
       data: {
-        name: e.value,
+        name: name,
         action: "create",
+        tags,
       }
     })
       .then((newTodo: TodoResponse) => {
         const todo: StoreState["todo"] = _.merge({}, store.value.todo);
+
         const category = todo.categories
-          .find((a) => e.categoryID === a.id);
+          .find((a) => categoryID === a.id);
+
         category.todos.push(newTodo);
+
         store.set({
           todo,
         });
@@ -66,7 +68,7 @@ export default class Service {
   }
 
   edit(e) {
-    const categories: CategoryResponse[] = store.value.todo.categories.slice();
+    const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
     const category = categories.find((a) => a.id === e.categoryID);
     const todoIndex = category.todos.findIndex((a) => a.id === e.todoID);
     const value = _.omit(e, ["categoryID", "todoID"]);
