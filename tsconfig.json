@@ -22,6 +22,12 @@
       "@types": [
         "types/"
       ],
+      "@constants": [
+        "frontend/src/constants"
+      ],
+      "@components/*": [
+        "frontend/src/components/*"
+      ],
       "@frontend/*": [
         "frontend/src/*"
       ],
