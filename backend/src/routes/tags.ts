@@ -62,7 +62,7 @@ function createTag(req: TagPostRequest, res: Response, database: Database) {
   const category = database.getElementById(req.params.categoryID);
 
   const tag = database.createElement("tag", {
-    id: generateHash(7),
+    id: generateHash(12),
     name: req.body.name,
     color: req.body.color,
     created: new Date().getTime(),

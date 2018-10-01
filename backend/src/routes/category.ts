@@ -6,6 +6,7 @@ import generateHash from "@generate-hash";
 import {
   CategoryAllResponse,
   CategoryElement,
+  CategoryFilterBy,
   CategoryResponse,
   CategorySortBy,
   FilterElement,
@@ -25,9 +26,11 @@ interface CategoryRequestParams {
 interface CategoryRequestQuery {
   name: string;
   sortBy?: CategorySortBy;
+  filterBy?: CategoryFilterBy;
   action?:
     | "create"
     | "delete"
+    | "filter"
     | "sort"
     ;
 }
@@ -45,6 +48,7 @@ function toCategoryResponse(element: CategoryElement): CategoryResponse {
   const filterElements = element.querySelectorAll<FilterElement>("filter");
   return {
     sortBy: element.attributes.sortBy,
+    filterBy: element.attributes.filterBy,
     id: element.attributes.id,
     created: element.attributes.created,
     name: element.attributes.name,
@@ -57,6 +61,7 @@ function toCategoryResponse(element: CategoryElement): CategoryResponse {
 function createCategory(req: CategoryRequest, res, database: Database) {
   const element = database.createElement<CategoryElement>("category", {
     sortBy: "date",
+    filterBy: null,
     created: new Date().getTime(),
     id: generateHash(12),
     name: req.body.name,
@@ -97,16 +102,32 @@ function sortCategory(req: CategoryRequest, res: Response, database: Database) {
   }
 }
 
+function filterCategory(req: CategoryRequest, res: Response, database: Database) {
+  let categoryElement = database.getElementById<CategoryElement>(req.params.categoryID);
+  if (categoryElement) {
+    categoryElement.setAttributes({
+      filterBy: req.body.filterBy
+    });
+    database.save();
+    res.send();
+  } else {
+    res
+      .status(404)
+      .send(`CATEGORY__NOT_FOUND: "${req.params.categoryID}"`);
+  }
+}
+
 function onPost(req: CategoryRequest, res, database: Database) {
   const bodyValidator =
     new Validate({
       "name?": "string",
       "action": `
-        | delete
         | create
+        | delete
+        | filter
         | sort
         `,
-      "[string]?": "string",
+      "[string]?": "string | null",
     });
 
   const isValidQuery =
@@ -122,6 +143,8 @@ function onPost(req: CategoryRequest, res, database: Database) {
       deleteCategory(req, res, database);
     } else if (req.body.action === "sort") {
       sortCategory(req, res, database);
+    } else if (req.body.action === "filter") {
+      filterCategory(req, res, database);
     }
   } else {
     res.status(500).send("CATEGORY__INVALID_REQUEST");

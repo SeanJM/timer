@@ -5,7 +5,8 @@ import { StoreState, withStore } from "@frontend/store";
 import path, { PathParams } from "@path";
 import { withRouter } from "@frontend/components/router";
 import { ContextMenuProps } from "@frontend/components/context-menu";
-import { FilterResponse } from "types";
+import { FilterResponse, CategoryFilterBy } from "@types";
+import { dispatch } from "@frontend/action";
 
 interface ContextMenuParams {
   type: string;
@@ -15,7 +16,9 @@ interface ContextMenuParams {
 
 interface ContextMenuFilterProps extends Partial<ContextMenuProps> {
   params: PathParams<ContextMenuParams>;
+  categoryID: string;
   filters: FilterResponse[];
+  filterBy: CategoryFilterBy;
 }
 
 function mapStateToProps(state: StoreState, props): ContextMenuFilterProps {
@@ -23,11 +26,11 @@ function mapStateToProps(state: StoreState, props): ContextMenuFilterProps {
   const { schema } = state.routes;
   const params = path.params<ContextMenuParams>(pathname, schema);
   const categoryElement = state.todo.categories.find((a) => a.id === params.categoryID);
-  console.log(categoryElement);
   return {
     ...props,
     filters: categoryElement.filters,
-    params,
+    filterBy: categoryElement.filterBy,
+    categoryID: params.categoryID,
   };
 }
 
@@ -36,11 +39,35 @@ function ContextMenuFilterView(props: ContextMenuFilterProps) {
     <ContextMenuView {...props}>
       {props.filters.map((filterElement) => {
         return (
-          <ContextMenuItem key={filterElement.id} type="select">
+          <ContextMenuItem
+            key={filterElement.id}
+            check={props.filterBy === filterElement.id}
+            type="select"
+            onClick={() => dispatch("CATEGORY", {
+              type: "FILTER_BY",
+              value: {
+                categoryID: props.categoryID,
+                filterBy: filterElement.id
+              }
+            })}
+          >
             {filterElement.name}
           </ContextMenuItem>
         );
       })}
+      <hr/>
+      <ContextMenuItem
+        type="select"
+        onClick={() => dispatch("CATEGORY", {
+          type: "FILTER_BY",
+          value: {
+            categoryID: props.categoryID,
+            filterBy: null
+          }
+        })}
+      >
+        Clear
+      </ContextMenuItem>
     </ContextMenuView>
   );
 }

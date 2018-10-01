@@ -8,6 +8,7 @@ export interface CategoryElementAttributes extends
   | "name"
   > {
   sortBy: CategorySortBy;
+  filterBy: string | null;
 }
 
 export interface CategoryAllResponse {
@@ -24,7 +25,13 @@ export type CategoryElement = DatabaseElement<{
 }>;
 
 export interface CategoryResponse extends
-  Pick<CategoryElementAttributes, "id" | "created" | "name" | "sortBy"> {
+  Pick<CategoryElementAttributes,
+    | "created"
+    | "filterBy"
+    | "id"
+    | "name"
+    | "sortBy"
+  > {
     filters: FilterResponse[];
     tags: TagResponse[];
     todos: TodoResponse[];
@@ -34,6 +41,11 @@ export type CategorySortBy =
   | "date"
   | "priority"
   | "name"
+  ;
+
+export type CategoryFilterBy =
+  | string
+  | null
   ;
 
 export interface InputOnValue {
@@ -50,23 +62,6 @@ export interface SwatchAttributes {
   value: string;
   created: number;
   id: string;
-}
-
-export interface StoreForm {
-  input: {
-    [key: string]: StoreFormInput
-  };
-  id: string;
-  isValid: boolean;
-  showValidation: boolean;
-}
-
-export interface StoreFormInput {
-  name: string;
-  value: any;
-  type?: string;
-  isValid?: boolean;
-  errorMessage?: string | null;
 }
 
 export interface TagCategory {

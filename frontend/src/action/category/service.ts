@@ -53,6 +53,46 @@ export class CategoryService {
       });
   }
 
+  filterBy(value) {
+    const categories =
+      store.value.todo.categories.slice();
+
+    const categoryIndex =
+      categories.findIndex((a)=> a.id === value.categoryID);
+
+    const prevCategoryElement: CategoryResponse =
+      _.merge({}, categories[categoryIndex]);
+
+    const nextCategoryElement: CategoryResponse =
+      _.merge({}, categories[categoryIndex], {
+        filterBy: value.filterBy
+      });
+
+    categories[categoryIndex] = nextCategoryElement;
+
+    store.set({
+      todo: {
+        categories
+      }
+    });
+
+    ajax.post(`/category/${value.categoryID}`, {
+      data: {
+        action: "filter",
+        filterBy: value.filterBy
+      }
+    })
+      .catch(() => {
+        const categories = store.value.todo.categories.slice();
+        categories[categoryIndex] = prevCategoryElement;
+        store.set({
+          todo: {
+            categories
+          }
+        });
+      });
+  }
+
   getAll() {
     store.set({
       todo: {

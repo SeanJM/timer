@@ -14,6 +14,11 @@ export function category(subscribe) {
         break;
       }
 
+      case "FILTER_BY": {
+        service.filterBy(e.value);
+        break;
+      }
+
       case "GET_ALL": {
         service.getAll();
         break;

@@ -71,27 +71,25 @@ export class FilterEditorView extends Component<FilterEditorOutProps> {
   render() {
     const { categoryTags, filterTags } = this.props;
     return (
-      <div className="filter-editor">
-        <Viewport
-          body={
-            <FormConnect type="borderless" id={FORM_ID}>
-              <InputGroup name="filterTags">
-                <label>Tags</label>
-                <InputChipSelect
-                  defaultValue={filterTags}
-                  data={categoryTags.map((tag) => {
-                    return {
-                      id: tag.id,
-                      label: tag.name,
-                      color: tag.color,
-                    } as ChipData;
-                  })}
-                />
-              </InputGroup>
-            </FormConnect>
-          }
-        ></Viewport>
-      </div>
+      <Viewport
+        body={
+          <FormConnect type="borderless" id={FORM_ID}>
+            <InputGroup name="filterTags">
+              <label>Tags</label>
+              <InputChipSelect
+                defaultValue={filterTags}
+                data={categoryTags.map((tag) => {
+                  return {
+                    id: tag.id,
+                    label: tag.name,
+                    color: tag.color,
+                  } as ChipData;
+                })}
+              />
+            </InputGroup>
+          </FormConnect>
+        }
+      />
     );
   }
 }

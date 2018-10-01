@@ -36,7 +36,7 @@ function createFilter(req: FilterPostRequest, res: Response, database: Database)
   const filterElement = database.createElement<FilterElement>("filter", {
     name: req.body.name,
     created: new Date().getTime(),
-    id: generateHash(7),
+    id: generateHash(12),
     tags: []
   });
 

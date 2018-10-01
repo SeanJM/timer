@@ -14,12 +14,12 @@ import { Button } from "@frontend/components/button";
 import sortBy from "@sort-by";
 
 interface FilterInParams {
-  categoryID: string;
+  filterID: string;
 }
 
 interface FilterOutParams {
   categoryID: string;
-  elementID?: string;
+  filterID?: string;
 }
 
 interface FilterListInProps extends WithRouterProps {
@@ -63,75 +63,64 @@ class FilterListView extends Component<FilterOutProps, {}> {
 
   render() {
     const { params, history, routes, filters } = this.props;
-    const className = ["filters"];
-
-    if (params.categoryID) {
-      className.push("filters--category-id");
-    }
-
-    if (params.elementID) {
-      className.push("filters--filter-id");
-    }
-
     return (
-      <div className={className.join(" ")}>
-        <Viewport
-          titlebar={
-            <Titlebar>
-              <TitleAndInput
-                title="Filters"
-                component={InputText}
-                onSubmit={(name) => dispatch("FILTERS", {
-                  type: "CREATE",
-                  value: {
-                    name,
-                    categoryID: params.categoryID,
-                  }
-                })}
-              />
-            </Titlebar>
-          }
-          body={
-            <List>
-              {filters.map((filter) => {
-                return (
-                  <ListItem
-                    key={filter.id}
-                    title={filter.name}
-                    timestamp={
-                      <Timestamp>{filter.created}</Timestamp>
-                    }
-                    onClick={() => {
-                      history.push({
-                        pathname: path.reduce(routes.schema, {
-                          type: "filters",
-                          categoryID: params.categoryID,
-                          elementID: filter.id,
-                        })
-                      });
-                    }}
-                    secondaryAction={
-                      <Button
-                        icon="close"
-                        onClick={() => dispatch("FILTERS", {
-                          type: "DELETE",
-                          value: {
-                            categoryID: params.categoryID,
-                            tagID: filter.id,
-                          }
-                        })}
-                      />
-                    }
-                    >
-                  </ListItem>
-                );
+      <Viewport
+        titlebar={
+          <Titlebar>
+            <TitleAndInput
+              title="Filters"
+              component={InputText}
+              onSubmit={(name) => dispatch("FILTERS", {
+                type: "CREATE",
+                value: {
+                  name,
+                  categoryID: params.categoryID,
+                }
               })}
-            </List>
-          }
-        />
-      </div>
+            />
+          </Titlebar>
+        }
+        body={
+          <List>
+            {filters.map((filter) => {
+              return (
+                <ListItem
+                  key={filter.id}
+                  title={filter.name}
+                  timestamp={
+                    <Timestamp>{filter.created}</Timestamp>
+                  }
+                  onClick={() => {
+                    history.push({
+                      pathname: path.reduce(routes.schema, {
+                        type: "filters",
+                        categoryID: params.categoryID,
+                        elementID: filter.id,
+                      })
+                    });
+                  }}
+                  secondaryAction={
+                    <Button
+                      icon="close"
+                      onClick={() => dispatch("FILTERS", {
+                        type: "DELETE",
+                        value: {
+                          categoryID: params.categoryID,
+                          tagID: filter.id,
+                        }
+                      })}
+                    />
+                  }
+                  >
+                </ListItem>
+              );
+            })}
+          </List>
+        }
+      />
     );
   }
 }
 
-export const FilterList = withStore(FilterListView, mapStateToProps)() as React.ComponentClass<any>;
+export const FilterListConnect =
+  withStore(FilterListView, mapStateToProps)() as React.ComponentClass<any>;
