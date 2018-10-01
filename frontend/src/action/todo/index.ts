@@ -3,16 +3,17 @@ import Service from "@frontend/action/todo/service";
 export default function (subscribe) {
   const service = new Service();
 
-  subscribe("TODO", (e) => {
-    switch (e.type) {
+  subscribe("TODO", ({ type, value }) => {
+    switch (type) {
       case "EDIT": {
-        service.edit(e.value);
+        service.edit(value);
+        break;
+      }
+
+      case "ADD": {
+        service.addTodo(value);
       }
     }
-  });
-
-  subscribe("ADD_TODO", function (e) {
-    service.addTodo(e);
   });
 
   subscribe("INCOMPLETE_TODO", function (e) {
