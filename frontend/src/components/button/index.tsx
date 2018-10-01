@@ -11,27 +11,32 @@ interface ButtonProps extends Partial<JSX.ElementChildrenAttribute> {
   onClick?: (event: React.MouseEvent) => void;
   type?: ButtonType;
   icon?: IconType;
+  active?: boolean;
 }
 
 export function Button(props: ButtonProps) {
   const { onClick } = props;
-  const className = ["button"];
+  const classList = ["button"];
 
   if (props.type) {
-    className.push("button--" + props.type);
+    classList.push("button--" + props.type);
   }
 
   if (props.children) {
-    className.push("button-text");
+    classList.push("button-text");
   }
 
   if (props.icon) {
-    className.push("button-icon");
+    classList.push("button-icon");
+  }
+
+  if (props.active) {
+    classList.push("button-active");
   }
 
   return (
     <span
-      className={className.join(" ")}
+      className={classList.join(" ")}
       onClick={(e) => onClick && onClick(e)}
     >
       {props.icon ? <Icon type={props.icon} /> : null}
