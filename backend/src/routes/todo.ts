@@ -4,7 +4,7 @@ import { Database } from "@backend/class/database";
 import { Request, Response } from "express";
 import Validate from "verified";
 import generateHash from "@generate-hash";
-import { TodoElement, TodoResponse } from "@types";
+import { TodoElement, TodoResponse, CategoryElement, TagElement } from "@types";
 import path from "@path";
 
 const TODO_NOT_FOUND = "TODO__ID_DOES_NOT_EXIST";
@@ -51,22 +51,27 @@ export interface TodoRequest extends Request {
   path: string;
 }
 
-function createTodo(req: TodoRequest, res: Response, database: Database) {
+function createTodo(req: TodoRequest, res: Response, database: Database, categoryElement: CategoryElement) {
+  const tagsByID =
+    categoryElement.querySelectorAll<TagElement>("tag")
+    .map((node) => node.attributes.id);
+
+  const tags = req.body.tags
+    ? req.body.tags.filter((tagID) => tagsByID.indexOf(tagID) !== -1)
+    : [];
+
   const todoElement =
     database.createElement<TodoElement>("todo", {
-      id: generateHash(6),
+      id: generateHash(12),
       name: req.body.name,
       state: "incomplete",
       progress: 0,
       priority: 0,
-      tags: [],
+      tags,
       created: new Date().getTime(),
       completedDate: null,
       notes: null
     });
-
-  let categoryElement =
-    database.getElementById(req.params.categoryID);
 
   categoryElement.appendChild(todoElement);
 
@@ -77,32 +82,24 @@ function createTodo(req: TodoRequest, res: Response, database: Database) {
   database.save();
 }
 
-function deleteTodo(req: TodoRequest, res: Response, database) {
-  let categoryElement =
-    database.getElementById(req.params.categoryID);
-
+function deleteTodo(req: TodoRequest, res: Response, database, categoryElement: CategoryElement) {
   let todoElement =
     database.getElementById(req.params.todoID);
 
-  if (categoryElement && todoElement) {
+  if (todoElement) {
     categoryElement.removeChild(todoElement);
     res.send();
     database.save();
-  } else if (!categoryElement) {
-    res.status(404).send(CATEGORY_NOT_FOUND);
   } else {
     res.status(404).send(TODO_NOT_FOUND);
   }
 }
 
-function completeTodo(req: TodoRequest, res, database) {
-  let categoryElement =
-    database.getElementById(req.params.categoryID);
-
+function completeTodo(req: TodoRequest, res, database, categoryElement: CategoryElement) {
   let todoElement: TodoElement =
     database.getElementById(req.params.todoID);
 
-  if (categoryElement && todoElement) {
+  if (todoElement) {
     todoElement.setAttributes({
       state: "complete",
       completedDate: new Date().getTime(),
@@ -110,38 +107,28 @@ function completeTodo(req: TodoRequest, res, database) {
 
     res.send(toTodoResponse(todoElement));
     database.save();
-  } else if (!categoryElement) {
-    res.status(404).send(CATEGORY_NOT_FOUND);
   } else {
     res.status(404).send(TODO_NOT_FOUND);
   }
 }
 
-function incompleteTodo(req: TodoRequest, res, database) {
-  let categoryElement =
-    database.getElementById(req.params.categoryID);
-
+function incompleteTodo(req: TodoRequest, res, database, categoryElement: CategoryElement) {
   let todoElement =
     database.getElementById(req.params.todoID);
 
-  if (categoryElement && todoElement) {
+  if (todoElement) {
     todoElement.setAttributes({
       state: "incomplete"
     });
 
     res.send(toTodoResponse(todoElement));
     database.save();
-  } else if (!categoryElement) {
-    res.status(404).send(CATEGORY_NOT_FOUND);
   } else {
     res.status(404).send(TODO_NOT_FOUND);
   }
 }
 
-function editTodo(req: TodoRequest, res, database: Database) {
-  let categoryElement =
-    database.getElementById(req.params.categoryID);
-
+function editTodo(req: TodoRequest, res, database: Database, categoryElement: CategoryElement) {
   let todoElement =
     database.getElementById<TodoElement>(req.params.todoID);
 
@@ -161,14 +148,15 @@ function editTodo(req: TodoRequest, res, database: Database) {
     });
     res.send(toTodoResponse(todoElement));
     database.save();
-  } else if (!categoryElement) {
-    res.status(404).send(CATEGORY_NOT_FOUND);
   } else {
     res.status(404).send(TODO_NOT_FOUND);
   }
 }
 
 function onPost(req: TodoRequest, res, database: Database) {
+  let categoryElement =
+    database.getElementById<CategoryElement>(req.params.categoryID);
+
   const bodyValidator =
     new Validate({
       "name?": "string",
@@ -189,16 +177,20 @@ function onPost(req: TodoRequest, res, database: Database) {
   const validated = bodyValidator.validate(req.body);
 
   if (validated.isValid) {
-    if (req.body.action === "create") {
-      createTodo(req, res, database);
-    } else if (req.body.action === "delete") {
-      deleteTodo(req, res, database);
-    } else if (req.body.action === "complete") {
-      completeTodo(req, res, database);
-    } else if (req.body.action === "incomplete") {
-      incompleteTodo(req, res, database);
-    } else if (req.body.action === "edit") {
-      editTodo(req, res, database);
+    if (!categoryElement) {
+      res.status(404).send(CATEGORY_NOT_FOUND);
+    } else {
+      if (req.body.action === "create") {
+        createTodo(req, res, database, categoryElement);
+      } else if (req.body.action === "delete") {
+        deleteTodo(req, res, database, categoryElement);
+      } else if (req.body.action === "complete") {
+        completeTodo(req, res, database, categoryElement);
+      } else if (req.body.action === "incomplete") {
+        incompleteTodo(req, res, database, categoryElement);
+      } else if (req.body.action === "edit") {
+        editTodo(req, res, database, categoryElement);
+      }
     }
   } else {
     res.status(500).send("TODO__INVALID_REQUEST");
