@@ -1,5 +1,4 @@
-import { store } from "@frontend/store";
-import { StoreForm, StoreFormInput } from "@types";
+import { store, StoreForm, StoreFormInput } from "@frontend/store";
 import Validator from "verified";
 
 const validators = {
