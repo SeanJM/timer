@@ -1,8 +1,8 @@
 import React from "react";
-import { withStore, StoreState } from "@frontend/store";
+import { withStore, StoreState, StoreForm } from "@frontend/store";
 import { FormConnect } from "@frontend/components/form";
 import { InputGroup } from "@frontend/components/input-group";
-import { TagResponse, StoreForm } from "types";
+import { TagResponse } from "types";
 import generateHash from "@generate-hash";
 import { emptyForm } from "@frontend/action/form";
 import { InputText } from "@frontend/components";

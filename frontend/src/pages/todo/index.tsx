@@ -15,7 +15,7 @@ type TodoPathParams = PathParams<{
 
 interface TodoOutProps extends WithRouterProps {
   params: TodoPathParams;
-  editorDefaultWidth: number;
+  todoEditorDefaultWidth: number;
 }
 
 function mapStateToProps(state: StoreState, props: WithRouterProps): TodoOutProps {
@@ -26,32 +26,36 @@ function mapStateToProps(state: StoreState, props: WithRouterProps): TodoOutProp
       categoryID: params.categoryID,
       todoID: params.elementID,
     },
-    editorDefaultWidth: state.layout.todoEditorDefaultWidth,
+    todoEditorDefaultWidth: state.layout.todoEditorDefaultWidth,
   };
 }
 
 export class Todo extends Component<TodoOutProps, {}> {
   render() {
-    console.log(this.props);
+    const { todoID } = this.props.params;
     return (
       <PanelGroup>
         <Panel>
           <TodoListConnect {...this.props}/>
         </Panel>
-        <Panel
-          defaultWidth={this.props.editorDefaultWidth}
-          onWidthChanged={(e) => {
-            dispatch("LAYOUT", {
-              type: "SET_WIDTH",
-              value: {
-                target: "editorDefaultWidth",
-                defaultWidth: e.width,
-              }
-            });
-          }}
-        >
-          <TodoEditorConnect {...this.props}/>
-        </Panel>
+        { todoID
+          ? (
+            <Panel
+              defaultWidth={this.props.todoEditorDefaultWidth}
+              onWidthChanged={(e) => {
+                dispatch("LAYOUT", {
+                  type: "SET_WIDTH",
+                  value: {
+                    target: "todoEditorDefaultWidth",
+                    defaultWidth: e.width,
+                  }
+                });
+              }}
+            >
+              <TodoEditorConnect {...this.props}/>
+            </Panel>
+          )
+          : null}
       </PanelGroup>
     );
   }

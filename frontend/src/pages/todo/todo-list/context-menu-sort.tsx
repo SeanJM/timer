@@ -35,33 +35,36 @@ function ContextMenuSortView(props: ContextMenuSortProps) {
     <ContextMenuView {...props}>
       <ContextMenuItem
         type="select"
-        check={props.sortBy === "date"} onClick={() => dispatch("CATEGORY", {
-        type: "SORT_BY",
-        value: {
-          sortBy: "date",
-          categoryID: props.params.categoryID,
-        }
+        check={props.sortBy === "date"}
+        onClick={() => dispatch("CATEGORY", {
+          type: "SORT_BY",
+          value: {
+            sortBy: "date",
+            categoryID: props.params.categoryID,
+          }
       })}>Sort by date</ContextMenuItem>
 
       <ContextMenuItem
         type="select"
-        check={props.sortBy === "priority"} onClick={() => dispatch("CATEGORY", {
-        type: "SORT_BY",
-        value: {
-          sortBy: "priority",
-          categoryID: props.params.categoryID,
-        }
+        check={props.sortBy === "priority"}
+        onClick={() => dispatch("CATEGORY", {
+          type: "SORT_BY",
+          value: {
+            sortBy: "priority",
+            categoryID: props.params.categoryID,
+          }
       })}>Sort by priority</ContextMenuItem>
 
       <ContextMenuItem
         type="select"
-        check={props.sortBy === "name"} onClick={() => dispatch("CATEGORY", {
-        type: "SORT_BY",
-        value: {
-          sortBy: "name",
-          categoryID: props.params.categoryID,
-        }
-      })}>Sort by name</ContextMenuItem>
+        check={props.sortBy === "name"}
+        onClick={() => dispatch("CATEGORY", {
+          type: "SORT_BY",
+          value: {
+            sortBy: "name",
+            categoryID: props.params.categoryID,
+          }
+        })}>Sort by name</ContextMenuItem>
     </ContextMenuView>
   );
 }
