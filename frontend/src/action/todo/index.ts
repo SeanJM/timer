@@ -1,7 +1,7 @@
-import Service from "@frontend/action/todo/service";
+import { TodoService } from "@frontend/action/todo/service";
 
 export default function (subscribe) {
-  const service = new Service();
+  const service = new TodoService();
 
   subscribe("TODO", ({ type, value }) => {
     switch (type) {

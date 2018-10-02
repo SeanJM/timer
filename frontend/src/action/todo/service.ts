@@ -4,7 +4,7 @@ import ajax from "@ajax";
 import _ from "lodash";
 import path from "@path";
 
-export default class Service {
+export class TodoService {
   addTodo({ name, tags, categoryID }) {
     ajax.post(`/todo/${categoryID}`, {
       data: {
@@ -71,7 +71,7 @@ export default class Service {
     const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
     const category = categories.find((a) => a.id === e.categoryID);
     const todoIndex = category.todos.findIndex((a) => a.id === e.todoID);
-    const value = _.omit(e, ["categoryID", "todoID"]);
+    const value = _.omitBy(_.omit(e, ["categoryID", "todoID"]), (a) => a == null);
     const prevTodoElement = _.assign({}, category.todos[todoIndex]);
 
     Object.assign(category.todos[todoIndex], value);
