@@ -75,13 +75,13 @@ export class FilterService {
   editFilter(value: FilterServiceEditValue) {
     const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
     const categoryElement = categories.find((a) => a.id === value.categoryID);
-    const filterElement = categoryElement.filters.find((a) => a.id === value.filterID);
-    const filterIndex = categoryElement.filters.indexOf(filterElement);
+    const nextFilterElement = _.merge({}, categoryElement.filters.find((a) => a.id === value.filterID)) as FilterResponse;
+    const prevFilterElement = categoryElement.filters.find((a) => a.id === value.filterID);
+    const filterIndex = categoryElement.filters.indexOf(prevFilterElement);
 
-    categoryElement.filters[filterIndex] = _.merge({}, categoryElement.filters[filterIndex], {
-      tags: value.tags || filterElement.tags,
-      name: value.name || filterElement.name,
-    });
+    nextFilterElement.tags = value.tags || nextFilterElement.tags;
+    nextFilterElement.name = value.name || nextFilterElement.name;
+    categoryElement.filters[filterIndex] = nextFilterElement;
 
     store.set({
       todo: {
@@ -98,7 +98,7 @@ export class FilterService {
     }).catch((res: string) => {
       const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
       const categoryElement = categories.find((a) => a.id === value.categoryID);
-      categoryElement.filters[filterIndex] = filterElement;
+      categoryElement.filters[filterIndex] = prevFilterElement;
       store.set({
         todo: {
           categories
