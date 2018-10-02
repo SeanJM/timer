@@ -5,6 +5,7 @@ import { InputValueEvent } from "@types";
 export interface InputGroupProps extends JSX.ElementChildrenAttribute {
   formid?: string;
   required?: boolean;
+  onValue?: (e: InputValueEvent) => void;
 }
 
 export function InputGroup(props: InputGroupProps) {
@@ -28,6 +29,11 @@ export function InputGroup(props: InputGroupProps) {
             required,
             onValue: (e: InputValueEvent) => {
               const { onValue } = child.props;
+
+              if (props.onValue) {
+                props.onValue(e);
+              }
+
               if (onValue) {
                 onValue(e);
               }
