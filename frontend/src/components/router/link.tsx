@@ -1,5 +1,5 @@
 import React from "react";
-import history from "./history";
+import { history } from "./history";
 
 export interface LinkProps extends Partial<JSX.ElementChildrenAttribute> {
   className?: string;

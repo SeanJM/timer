@@ -1,5 +1,5 @@
 import React from "react";
-import history, { RouterHistory } from "@frontend/components/router/history";
+import { history, RouterHistory } from "@frontend/components/router/history";
 import getLocation from "@frontend/components/router/get-location";
 import path from "@path";
 import { RouterLocation } from "@frontend/components/router/types";

@@ -43,7 +43,7 @@ function handleEvent() {
   );
 }
 
-const history = {
+export const history = {
   stack: [
     getLocation(window.location.hash.substring(1))
   ],
@@ -54,5 +54,3 @@ const history = {
 };
 
 window.addEventListener("hashchange", history);
-
-export default history;
