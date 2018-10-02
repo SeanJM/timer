@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { dispatch } from "@frontend/action";
 
-export interface ContextMenuProps {
-  children: JSX.Element | JSX.Element[];
+export interface ContextMenuProps extends JSX.ElementChildrenAttribute {
   id?: string;
   pageX?: number;
   pageY?: number;
