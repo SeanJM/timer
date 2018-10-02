@@ -1,6 +1,6 @@
 // tslint:disable:no-default-export
 
-export type PathQueryValue<T extends {[key: string]: string | string[]} = {}> = T;
+export type PathQueryValue<T = {[key: string]: string | string[]}> = T;
 
 export class PathQuery<T extends {} = {}> {
   value: Partial<PathQueryValue<T>>;
@@ -49,11 +49,13 @@ export class PathQuery<T extends {} = {}> {
     let res = [];
     this.forEach((value, key) => {
       let property = encodeURI(key);
+      const isString = typeof value === "string" && value.length;
+      const isNumber = !isNaN(Number(value));
       if (Array.isArray(value)) {
         value.forEach((member) => {
           res.push(property + "[]=" + encodeURI(member));
         });
-      } else {
+      } else if (isNumber || isString) {
         res.push(property + "=" + encodeURI(value as string));
       }
     });
