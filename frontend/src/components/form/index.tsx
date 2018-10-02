@@ -1,5 +1,6 @@
 import * as React from "react";
 import { withStore } from "@frontend/store";
+import { dispatch } from "@frontend/action";
 
 function mapStateToProps(state, props) {
   return {
@@ -40,7 +41,17 @@ export function Form(props: FormProps) {
       {React.Children.toArray(props.children).map((child: JSX.Element) => {
         if (typeof child.type === "function") {
           return React.cloneElement(child, {
-            formid: props.id
+            formid: props.id,
+            onValue: (e) => {
+              if (props.id) {
+                dispatch("FORM_VALUE", {
+                  type: e.type,
+                  value: e.value,
+                  name: e.name,
+                  id: props.id,
+                });
+              }
+            }
           });
         }
         return child;
