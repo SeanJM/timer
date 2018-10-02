@@ -12,7 +12,7 @@ interface IDList {
 function toElement(node: ElementChild, idList: IDList) {
   if ((node as Partial<DatabaseElement>).children) {
     let element = new DatabaseElement(
-      (node as Partial<DatabaseElement>).type,
+      (node as Partial<DatabaseElement>).tagName,
       (node as Partial<DatabaseElement>).attributes,
       (node as Partial<DatabaseElement>).children.map((child) => toElement(child, idList))
     );
@@ -41,7 +41,7 @@ export class Database {
   }
 
   createElement<T extends DatabaseElement = DatabaseElement>(): T;
-  createElement<T extends DatabaseElement = DatabaseElement>(type: T["type"]): T;
+  createElement<T extends DatabaseElement = DatabaseElement>(type: T["tagName"]): T;
   createElement<T extends DatabaseElement = DatabaseElement>(props: DatabaseElement<T>["attributes"]): T;
   createElement<T extends DatabaseElement = DatabaseElement>(props: DatabaseElement<T>["attributes"], children: ElementChild[]): T;
   createElement<T extends DatabaseElement = DatabaseElement>(children: ElementChild[]): T;

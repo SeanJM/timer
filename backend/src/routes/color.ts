@@ -23,7 +23,7 @@ interface SwatchAttributes {
 }
 
 interface SwatchElement extends DatabaseElement {
-  type: "swatch";
+  tagName: "swatch";
   attributes: SwatchAttributes;
 }
 

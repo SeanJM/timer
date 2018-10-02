@@ -1,5 +1,7 @@
 import { DatabaseElement } from "@backend/class/element";
+import { FilterResponse } from "./filter";
 import "./verified";
+export * from "./filter";
 
 export interface CategoryElementAttributes extends
   Pick<DatabaseElement["attributes"],
@@ -81,7 +83,7 @@ export interface TagResponse {
 }
 
 export type TagElement = DatabaseElement<{
-  type: "tag";
+  tagName: "tag";
   attributes: {
     name: string;
     id: string;
@@ -92,7 +94,7 @@ export type TagElement = DatabaseElement<{
 }>;
 
 export type TodoElement = DatabaseElement<{
-  type: "todo";
+  tagName: "todo";
   attributes: {
     completedDate: null | number;
     priority: number;
@@ -128,19 +130,3 @@ export interface ColorState {
   colorPickers?: ColorPicker[];
   palette?: SwatchAttributes[];
 }
-
-export interface FilterResponse {
-  name: string;
-  id: string;
-  created: number;
-  tags: string[];
-}
-
-export type FilterElement = DatabaseElement<{
-  type: "filter";
-  attributes: {
-    id: string;
-    name: string;
-    tags: string[]
-  };
-}>;

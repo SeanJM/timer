@@ -1,3 +1,4 @@
+// tslint:disable:no-default-export
 import { DatabaseElement, ElementAttributes } from "@backend/class/element";
 
 type QueryObject = Partial<DatabaseElement>;
@@ -24,10 +25,10 @@ export default function querySelectorToObjectList(selector: string) {
 
   while (++i < n) {
     if (/[a-zA-Z]/.test(selector[i])) {
-      queryObject.type = "";
+      queryObject.tagName = "";
 
       while (selector[i] && !boundary[selector[i]]) {
-        queryObject.type += selector[i];
+        queryObject.tagName += selector[i];
         i += 1;
       }
 

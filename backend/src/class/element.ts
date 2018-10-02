@@ -77,15 +77,15 @@ function findElementsFromQuery(node: DatabaseElement, index: number, queryObject
 }
 
 export class DatabaseElement<U extends Partial<DatabaseElement> = {}> {
-  type: string;
+  tagName: string;
   attributes: ElementAttributes<U["attributes"]>;
   children: Array<ElementChild | undefined>;
   parentNode: DatabaseElement;
 
-  constructor(type: U["type"], attributes: ElementAttributes<U["attributes"]>, children: Array<ElementChild>) {
+  constructor(type: U["tagName"], attributes: ElementAttributes<U["attributes"]>, children: Array<ElementChild>) {
     let i = -1;
     const n = children.length;
-    this.type = type;
+    this.tagName = type;
     this.attributes = attributes;
     this.children = children;
     while (++i < n) {
@@ -107,7 +107,7 @@ export class DatabaseElement<U extends Partial<DatabaseElement> = {}> {
   }
 
   is(query: Partial<DatabaseElement>): boolean {
-    if (query.type && query.type !== this.type) {
+    if (query.tagName && query.tagName !== this.tagName) {
       return false;
     }
 
@@ -150,7 +150,7 @@ export class DatabaseElement<U extends Partial<DatabaseElement> = {}> {
 
   toJSON() {
     return {
-      type: this.type,
+      tagName: this.tagName,
       attributes: this.attributes,
       children: this.children,
     } as Partial<DatabaseElement>;
