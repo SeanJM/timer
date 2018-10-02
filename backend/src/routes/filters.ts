@@ -2,7 +2,7 @@ import { Response, Express } from "express";
 import Validate from "verified";
 import { Database } from "@backend/class/database";
 import generateHash from "@generate-hash";
-import { FilterResponse, FilterElement, CategoryElement } from "@types";
+import { FilterResponse, FilterTagElement, FilterElement, CategoryElement, FilterTagTypes } from "@types";
 import path, { PathParams } from "@path";
 
 interface FilterGetRequest {
@@ -15,17 +15,27 @@ interface FilterPostRequest {
   body: {
     action: "create" | "delete" | "edit",
     name?: string,
-    tags?: string[],
+    tagFilters?: FilterResponse["tagFilters"],
   };
   params: PathParams<{ categoryID: string, filterID: string }>;
 }
 
 export function toFilterResponse(element: FilterElement): FilterResponse {
+  const tagFilters: { [ key in FilterTagTypes ]: string[] } = {
+    includes: [],
+    excludes: [],
+    any: [],
+  };
+
+  (element.children as FilterTagElement[]).forEach((a) => {
+    tagFilters[a.attributes.type] = a.children;
+  });
+
   return {
     name: element.attributes.name,
     id: element.attributes.id,
     created: element.attributes.created,
-    tags: element.attributes.tags,
+    tagFilters,
   };
 }
 
@@ -59,11 +69,31 @@ function editFilter(req: FilterPostRequest, res, database) {
   const { categoryID, filterID } = req.params;
   const category: CategoryElement = database.getElementById(categoryID);
   const filterElement = category.querySelector<FilterElement>(`#${filterID}`);
+
   if (category && filterElement) {
     filterElement.setAttributes({
       name: req.body.name || filterElement.attributes.name,
-      tags: req.body.tags || filterElement.attributes.tags,
     });
+
+    filterElement.children = [];
+
+    filterElement.appendChild(
+      database.createElement("filter-tag", {
+        type: "includes",
+      }, req.body.tagFilters.includes)
+    );
+
+    filterElement.appendChild(
+      database.createElement("filter-tag", {
+        type: "excludes",
+      }, req.body.tagFilters.excludes)
+    );
+
+    filterElement.appendChild(
+      database.createElement("filter-tag", {
+        type: "any",
+      }, req.body.tagFilters.any)
+    );
 
     res.send(toFilterResponse(filterElement));
     database.save();
@@ -78,10 +108,16 @@ function onPost(req: FilterPostRequest, res: Response, database) {
   const validateQuery = new Validate({
     action: "create|delete|edit",
     "name?": "string",
-    "tags?": "string[]",
+    "tagFilters?": {
+      any: "any[]",
+      includes: "any[]",
+      excludes: "any[]",
+    },
   });
 
-  if (validateQuery.validate(req.body).isValid) {
+  const validated = validateQuery.validate(req.body);
+
+  if (validated.isValid) {
     if (req.body.action === "create") {
       createFilter(req, res, database);
     } else if (req.body.action === "delete") {
@@ -90,7 +126,7 @@ function onPost(req: FilterPostRequest, res: Response, database) {
       editFilter(req, res, database);
     }
   } else {
-    res.status(500).send("TAG__INVALID_REQUEST");
+    res.status(500).send("TAG__INVALID_REQUEST: " + JSON.stringify((validated.invalid as any).map((a) => a.pathname).join(", ")));
   }
 }
 

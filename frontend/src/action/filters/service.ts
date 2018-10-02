@@ -14,11 +14,10 @@ export interface FilterServiceCreateValue {
   categoryID: string;
 }
 
-export interface FilterServiceEditValue {
+export interface FilterServiceEditValue extends Pick<FilterResponse, "tagFilters"> {
   name?: string;
   categoryID: string;
   filterID: string;
-  tags: string[];
 }
 
 export class FilterService {
@@ -30,7 +29,11 @@ export class FilterService {
       created: new Date().getTime(),
       id: generateHash(),
       name: value.name,
-      tags: [],
+      tagFilters: {
+        includes: [],
+        excludes: [],
+        any: [],
+      },
     };
 
     categoryElement.filters.push(filter);
@@ -79,7 +82,7 @@ export class FilterService {
     const prevFilterElement = categoryElement.filters.find((a) => a.id === value.filterID);
     const filterIndex = categoryElement.filters.indexOf(prevFilterElement);
 
-    nextFilterElement.tags = value.tags || nextFilterElement.tags;
+    nextFilterElement.tagFilters = value.tagFilters || nextFilterElement.tagFilters;
     nextFilterElement.name = value.name || nextFilterElement.name;
     categoryElement.filters[filterIndex] = nextFilterElement;
 
@@ -93,7 +96,7 @@ export class FilterService {
       data: {
         action: "edit",
         name: value.name,
-        tags: value.tags,
+        tagFilters: value.tagFilters,
       }
     }).catch((res: string) => {
       const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
