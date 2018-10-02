@@ -1,6 +1,18 @@
 import Persistore from "@frontend/class/persistore";
-import { Keys, ColorState, CategoryResponse, StoreForm, FilterResponse, CategoryAllResponse } from "@types";
 import Validator from "verified";
+
+import {
+  CategoryAllResponse,
+  CategoryResponse,
+  ColorState,
+  FilterResponse,
+  Keys,
+} from "@types";
+
+import {
+  StoreDropdown,
+  StoreForm,
+} from "./store-types";
 
 export interface TodoNode {
   attributes: {
@@ -17,9 +29,12 @@ export interface Category extends TodoNode {
 
 export interface StoreState {
   keys: Keys;
+  dropdown: StoreDropdown;
 
   layout: {
-    todoEditorDefaultWidth: number
+    todoEditorDefaultWidth?: number;
+    tagEditorDefaultWidth?: number;
+    filterEditorDefaultWidth?: number;
   };
 
   contextMenu: string[];
@@ -62,13 +77,16 @@ export const store = new Persistore<StoreState>(
     },
 
     contextMenu: [],
+    dropdown: {},
 
     keys: {
       control: false,
     },
 
     layout: {
-      todoEditorDefaultWidth: 400
+      todoEditorDefaultWidth: 400,
+      tagEditorDefaultWidth: 400,
+      filterEditorDefaultWidth: 400
     },
 
     categories: {
