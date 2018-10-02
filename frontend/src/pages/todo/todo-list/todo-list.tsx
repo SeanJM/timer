@@ -1,25 +1,26 @@
 import React, { Component } from "react";
 
-import { Button } from "@frontend/components/button";
-import { CategorySortBy, CategoryFilterBy } from "@types";
+import { Button } from "@components/button";
+import { CategorySortBy, CategoryFilterBy, FilterTypes } from "@types";
 import { ContextMenuFilterConnect } from "./context-menu-filter";
-import { contextMenuPush } from "@frontend/components/context-menu";
+import { contextMenuPush } from "@components/context-menu";
 import { ContextMenuSort } from "./context-menu-sort";
 import { dispatch } from "@frontend/action";
 import { emptyForm } from "@frontend/action/form";
-import { Filter } from "@frontend/components/filter";
-import { InputText } from "@frontend/components/input";
-import { List } from "@frontend/components/list";
-import { RouteComponentProps } from "@frontend/components/router";
+import { Filter } from "@components/filter";
+import { InputText } from "@components/input";
+import { List } from "@components/list";
+import { RouteComponentProps } from "@components/router";
 import { routes } from "@frontend/routes";
-import { TabBar, Tab } from "@frontend/components/tab-bar";
-import { TitleAndInput } from "@frontend/components/title-and-input";
-import { Titlebar } from "@frontend/components/titlebar";
-import { Todo } from "@frontend/components/todo";
+import { TabBar, Tab } from "@components/tab-bar";
+import { TitleAndInput } from "@components/title-and-input";
+import { Titlebar } from "@components/titlebar";
+import { Todo } from "@components/todo";
+import { TodoListProgress } from "./todo-list-progress";
 import { TodoResponse, FilterResponse } from "types";
-import { Viewport } from "@frontend/components/viewport";
-import { withStore, StoreState, StoreForm, StoreFormInput } from "@frontend/store";
+import { Viewport } from "@components/viewport";
 
+import { withStore, StoreState, StoreForm, StoreFormInput } from "@frontend/store";
 import generateHash from "@generate-hash";
 import path, { PathQueryValue, PathParams } from "@path";
 import { Control } from "@frontend/components";
@@ -52,7 +53,7 @@ interface TodoListOutProps extends TodoListInProps {
   priorityLength: number;
   completeTodos: TodoResponse[];
   sortBy: CategorySortBy | "";
-  filterTags: string[];
+  filters: { [key in FilterTypes]: string[] };
   filterBy: CategoryFilterBy;
   incompleteTodos: TodoResponse[];
   input: StoreFormInput;
@@ -74,12 +75,25 @@ function applySearch(search: string, todo: TodoResponse) {
 }
 
 function applyFilter(filter: FilterResponse | null, todo: TodoResponse) {
+  const tagFilters: { [key in FilterTypes]: string[]} = {
+    includes: [],
+    excludes: [],
+    any: [],
+  };
+
   if (filter) {
-    let mappedByID =
-      todo.tags.map((tagID) => filter.tags.indexOf(tagID) > -1);
+    filter.filters.forEach((a) => {
+      [].push.apply(tagFilters[a.type],a.IDList);
+    });
+
+    let todoIncludes = todo.tags.filter((tagID) => tagFilters.includes.indexOf(tagID) > -1);
+    let todoExcludes = todo.tags.filter((tagID) => tagFilters.excludes.indexOf(tagID) > -1);
+    let todoHasAny = todo.tags.filter((tagID) => tagFilters.any.indexOf(tagID) > -1);
 
     let hasTags =
-      mappedByID.filter((a) => a).length >= filter.tags.length;
+      todoExcludes.length === 0 &&
+      todoIncludes.length === tagFilters.includes.length &&
+      (tagFilters.any.length ? todoHasAny.length : true);
 
     return hasTags;
   }
@@ -108,9 +122,17 @@ function mapStateToProps(state: StoreState, props: TodoListInProps): TodoListOut
       applySearch(search, todo)
   );
 
-  const filterTags = filter
-    ? filter.tags
-    : [];
+  const filters: { [key in FilterTypes]: string[] } = {
+    includes: [],
+    excludes: [],
+    any: [],
+  };
+
+  if (filter) {
+    filter.filters.forEach((a) => {
+      [].push.apply(filters[a.type], a.IDList);
+    });
+  }
 
   return {
     ...props,
@@ -119,7 +141,7 @@ function mapStateToProps(state: StoreState, props: TodoListInProps): TodoListOut
     categoryID,
     form,
     controlPressed: state.keys.control,
-    filterTags,
+    filters,
     name: category && category.name,
     sortBy: category && category.sortBy,
     filterBy: category && category.filterBy,
@@ -180,7 +202,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
   render() {
     const {
       categoryID,
-      filterTags,
+      filters,
       history,
       params,
       priorityLength,
@@ -207,7 +229,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                 type: "ADD",
                 value: {
                   categoryID,
-                  tags: filterTags,
+                  tags: filters,
                   name,
                 }
               })}
@@ -306,6 +328,12 @@ class TodoListView extends Component<TodoListOutProps, {}> {
               }
             </List>
           </Filter>
+        }
+        feet={
+          <TodoListProgress
+            incompleteTodos={this.props.incompleteTodos}
+            completeTodos={this.props.completeTodos}
+          />
         }
       />
     );

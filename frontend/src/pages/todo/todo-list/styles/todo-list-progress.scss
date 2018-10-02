@@ -1,0 +1,57 @@
+.todo-list_progress {
+  padding: $u2;
+  border-radius: $u;
+  overflow: hidden;
+}
+
+.todo-list_progress-bar {
+  border-radius: $u;
+  overflow: hidden;
+}
+
+.todo-list_progress-bar-complete,
+.todo-list_progress-bar-incomplete {
+  display: inline-block;
+  height: $u2;
+}
+
+.todo-list_progress-bar-complete,
+.todo-list_progress-bar-incomplete {
+  .todo-list_progress-bar-chunk {
+    display: inline-block;
+    height: 100%;
+
+    span {
+      background: $primary;
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .todo-list_progress-bar-chunk + .todo-list_progress-bar-chunk {
+    padding-left: 1px;
+  }
+}
+
+.todo-list_progress-bar-incomplete {
+  .todo-list_progress-bar-chunk--first {
+    padding-left: 1px;
+  }
+}
+
+.todo-list_progress-bar-complete {
+  .todo-list_progress-bar-chunk {
+    span {
+      background: $primary;
+    }
+  }
+}
+
+.todo-list_progress-bar-incomplete {
+  .todo-list_progress-bar-chunk {
+    span {
+      background: $grey-light;
+    }
+  }
+}
