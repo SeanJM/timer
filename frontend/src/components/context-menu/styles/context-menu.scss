@@ -9,6 +9,14 @@
   ul {
     list-style: none;
   }
+
+  hr {
+    border: none;
+    border-top: 1px solid $grey-light;
+    margin-bottom: $u;
+    margin-left: $u8;
+    margin-top: $u;
+  }
 }
 
 .context-menu-container {
