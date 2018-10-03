@@ -10,3 +10,17 @@
   font-family: "Source Code Pro", "monospace";
   border-bottom: 1px solid $grey-light;
 }
+
+.CodeMirror-focused .CodeMirror-selected {
+  background: desaturate(lighten($primary, 20%), 10%);
+}
+
+.CodeMirror-gutters {
+  background: $grey-lightest;
+  border-right: 0;
+  padding-right: $u;
+}
+
+.CodeMirror-linenumber {
+  color: $grey;
+}
