@@ -1,18 +1,18 @@
 {
-  "type": "element",
+  "tagName": "element",
   "attributes": {
     "id": "body"
   },
   "children": [
     {
-      "type": "element",
+      "tagName": "element",
       "attributes": {
         "id": "categories",
         "created": 1534419288489
       },
       "children": [
         {
-          "type": "category",
+          "tagName": "category",
           "attributes": {
             "id": "0t5-4..$4p$7nhX9sK80zhwEuO8F.+Dg",
             "name": "SafetyWing"
@@ -20,7 +20,7 @@
           "children": []
         },
         {
-          "type": "category",
+          "tagName": "category",
           "attributes": {
             "id": "5T_2T759-lruGK4r0yski3rs.gz+h9F_",
             "name": "Fronted"
