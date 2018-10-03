@@ -15,8 +15,6 @@ interface PanelGroupProps {
 
 interface PanelGroupState {
   innerWidth: number;
-  totalChildrenWidth: number;
-  childrenWithNoWidth: number;
   childrenMappedWidths: number[];
 }
 
@@ -50,14 +48,21 @@ export class PanelGroup extends Component<PanelGroupProps, PanelGroupState> {
   node: HTMLDivElement;
 
   constructor(props) {
-    const children = React.Children.toArray(props.children) as React.ReactElement<PanelProps>[];
+    super(props);
+    this.state = {
+      innerWidth: 0,
+      childrenMappedWidths: [],
+    };
+  }
+
+  getChildrenWidths() {
+    const children = React.Children.toArray(this.props.children) as React.ReactElement<PanelProps>[];
     const childrenByWidth = [];
 
     let childrenWidthNoWidth = 0;
     let totalChildrenWidth = 0;
     let i = -1;
     const n = children.length;
-    super(props);
 
     while (++i < n) {
       childrenByWidth[i] = children[i].props.defaultWidth || 0;
@@ -65,22 +70,24 @@ export class PanelGroup extends Component<PanelGroupProps, PanelGroupState> {
       childrenWidthNoWidth += !childrenByWidth[i] ? 1 : 0;
     }
 
-    this.state = {
-      innerWidth: 0,
+    return {
       totalChildrenWidth: totalChildrenWidth,
       childrenWithNoWidth: childrenWidthNoWidth,
-      childrenMappedWidths: [],
     };
   }
 
   setChildrenMappedWidths() {
+    const { totalChildrenWidth, childrenWithNoWidth } = this.getChildrenWidths();
+
     const children =
       React.Children.toArray(this.props.children) as React.ReactElement<PanelProps>[];
+
+    const innerWidth = this.node.getBoundingClientRect().width;
 
     let i = -1;
     const n = children.length;
     const childrenMappedWidths = [];
-    const defaultWidth = this.state.innerWidth - (this.state.totalChildrenWidth / this.state.childrenWithNoWidth);
+    const defaultWidth = innerWidth - (totalChildrenWidth / childrenWithNoWidth);
 
     while (++i < n) {
       childrenMappedWidths[i] = children[i].props.defaultWidth || defaultWidth;
@@ -90,20 +97,26 @@ export class PanelGroup extends Component<PanelGroupProps, PanelGroupState> {
   }
 
   handleEvent() {
-    this.setState({
-      innerWidth: this.node.getBoundingClientRect().width
-    });
+    this.setChildrenMappedWidths();
   }
 
   componentDidMount() {
-    this.setState({
-      innerWidth: this.node.getBoundingClientRect().width
-    }, () => this.setChildrenMappedWidths());
+    this.setChildrenMappedWidths();
     window.addEventListener("resize", this);
   }
 
-  componentWillMount() {
+  componentWillUnmount() {
     window.removeEventListener("resize", this);
+  }
+
+  componentDidUpdate(prevProps) {
+    const prevChildren = React.Children.toArray(prevProps.children).filter((a) => a);
+    const nextChildren = React.Children.toArray(this.props.children).filter((a) => a);
+    if (nextChildren.length !== prevChildren.length) {
+      setTimeout(() => {
+        this.setChildrenMappedWidths();
+      }, 20);
+    }
   }
 
   onPanelDragMove(e: DragMeEvent, i) {
