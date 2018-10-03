@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 
+import indexesOfWords from "@strings/indexes-of-words";
 import { Button } from "@components/button";
-import { CategorySortBy, CategoryFilterBy, FilterTypes } from "@types";
+import { CategorySortBy, CategoryFilterBy, FilterTagTypes } from "@types";
 import { ContextMenuFilterConnect } from "./context-menu-filter";
 import { contextMenuPush } from "@components/context-menu";
 import { ContextMenuSort } from "./context-menu-sort";
@@ -53,7 +54,7 @@ interface TodoListOutProps extends TodoListInProps {
   priorityLength: number;
   completeTodos: TodoResponse[];
   sortBy: CategorySortBy | "";
-  filters: { [key in FilterTypes]: string[] };
+  tagFilters: { [key in FilterTagTypes]: string[] };
   filterBy: CategoryFilterBy;
   incompleteTodos: TodoResponse[];
   input: StoreFormInput;
@@ -70,22 +71,14 @@ function isIncomplete(todo: TodoResponse) {
 
 function applySearch(search: string, todo: TodoResponse) {
   return search
-    ? todo.name.toLowerCase().indexOf(search) > -1
+    ? indexesOfWords(todo.name, search) !== -1
     : true;
 }
 
 function applyFilter(filter: FilterResponse | null, todo: TodoResponse) {
-  const tagFilters: { [key in FilterTypes]: string[]} = {
-    includes: [],
-    excludes: [],
-    any: [],
-  };
+  const tagFilters = filter && filter.tagFilters;
 
   if (filter) {
-    filter.filters.forEach((a) => {
-      [].push.apply(tagFilters[a.type],a.IDList);
-    });
-
     let todoIncludes = todo.tags.filter((tagID) => tagFilters.includes.indexOf(tagID) > -1);
     let todoExcludes = todo.tags.filter((tagID) => tagFilters.excludes.indexOf(tagID) > -1);
     let todoHasAny = todo.tags.filter((tagID) => tagFilters.any.indexOf(tagID) > -1);
@@ -122,18 +115,6 @@ function mapStateToProps(state: StoreState, props: TodoListInProps): TodoListOut
       applySearch(search, todo)
   );
 
-  const filters: { [key in FilterTypes]: string[] } = {
-    includes: [],
-    excludes: [],
-    any: [],
-  };
-
-  if (filter) {
-    filter.filters.forEach((a) => {
-      [].push.apply(filters[a.type], a.IDList);
-    });
-  }
-
   return {
     ...props,
     params,
@@ -141,7 +122,7 @@ function mapStateToProps(state: StoreState, props: TodoListInProps): TodoListOut
     categoryID,
     form,
     controlPressed: state.keys.control,
-    filters,
+    tagFilters: filter && filter.tagFilters,
     name: category && category.name,
     sortBy: category && category.sortBy,
     filterBy: category && category.filterBy,
@@ -202,7 +183,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
   render() {
     const {
       categoryID,
-      filters,
+      tagFilters,
       history,
       params,
       priorityLength,
@@ -229,7 +210,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                 type: "ADD",
                 value: {
                   categoryID,
-                  tags: filters,
+                  tags: tagFilters.includes.concat(tagFilters.any),
                   name,
                 }
               })}
@@ -292,17 +273,18 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                 .map((todo) => (
                   <Todo
                     categoryID={categoryID}
-                    created={todo.created}
                     completedDate={todo.completedDate}
+                    created={todo.created}
                     history={history}
                     id={todo.id}
                     isActive={params.todoID === todo.id}
                     key={todo.id}
-                    name={todo.name}
-                    priorityLength={priorityLength}
                     priority={todo.priority}
+                    priorityLength={priorityLength}
+                    search={query.search}
                     showAlt={this.props.controlPressed}
                     state={todo.state}
+                    title={todo.name}
                   />
                 ))
               }
@@ -318,11 +300,12 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                     id={todo.id}
                     isActive={params.todoID === todo.id}
                     key={todo.id}
-                    name={todo.name}
-                    priorityLength={priorityLength}
                     priority={todo.priority}
+                    priorityLength={priorityLength}
+                    search={query.search}
                     showAlt={this.props.controlPressed}
                     state={todo.state}
+                    title={todo.name}
                   />
                 ))
               }
