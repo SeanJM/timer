@@ -75,25 +75,27 @@ function editFilter(req: FilterPostRequest, res, database) {
       name: req.body.name || filterElement.attributes.name,
     });
 
-    filterElement.children = [];
+    if (req.body.tagFilters) {
+      filterElement.children = [];
 
-    filterElement.appendChild(
-      database.createElement("filter-tag", {
-        type: "includes",
-      }, req.body.tagFilters.includes)
-    );
+      filterElement.appendChild(
+        database.createElement("filter-tag", {
+          type: "includes",
+        }, req.body.tagFilters.includes)
+      );
 
-    filterElement.appendChild(
-      database.createElement("filter-tag", {
-        type: "excludes",
-      }, req.body.tagFilters.excludes)
-    );
+      filterElement.appendChild(
+        database.createElement("filter-tag", {
+          type: "excludes",
+        }, req.body.tagFilters.excludes)
+      );
 
-    filterElement.appendChild(
-      database.createElement("filter-tag", {
-        type: "any",
-      }, req.body.tagFilters.any)
-    );
+      filterElement.appendChild(
+        database.createElement("filter-tag", {
+          type: "any",
+        }, req.body.tagFilters.any)
+      );
+    }
 
     res.send(toFilterResponse(filterElement));
     database.save();
