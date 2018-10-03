@@ -4,8 +4,14 @@ import ajax from "@ajax";
 import _ from "lodash";
 import path from "@path";
 
+interface TodoServiceAddTodo {
+  name: string;
+  categoryID: string;
+  tags: string[];
+}
+
 export class TodoService {
-  addTodo({ name, tags, categoryID }) {
+  addTodo({ name, tags, categoryID }: TodoServiceAddTodo) {
     ajax.post(`/todo/${categoryID}`, {
       data: {
         name: name,
