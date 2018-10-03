@@ -27,14 +27,16 @@ export class Titlebar extends Component<TitlebarProps> {
   }
 
   componentDidMount() {
-    const primaryActionWidth =
-      this.getNodeWith(this.primaryActionNode);
-    const secondaryActionWidth =
-      this.getNodeWith(this.secondaryActionNode);
-    this.contentNode.setAttribute("style", `
-      padding-left: ${primaryActionWidth}px;
-      padding-right: ${secondaryActionWidth}px;
-    `);
+    setTimeout(() => {
+      const primaryActionWidth =
+        this.getNodeWith(this.primaryActionNode);
+      const secondaryActionWidth =
+        this.getNodeWith(this.secondaryActionNode);
+      this.contentNode.setAttribute("style", `
+        padding-left: ${primaryActionWidth}px;
+        padding-right: ${secondaryActionWidth}px;
+      `);
+    }, 0);
   }
 
   render() {
