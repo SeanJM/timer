@@ -11,11 +11,12 @@ $blue-light: lighten($blue, 15%);
 
 $green: adjust-hue($red, 175deg);
 $green-light: lighten($green, 15%);
+$green-lightest: adjust-hue(lighten($green, 40%), -5deg);
 
 $yellow: adjust-hue($red, 70deg);
 $yellow-light: lighten($yellow, 15%);
 
-$yellow: adjust-hue($red, 70deg);
+$yellow: adjust-hue($red, 68deg);
 $yellow-light: lighten($yellow, 15%);
 
 $orange: lighten(adjust-hue($red, 35deg), 5%);
