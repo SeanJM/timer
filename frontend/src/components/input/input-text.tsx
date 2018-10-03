@@ -1,9 +1,16 @@
 import * as React from "react";
 import { Component } from "react";
-import { InputWrapper, InputDefaultProps } from "@frontend/components/input";
+import { InputWrapper } from "@frontend/components/input";
 import { IconType } from "@frontend/components/icon";
+import { InputValueEvent } from "@types";
 
-interface InputTextProps extends InputDefaultProps {
+interface InputTextProps {
+  onBlur?: (e: React.FocusEvent) => void;
+  onFocus?: (e: React.FocusEvent) => void;
+  onInput?: (e: React.FormEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onValue?: (e: InputValueEvent) => void;
+
   defaultValue?: string;
   label?: string;
   button?: JSX.Element;
@@ -63,7 +70,6 @@ export class InputText extends Component<InputTextProps, InputTextState> {
 
   componentDidUpdate(prevProps: InputTextProps) {
     if (prevProps.defaultValue !== this.props.defaultValue) {
-      console.log(this.props.defaultValue);
       this.node.value = this.props.defaultValue ? this.props.defaultValue : "";
       this.onValue();
     }
