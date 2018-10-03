@@ -51,3 +51,16 @@
     top: ($titlebar-size * 2);
   }
 }
+
+.viewport--feet .viewport_body {
+  bottom: $titlebar-size;
+}
+
+.viewport_feet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: $titlebar-size;
+  border-top: 1px solid $grey-light;
+}
