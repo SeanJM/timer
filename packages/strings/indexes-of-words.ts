@@ -12,7 +12,7 @@ export interface IndexesOfWordsElement {
   endOf: number;
 }
 
-export default function indexesOfWords(string: string, match: string) {
+export default function indexesOfWords(string: string = "", match: string = "") {
   const stringLC = string.toLowerCase();
   const matchLC = match.toLowerCase();
   const words = matchLC.split(" ").filter((a) => a.length);
