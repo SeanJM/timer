@@ -1,28 +1,23 @@
 import { DatabaseElement } from "@backend/class/element";
 import "./verified";
 
-export type FilterTypes =
+export type FilterTagTypes =
   | "includes"
   | "excludes"
   | "any"
   ;
 
-export interface FilterElementResponse {
-  type: FilterTypes;
-  IDList: string[];
-}
-
 export interface FilterResponse {
   name: string;
   id: string;
   created: number;
-  filters: FilterElementResponse[];
+  tagFilters: { [key in FilterTagTypes]: string[] };
 }
 
 export interface FilterTagElement extends DatabaseElement {
-  tagName: "tag";
+  tagName: "filter-tag";
   attributes: {
-    type: FilterTypes
+    type: FilterTagTypes
   };
   children: string[];
 }
