@@ -1,0 +1,10 @@
+.todo-title {
+  font-size: $font-size;
+  line-height: $line-height;
+  font-weight: bold;
+}
+
+.todo-title-search {
+  display: inline-block;
+  background: $green-lightest;
+}
