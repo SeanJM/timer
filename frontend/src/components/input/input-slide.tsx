@@ -33,9 +33,9 @@ export class InputSlide extends Component<InputSlideProps, InputSlideState> {
     const { onValue } = this.props;
     if (onValue) {
       onValue({
-        value: this.state.value,
-        type: "number",
         name: this.props.name,
+        type: "number",
+        value: this.state.value,
       });
     }
   }
