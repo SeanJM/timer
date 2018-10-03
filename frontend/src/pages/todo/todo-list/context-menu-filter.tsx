@@ -1,12 +1,12 @@
 import React from "react";
 import { ContextMenuView, ContextMenuItem } from "@frontend/components/context-menu";
-// import { dispatch } from "@frontend/action";
 import { StoreState, withStore } from "@frontend/store";
 import path, { PathParams } from "@path";
 import { withRouter } from "@frontend/components/router";
 import { ContextMenuProps } from "@frontend/components/context-menu";
 import { FilterResponse, CategoryFilterBy } from "@types";
 import { dispatch } from "@frontend/action";
+import sortObjectBy from "@sort-object-by";
 
 interface ContextMenuParams {
   type: string;
@@ -28,7 +28,7 @@ function mapStateToProps(state: StoreState, props): ContextMenuFilterProps {
   const categoryElement = state.todo.categories.find((a) => a.id === params.categoryID);
   return {
     ...props,
-    filters: categoryElement.filters,
+    filters: categoryElement.filters.sort(sortObjectBy("name")),
     filterBy: categoryElement.filterBy,
     categoryID: params.categoryID,
   };
