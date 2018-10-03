@@ -12,7 +12,7 @@ interface ListItemProps extends Partial<JSX.ElementChildrenAttribute> {
   body?: JSX.Element;
   feet?: JSX.Element;
   to?: string;
-  title?: string | number;
+  title?: string | number | JSX.Element;
   passive?: boolean;
   isActive?: boolean;
   id?: string;
@@ -95,7 +95,11 @@ export class ListItem extends Component<ListItemProps> {
           : null}
         <div className="list-item_content">
           {title
-            ? <div className="list-item_title"><h6>{title}</h6></div>
+            ? (
+              <div className="list-item_title">
+                {typeof title === "function" ? title : <h6>{title}</h6>}
+              </div>
+            )
             : null}
           {timestamp
             ? <div className="list-item_timestamp">{timestamp}</div>
