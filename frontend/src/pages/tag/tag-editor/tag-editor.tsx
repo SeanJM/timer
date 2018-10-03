@@ -102,7 +102,7 @@ class TagEditorView extends Component<TagEditorProps> {
         }
         body={
           <FormConnect type="borderless" id={FORM_ID}>
-            <InputGroup name="todoTags">
+            <InputGroup>
               <label>Color</label>
               <Swatch
                 background={form.color || tag.color}
