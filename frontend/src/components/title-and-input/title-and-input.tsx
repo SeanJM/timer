@@ -14,7 +14,7 @@ interface InputAndInputProps {
 }
 
 interface State {
-  showAdd: boolean;
+  showInput: boolean;
   value: undefined | string;
 }
 
@@ -26,16 +26,18 @@ export interface TitleAndInputPassedProps {
 }
 
 export class TitleAndInput extends Component<InputAndInputProps, State> {
+  InputComponent: any;
+
   constructor(props) {
     super(props);
+    this.InputComponent = this.props.component;
     this.state = {
-      showAdd: true,
+      showInput: false,
       value: this.props.defaultValue,
     };
   }
 
   onValue(e: InputValueEvent) {
-    console.log(e);
     const { onValue } = this.props;
 
     this.setState({
@@ -48,20 +50,16 @@ export class TitleAndInput extends Component<InputAndInputProps, State> {
   }
 
   onEnterKey() {
-    this.setState({
-      showAdd: true,
-    });
-
     this.props.onSubmit(this.state.value);
-
     this.setState({
+      showInput: false,
       value: undefined
     });
   }
 
   onEscKey() {
     this.setState({
-      showAdd: true,
+      showInput: true,
     });
   }
 
@@ -77,11 +75,21 @@ export class TitleAndInput extends Component<InputAndInputProps, State> {
     }
   }
 
-  render() {
-    console.log(this.props.defaultValue);
-    const className = ["title-and-input"];
+  componentDidUpdate(prevProps) {
+    if (this.props.defaultValue !== prevProps.defaultValue && !this.state.showInput) {
+      this.props.onValue({
+        value: this.props.defaultValue || "",
+        type: "string",
+        name: this.props.name,
+      });
+    }
+  }
 
-    if (!this.state.showAdd) {
+  render() {
+    const className = ["title-and-input"];
+    const { InputComponent } = this;
+
+    if (this.state.showInput) {
       className.push("title-and-input--show-input");
     }
 
@@ -90,31 +98,35 @@ export class TitleAndInput extends Component<InputAndInputProps, State> {
         <div className="title-and-input_title">
           <h6>{this.props.title}</h6>
         </div>
-        {React.createElement(this.props.component, {
-          autofocus: true,
-          name: this.props.name,
-          defaultValue: this.props.defaultValue,
-          style: { display: this.state.showAdd ? "none" : "" },
-          onValue: (e: InputValueEvent) => this.onValue(e),
-          onKeyDown: (e: React.KeyboardEvent) => this.onKeyDown(e)
-        } as TitleAndInputPassedProps)}
-        {this.state.showAdd
+        {this.state.showInput
+          ? (
+            <InputComponent
+              autofocus={true}
+              name={this.props.name}
+              defaultValue={this.props.defaultValue}
+              onValue={(e: InputValueEvent) => this.onValue(e)}
+              onKeyDown={(e: React.KeyboardEvent) => this.onKeyDown(e)}
+            />
+          )
+          : null
+        }
+        {this.state.showInput
           ? (
             <Button
-              icon={this.props.icon || "add"}
+              icon="close"
               onClick={() => {
                 this.setState({
-                  showAdd: false,
+                  showInput: false,
                 });
               }}
             />
           )
           : (
             <Button
-              icon="close"
+              icon={this.props.icon || "add"}
               onClick={() => {
                 this.setState({
-                  showAdd: true,
+                  showInput: true,
                 });
               }}
             />
