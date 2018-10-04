@@ -10,7 +10,7 @@ interface ListItemProps extends Partial<JSX.ElementChildrenAttribute> {
   secondaryAction?: JSX.Element;
   timestamp?: JSX.Element;
   body?: JSX.Element;
-  feet?: JSX.Element;
+  footer?: JSX.Element;
   to?: string;
   title?: string | number | JSX.Element;
   passive?: boolean;
@@ -46,7 +46,7 @@ export class ListItem extends Component<ListItemProps> {
   render() {
     const {
       body,
-      feet,
+      footer,
       isActive,
       onClick,
       passive,
@@ -107,8 +107,8 @@ export class ListItem extends Component<ListItemProps> {
           {body
             ? <div className="list-item_body">{body}</div>
             : null}
-          {feet
-            ? <div className="list-item_feet">{feet}</div>
+          {footer
+            ? <div className="list-item_feet">{footer}</div>
             : null}
           {to
             ? <Link className="list-item_link" to={to} />
