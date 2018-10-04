@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { withStore } from "@frontend/store";
 import { StoreState } from "@frontend/store";
 import { TodoEditorConnect } from "./todo-editor";
+import { TodoNotFound } from "./todo-not-found";
 import { TodoListConnect } from "./todo-list";
 import { WithRouterProps } from "@frontend/components/router";
 import { PanelGroup, Panel } from "@frontend/components/panel-group";
@@ -13,19 +14,32 @@ type TodoPathParams = PathParams<{
   todoID: string;
 }>;
 
+type TodoPathInParams = PathParams<{
+  categoryID: string;
+  elementID: string;
+}>;
+
+interface TodoInProps extends WithRouterProps {
+  params: TodoPathInParams;
+}
+
 interface TodoOutProps extends WithRouterProps {
-  params: TodoPathParams;
+  params: PathParams<TodoPathParams>;
+  todoExists: boolean;
   todoEditorDefaultWidth: number;
 }
 
-function mapStateToProps(state: StoreState, props: WithRouterProps): TodoOutProps {
-  const params = path.params(props.location.pathname, state.routes.schema);
+function mapStateToProps(state: StoreState, props: TodoInProps): TodoOutProps {
+  const params: TodoPathInParams = path.params(props.location.pathname, state.routes.schema);
+  const category = state.todo.categories.find(a => a.id === params.categoryID);
+  const todo = category.todos.find(a => a.id === params.elementID);
   return {
     ...props,
     params: {
       categoryID: params.categoryID,
       todoID: params.elementID,
     },
+    todoExists: !!todo,
     todoEditorDefaultWidth: state.layout.todoEditorDefaultWidth,
   };
 }
@@ -52,7 +66,9 @@ export class Todo extends Component<TodoOutProps, {}> {
                 });
               }}
             >
-              <TodoEditorConnect {...this.props}/>
+              {this.props.todoExists
+                ? <TodoEditorConnect {...this.props}/>
+                : <TodoNotFound {...this.props}/>}
             </Panel>
           )
           : null}
