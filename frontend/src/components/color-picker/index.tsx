@@ -6,7 +6,7 @@ import blush from "blush";
 import { Button } from "@frontend/components/button";
 import { Control } from "@frontend/components/control";
 import ColorPickerSwatch from "./color-picker-swatch";
-import ColorPickerPalette from "@frontend/components/color-picker/color-picker-palette";
+import { ColorPickerPaletteConnect } from "@frontend/components/color-picker/color-picker-palette";
 import { HueSlider, LightnessSlider, SaturationSlider } from "./hsl-sliders";
 
 interface PickerProps {
@@ -118,7 +118,7 @@ class ColorPickerView extends React.Component<ColorPickerProps, ColorPickerState
               value={this.state.value}
               onInput={(e) => this.onLightnessValue(e.value)}/>
             <small><h6>Palette</h6></small>
-            <ColorPickerPalette
+            <ColorPickerPaletteConnect
               value={this.state.value}
               onSelect={(value) => this.onPaletteSelect(value)}/>
           </div>
