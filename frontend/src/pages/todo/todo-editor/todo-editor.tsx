@@ -1,20 +1,23 @@
-import React from "react";
-import generateHash from "@generate-hash";
-import path from "@path";
-import sortObjectBy from "@sort-object-by";
 import _ from "lodash";
+import generateHash from "@generate-hash";
+import path, { PathQueryValue } from "@path";
+import React from "react";
+import sortObjectBy from "@sort-object-by";
+
+import { dispatch } from "@frontend/action";
+import { emptyForm } from "@frontend/action/form";
 
 import { Button } from "@frontend/components/button";
 import { ChipData } from "@frontend/components/chip";
 import { CodeMirror } from "@frontend/components/code-mirror";
-import { dispatch } from "@frontend/action";
-import { emptyForm } from "@frontend/action/form";
+import { Filter } from "@frontend/components/filter";
 import { FormConnect } from "@frontend/components/form";
 import { InputChipSelect } from "@frontend/components/input/input-chip-select";
 import { InputGroup } from "@frontend/components/input-group";
 import { InputSlide } from "@frontend/components/input/input-slide";
 import { InputText } from "@frontend/components";
 import { RouteComponentProps } from "@frontend/components/router";
+import { TabBar, Tab } from "@frontend/components/tab-bar";
 import { TagResponse, TodoResponse } from "@types";
 import { TitleAndInput } from "@frontend/components/title-and-input";
 import { Titlebar } from "@frontend/components/titlebar";
@@ -32,14 +35,21 @@ const EMPTY_TODO_RESPONSE: TodoResponse = {
   notes: null
 };
 
-interface TodoEditorProps
-  extends RouteComponentProps {
+interface TodoEditorInProps extends RouteComponentProps {
+  query: PathQueryValue<{
+    todoEditView:
+      | "settings"
+      | "notes"
+  }>;
+}
+
+interface TodoEditorOutProps
+  extends TodoEditorInProps {
   todoName: string;
   todoTags: string[];
 
   todoProgressIndex: number;
   todoProgressLength: number;
-
   todoPriorityIndex: number;
   todoPriorityLength: number;
 
@@ -57,7 +67,7 @@ interface TodoEditorProps
   formInputTodoNotes: string | null;
 }
 
-function mapStateToProps(state: StoreState, props: RouteComponentProps): TodoEditorProps {
+function mapStateToProps(state: StoreState, props: TodoEditorInProps): TodoEditorOutProps {
   const { categoryID, todoID } = props.params;
 
   const category =
@@ -69,8 +79,6 @@ function mapStateToProps(state: StoreState, props: RouteComponentProps): TodoEdi
   const todo =
     category.todos.find((a) => a.id === todoID) ||
     EMPTY_TODO_RESPONSE;
-
-  console.log(category.tags);
 
   return {
     history: props.history,
@@ -100,7 +108,7 @@ function mapStateToProps(state: StoreState, props: RouteComponentProps): TodoEdi
   };
 }
 
-class TodoEditor extends React.Component<TodoEditorProps> {
+class TodoEditor extends React.Component<TodoEditorOutProps> {
   constructor(props) {
     super(props);
     this.save = _.debounce(this.save.bind(this), 500);
@@ -140,6 +148,18 @@ class TodoEditor extends React.Component<TodoEditorProps> {
     this.clear();
   }
 
+  componentDidMount() {
+    const { history, query } = this.props;
+    if (!query.todoEditView) {
+      history.push({
+        query: {
+          ...query,
+          todoEditView: "settings",
+        },
+      });
+    }
+  }
+
   componentDidUpdate(prevProps) {
     const saveTags = prevProps.formInputTodoTags && this.props.formInputTodoTags.length !== prevProps.formInputTodoTags.length;
     if (prevProps.todoID === this.props.todoID) {
@@ -157,7 +177,7 @@ class TodoEditor extends React.Component<TodoEditorProps> {
   }
 
   render() {
-    const { history, location } = this.props;
+    const { history, location, query } = this.props;
     return (
       <Viewport
         titlebar={
@@ -189,9 +209,35 @@ class TodoEditor extends React.Component<TodoEditorProps> {
             />
           </Titlebar>
         }
+        toolbar={
+          <Titlebar>
+            <TabBar>
+              <Tab
+                onClick={() => history.push({
+                  query: {
+                    ...query,
+                    todoEditView: "settings",
+                  },
+                })}
+                isActive={query.todoEditView === "settings"}>Settings</Tab>
+              <Tab
+                onClick={() => history.push({
+                  query: {
+                    ...query,
+                    todoEditView: "notes",
+                  },
+                })}
+                isActive={query.todoEditView === "notes"}>Notes</Tab>
+            </TabBar>
+          </Titlebar>
+        }
         body={
-          <div>
-            <FormConnect type="borderless" id={FORM_ID}>
+          <Filter view={query.todoEditView}>
+            <FormConnect
+              id={FORM_ID}
+              type="borderless"
+              view="settings"
+            >
               <InputGroup>
                 <label>Todo tags</label>
                 <InputChipSelect
@@ -215,6 +261,12 @@ class TodoEditor extends React.Component<TodoEditorProps> {
                   defaultValue={this.props.todoPriorityIndex}
                 />
               </InputGroup>
+            </FormConnect>
+            <FormConnect
+              id={FORM_ID}
+              type="borderless"
+              view="notes"
+            >
               <InputGroup>
                 <label>Notes</label>
                 <CodeMirror
@@ -226,7 +278,7 @@ class TodoEditor extends React.Component<TodoEditorProps> {
                 />
               </InputGroup>
             </FormConnect>
-          </div>
+          </Filter>
         }
       />
     );
