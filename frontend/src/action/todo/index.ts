@@ -1,6 +1,6 @@
 import { TodoService } from "@frontend/action/todo/service";
 
-export default function (subscribe) {
+export function todo(subscribe) {
   const service = new TodoService();
 
   subscribe("TODO", ({ type, value }) => {
@@ -10,21 +10,24 @@ export default function (subscribe) {
         break;
       }
 
+      case "DELETE": {
+        service.delete(value);
+        break;
+      }
+
+      case "COMPLETE": {
+        service.complete(value);
+        break;
+      }
+
+      case "INCOMPLETE": {
+        service.incomplete(value);
+        break;
+      }
+
       case "ADD": {
         service.addTodo(value);
       }
     }
-  });
-
-  subscribe("INCOMPLETE_TODO", function (e) {
-    service.incomplete(e);
-  });
-
-  subscribe("COMPLETE_TODO", function (e) {
-    service.complete(e);
-  });
-
-  subscribe("DELETE_TODO", function (e) {
-    service.delete(e);
   });
 }
