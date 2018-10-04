@@ -139,14 +139,14 @@ class TodoListView extends Component<TodoListOutProps, {}> {
   node: HTMLInputElement;
 
   handleChange() {
-    const query: { [key: string]: string | null } =
-      {
-        ...this.props.query,
-        view: "incomplete",
-        filterBy: this.props.filterBy
-      };
-
-    this.props.history.push({ query });
+    const { filterBy, query, history } = this.props;
+    history.push({
+      query: {
+        ...query,
+        filterBy,
+        view: query.view || "incomplete",
+      }
+    });
   }
 
   componentDidUpdate() {
@@ -254,19 +254,28 @@ class TodoListView extends Component<TodoListOutProps, {}> {
               <Tab
                 isActive={query.view === "complete"}
                 onClick={() => history.push({
-                  query: { view: "complete" }
+                  query: {
+                    ...query,
+                    view: "complete"
+                  }
                 })}>Complete</Tab>
 
               <Tab
                 isActive={query.view === "incomplete"}
                 onClick={() => history.push({
-                  query: { view: "incomplete" }
+                  query: {
+                    ...query,
+                    view: "incomplete"
+                  }
                 })}>Incomplete</Tab>
 
               <Tab
                 isActive={query.view === "all"}
                 onClick={() => history.push({
-                  query: { view: "all" }
+                  query: {
+                    ...query,
+                    view: "all"
+                  }
                 })}>All</Tab>
             </TabBar>
           </Titlebar>
