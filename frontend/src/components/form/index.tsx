@@ -14,6 +14,7 @@ interface FormProps extends JSX.ElementChildrenAttribute {
   type?: "borderless";
   showValidation?: boolean;
   onSubmit?: (e: React.FormEvent) => void;
+  [key: string]: any;
 }
 
 export function Form(props: FormProps) {
