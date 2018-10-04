@@ -5,6 +5,7 @@
   border-right: 1px solid $grey-light;
   position: relative;
   user-select: none;
+  min-width: $u20;
 }
 
 .tab--active {
@@ -28,4 +29,5 @@
   font-size: $font-size;
   line-height: $line-height;
   padding: $u4 $u4;
+  width: 100%;
 }
