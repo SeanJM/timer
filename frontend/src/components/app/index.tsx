@@ -10,29 +10,11 @@ import { CategoryListConnect } from "@frontend/pages/category-list";
 import { NotFound } from "@frontend/pages/not-found";
 import { FilterConnect } from "@frontend/pages/filters";
 import { ContextMenuContainerConnect } from "@frontend/components/context-menu";
+import { ShortCutService } from "@frontend/components/shortcut";
 
 export class App extends Component {
-  handleEvent(e: KeyboardEvent) {
-    switch (e.type) {
-      case "keydown": {
-        if (e.which === 91) {
-          dispatch("KEYDOWN_CTRL");
-        }
-        break;
-      }
-
-      case "keyup": {
-        if (e.which === 91) {
-          dispatch("KEYUP_CTRL");
-        }
-      }
-    }
-  }
-
   componentDidMount() {
     dispatch("CATEGORY", { type: "GET_ALL" });
-    document.addEventListener("keydown", this);
-    document.addEventListener("keyup", this);
   }
 
   render() {
@@ -62,9 +44,10 @@ export class App extends Component {
           </Router>
         </div>
 
-        <ModalContainerConnect />
-        <ColorPickerSpawnConnect />
-        <ContextMenuContainerConnect />
+        <ModalContainerConnect/>
+        <ColorPickerSpawnConnect/>
+        <ContextMenuContainerConnect/>
+        <ShortCutService/>
       </div>
     );
   }

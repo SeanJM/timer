@@ -49,13 +49,14 @@ interface TodoListInProps extends Pick<RouteComponentProps, "location" | "histor
 interface TodoListOutProps extends TodoListInProps {
   categoryID: any;
   form: StoreForm;
-  controlPressed: boolean;
+  showAlt: boolean;
   name: string;
   priorityLength: number;
-  completeTodos: TodoResponse[];
   sortBy: CategorySortBy | "";
   tagFilters: { [key in FilterTagTypes]: string[] };
   filterBy: CategoryFilterBy;
+  todos: TodoResponse[];
+  completeTodos: TodoResponse[];
   incompleteTodos: TodoResponse[];
   input: StoreFormInput;
   todoID: null | string;
@@ -121,11 +122,12 @@ function mapStateToProps(state: StoreState, props: TodoListInProps): TodoListOut
     priorityLength: state.todo.todoSettings.priorityLength,
     categoryID,
     form,
-    controlPressed: state.keys.control,
+    showAlt: state.shortcut === "ALT",
     tagFilters: filter && filter.tagFilters,
     name: category && category.name,
     sortBy: category && category.sortBy,
     filterBy: category && category.filterBy,
+    todos: filteredTodos,
     completeTodos: filteredTodos.filter(isComplete),
     incompleteTodos: filteredTodos.filter(isIncomplete),
     input: form.input.todo_value || { name: "todo_value", value: undefined },
@@ -139,8 +141,8 @@ class TodoListView extends Component<TodoListOutProps, {}> {
   handleChange() {
     const query: { [key: string]: string | null } =
       {
-        view: "incomplete",
         ...this.props.query,
+        view: "incomplete",
         filterBy: this.props.filterBy
       };
 
@@ -187,6 +189,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
       history,
       params,
       priorityLength,
+      showAlt,
       query,
     } = this.props;
 
@@ -251,17 +254,20 @@ class TodoListView extends Component<TodoListOutProps, {}> {
               <Tab
                 isActive={query.view === "complete"}
                 onClick={() => history.push({
-                  query: {
-                    view: "complete"
-                  }
+                  query: { view: "complete" }
                 })}>Complete</Tab>
+
               <Tab
                 isActive={query.view === "incomplete"}
                 onClick={() => history.push({
-                  query: {
-                    view: "incomplete"
-                  }
+                  query: { view: "incomplete" }
                 })}>Incomplete</Tab>
+
+              <Tab
+                isActive={query.view === "all"}
+                onClick={() => history.push({
+                  query: { view: "all" }
+                })}>All</Tab>
             </TabBar>
           </Titlebar>
         }
@@ -282,7 +288,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                     priority={todo.priority}
                     priorityLength={priorityLength}
                     search={query.search}
-                    showAlt={this.props.controlPressed}
+                    showAlt={showAlt}
                     state={todo.state}
                     title={todo.name}
                   />
@@ -303,7 +309,29 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                     priority={todo.priority}
                     priorityLength={priorityLength}
                     search={query.search}
-                    showAlt={this.props.controlPressed}
+                    showAlt={showAlt}
+                    state={todo.state}
+                    title={todo.name}
+                  />
+                ))
+              }
+            </List>
+            <List id="all">
+              {this.props.todos
+                .sort((a, b) => this.sortBy(a, b))
+                .map((todo) => (
+                  <Todo
+                    categoryID={categoryID}
+                    completedDate={todo.completedDate}
+                    created={todo.created}
+                    history={history}
+                    id={todo.id}
+                    isActive={params.todoID === todo.id}
+                    key={todo.id}
+                    priority={todo.priority}
+                    priorityLength={priorityLength}
+                    search={query.search}
+                    showAlt={showAlt}
                     state={todo.state}
                     title={todo.name}
                   />

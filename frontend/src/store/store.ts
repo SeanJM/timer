@@ -6,7 +6,7 @@ import {
   CategoryResponse,
   ColorState,
   FilterResponse,
-  Keys,
+  Shortcut,
 } from "@types";
 
 import {
@@ -28,7 +28,7 @@ export interface Category extends TodoNode {
 }
 
 export interface StoreState {
-  keys: Keys;
+  shortcut: Shortcut;
   dropdown: StoreDropdown;
 
   layout: {
@@ -79,9 +79,7 @@ export const store = new Persistore<StoreState>(
     contextMenu: [],
     dropdown: {},
 
-    keys: {
-      control: false,
-    },
+    shortcut: null,
 
     layout: {
       todoEditorDefaultWidth: 400,

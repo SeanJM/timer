@@ -116,9 +116,7 @@ export type TodoResponse =
     | "tags"
   >;
 
-export interface Keys {
-  control: boolean;
-}
+export type Shortcut = string;
 
 export interface ColorPicker {
   id: string;

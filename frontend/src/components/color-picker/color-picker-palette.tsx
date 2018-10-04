@@ -1,6 +1,6 @@
 import React from "react";
 import { withStore, StoreState } from "@frontend/store";
-import { SwatchAttributes, Keys, ColorState } from "@types";
+import { SwatchAttributes, Shortcut, ColorState } from "@types";
 import generateHash from "@generate-hash";
 import { Icon } from "@frontend/components/icon";
 import { dispatch } from "@frontend/action/";
@@ -19,8 +19,9 @@ interface ColorPaletteProps extends Pick<ColorState, "palette"> {
 }
 
 interface ColorPaletteMappedProps extends Pick<ColorState, "palette">, ColorPaletteProps {
+  isDeleteMode: boolean;
   empties: SwatchAttributes[];
-  keys: Keys;
+  shortcut: Shortcut;
 }
 
 function mapStateToProps(
@@ -40,7 +41,8 @@ function mapStateToProps(
     });
   }
   return {
-    keys: state.keys,
+    isDeleteMode: state.shortcut === "ALT",
+    shortcut: state.shortcut,
     value: props.value,
     palette: state.color.palette,
     onSelect: props.onSelect,
@@ -49,6 +51,7 @@ function mapStateToProps(
 }
 
 function ColorPalette(props: ColorPaletteMappedProps) {
+  const { isDeleteMode } = props;
   return (
     <div className="color-picker_palette">
      {props.palette.map((a) => {
@@ -56,11 +59,11 @@ function ColorPalette(props: ColorPaletteMappedProps) {
           "color-picker_palette_swatch"
         ];
 
-        if (a.value === props.value && !props.keys.control) {
+        if (a.value === props.value && !props.shortcut) {
           className.push("color-picker_palette_swatch--active");
         }
 
-        if (props.keys.control) {
+        if (isDeleteMode) {
           className.push("color-picker_palette_swatch--delete");
         }
 
@@ -68,7 +71,7 @@ function ColorPalette(props: ColorPaletteMappedProps) {
           <div
             key={a.id}
             onClick={() => {
-              if (props.keys.control) {
+              if (isDeleteMode) {
                 dispatch("COLOR", {
                   type: "DELETE_SWATCH",
                   id: a.id,
@@ -83,7 +86,7 @@ function ColorPalette(props: ColorPaletteMappedProps) {
               style={{ background: a.value }}/>
             <div className="color-picker_palette_swatch-active"/>
             <div className="color-picker_palette_swatch-stroke"/>
-            {props.keys.control
+            {isDeleteMode
               ? (
                 <div className={"color-picker_palette_swatch-delete"}>
                   <Icon type="close"/>
@@ -113,4 +116,5 @@ function ColorPalette(props: ColorPaletteMappedProps) {
   );
 }
 
-export default withStore<ColorPaletteProps>(ColorPalette as React.ComponentType, mapStateToProps)();
+export const ColorPickerPaletteConnect =
+  withStore<ColorPaletteProps>(ColorPalette as React.ComponentType, mapStateToProps)();

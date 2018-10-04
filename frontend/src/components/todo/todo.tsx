@@ -25,87 +25,86 @@ interface TodoProps {
   state: string;
 }
 
-function ButtonDone(props: { id: string, categoryID: string }) {
+function TodoCheck(props: { checked: boolean, id: string, categoryID: string }) {
+  const type = props.checked
+    ? "INCOMPLETE"
+    : "COMPLETE";
+
   return (
-    <Button
-      onClick={() => {
-        dispatch("COMPLETE_TODO", {
+    <input type="checkbox"
+      checked={props.checked}
+      onClick={() => dispatch("TODO", {
+        type,
+        value: {
           id: props.id,
           categoryID: props.categoryID,
-        });
-      }}
-      icon="check"
+        }
+      })}
     />
   );
 }
 
-function ButtonDelete(props: { id: string, categoryID: string }) {
+function ButtonDelete(value: { id: string, categoryID: string }) {
   return (
-    <Button
-      onClick={() => {
-        dispatch("DELETE_TODO", {
-          id: props.id,
-          categoryID: props.categoryID,
-        });
-      }}
-      type="danger"
-      icon="close"
-    />
-  );
-}
-
-function ButtonUndone(props: { id: string, categoryID: string }) {
-  return (
-    <Button
-      onClick={() => {
-        dispatch("INCOMPLETE_TODO", {
-          id: props.id,
-          categoryID: props.categoryID,
-        });
-      }}
-      icon="history-back"
-    />
+    <Button type="danger"
+      onClick={() => dispatch("TODO", { type: "DELETE", value })}
+    >
+      Delete
+    </Button>
   );
 }
 
 export function Todo(props: TodoProps) {
   const className = ["todo"];
-  const { history } = props;
 
-  className.push("todo-" + props.state);
+  const {
+    categoryID,
+    created,
+    history,
+    id,
+    isActive,
+    search,
+    state,
+    title
+  } = props;
+
+  className.push("todo-" + state);
 
   return (
     <ListItem
-      isActive={props.isActive}
-      passive={props.state === "complete"}
-      title={
-        <TodoTitle search={props.search}>{props.title}</TodoTitle>
-      }
-      timestamp={<Timestamp>{props.created}</Timestamp>}
+      isActive={isActive}
+      passive={state === "complete"}
+      title={<TodoTitle search={search}>{title}</TodoTitle>}
+      timestamp={<Timestamp>{created}</Timestamp>}
+
       onClick={() => history.push({
         pathname: path.reduce(routes.pathname, {
           type: "todo",
-          categoryID: props.categoryID,
-          todoID: props.id
+          categoryID,
+          todoID: id
         })
       })}
+
       secondaryAction={
         <TodoPriority
           priority={props.priority}
           priorityLength={props.priorityLength}
         />
       }
+
       primaryAction={
         <Control>
-          {props.state === "complete"
-            ? props.showAlt
-              ? <ButtonUndone id={props.id} categoryID={props.categoryID} />
-              : <ButtonDelete id={props.id} categoryID={props.categoryID} />
-            : props.showAlt
-              ? <ButtonDelete id={props.id} categoryID={props.categoryID} />
-              : <ButtonDone id={props.id} categoryID={props.categoryID} />
-          }
+          <TodoCheck
+            categoryID={categoryID}
+            checked={state === "complete"}
+            id={id}
+          />
         </Control>
+      }
+      footer={
+        props.showAlt
+          ? <ButtonDelete id={id} categoryID={categoryID}/>
+          : null
       }
     >
     </ListItem>
