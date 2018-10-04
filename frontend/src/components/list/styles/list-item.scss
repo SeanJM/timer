@@ -57,6 +57,12 @@
   left: $u2;
   top: $u2;
   z-index: 1;
+
+  input[type="checkbox"] {
+    margin-top: $u2;
+    margin-left: $u;
+    margin-right: $u2;
+  }
 }
 
 .list-item_secondary-action {
