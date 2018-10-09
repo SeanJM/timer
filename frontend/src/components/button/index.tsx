@@ -9,9 +9,10 @@ type ButtonType =
 
 interface ButtonProps extends Partial<JSX.ElementChildrenAttribute> {
   onClick?: (event: React.MouseEvent) => void;
-  type?: ButtonType;
-  icon?: IconType;
   active?: boolean;
+  className?: string;
+  icon?: IconType;
+  type?: ButtonType;
 }
 
 export function Button(props: ButtonProps) {
@@ -32,6 +33,10 @@ export function Button(props: ButtonProps) {
 
   if (props.active) {
     classList.push("button-active");
+  }
+
+  if (props.className) {
+    classList.push(props.className);
   }
 
   return (
