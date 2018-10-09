@@ -1,0 +1,9 @@
+@mixin paragraph($font-size) {
+  p {
+    font-size: $font-size;
+    line-height: $font-size * 1.325;
+  }
+
+  p + p { margin-top: $u6; }
+  ul + p { margin-top: $u6; }
+}

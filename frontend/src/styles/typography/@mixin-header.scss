@@ -1,0 +1,10 @@
+@mixin header($min, $max, $index) {
+  $base: $min + ($max - $min) / 6 * (6 - $index);
+
+  h#{$index} {
+    font-size: $base;
+    font-weight: bold;
+    line-height: $base * 1.215;
+    letter-spacing: $base * -0.02;
+  }
+}

@@ -1,18 +1,18 @@
+@import "@mixin-header";
+@import "@mixin-paragraph";
+@import "@mixin-list";
+
 body {
   font-family: Arial, Helvetica, sans-serif;
   color: $black;
 }
 
-@mixin header($min, $max, $index) {
-  $base: $min + ($max - $min) / 6 * (6 - $index);
-
-  h#{$index} {
-    font-size: $base;
-    font-weight: bold;
-    line-height: $base * 1.215;
-    letter-spacing: $base * -0.02;
-  }
+a {
+  color: $primary;
 }
+
+@include paragraph($font-size);
+@include list($font-size);
 
 @include header(
   $font-size * 1.07,
@@ -59,13 +59,4 @@ small {
     font-weight: bold;
     text-transform: uppercase;
   }
-
-  h6 {
-    margin-bottom: $u * 0.4;
-  }
-}
-
-p {
-  font-size: $font-size;
-  line-height: $line-height;
 }
