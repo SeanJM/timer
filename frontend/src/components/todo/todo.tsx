@@ -1,9 +1,8 @@
 import path from "@path";
 import React from "react";
-import { Button } from "@frontend/components/button";
 import { Control } from "@frontend/components/control";
 import { dispatch } from "@frontend/action/";
-import { ListItem } from "@frontend/components/list";
+import { ListItem, ListAction } from "@frontend/components/list";
 import { RouterHistory } from "@frontend/components/router";
 import { routes } from "@frontend/routes";
 import { Timestamp } from "@frontend/components/timestamp";
@@ -46,11 +45,11 @@ function TodoCheck(props: { checked: boolean, id: string, categoryID: string }) 
 
 function ButtonDelete(value: { id: string, categoryID: string }) {
   return (
-    <Button type="danger"
+    <ListAction type="danger"
       onClick={() => dispatch("TODO", { type: "DELETE", value })}
     >
       Delete
-    </Button>
+    </ListAction>
   );
 }
 
