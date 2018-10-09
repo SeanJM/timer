@@ -31,6 +31,7 @@ function push(url: HistoryLocation): void;
 function push(url: string): void;
 function push(url: any) {
   if (typeof url === "string") {
+    url = url[0] === "/" ? url : "/" + url;
     window.location.hash = url;
   } else {
     pushObject(url);
