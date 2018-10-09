@@ -7,21 +7,20 @@ import sortObjectBy from "@sort-object-by";
 import { dispatch } from "@frontend/action";
 import { emptyForm } from "@frontend/action/form";
 
-import { Button } from "@frontend/components/button";
-import { ChipData } from "@frontend/components/chip";
-import { CodeMirror } from "@frontend/components/code-mirror";
-import { Filter } from "@frontend/components/filter";
-import { FormConnect } from "@frontend/components/form";
-import { InputChipSelect } from "@frontend/components/input/input-chip-select";
-import { InputGroup } from "@frontend/components/input-group";
-import { InputSlide } from "@frontend/components/input/input-slide";
-import { InputText } from "@frontend/components";
-import { RouteComponentProps } from "@frontend/components/router";
-import { TabBar, Tab } from "@frontend/components/tab-bar";
+import { Button } from "@components/button";
+import { ChipData } from "@components/chip";
+import { MarkdownEditor } from "@components/markdown-editor";
+import { Filter } from "@components/filter";
+import { FormConnect } from "@components/form";
+import { InputChipSelect } from "@components/input/input-chip-select";
+import { InputGroup } from "@components/input-group";
+import { InputSlide, InputText } from "@components/input";
+import { RouteComponentProps } from "@components/router";
+import { TabBar, Tab } from "@components/tab-bar";
 import { TagResponse, TodoResponse } from "@types";
-import { TitleAndInput } from "@frontend/components/title-and-input";
-import { Titlebar } from "@frontend/components/titlebar";
-import { Viewport } from "@frontend/components/viewport";
+import { TitleAndInput } from "@components/title-and-input";
+import { Titlebar } from "@components/titlebar";
+import { Viewport } from "@components/viewport";
 import { withStore, StoreState, StoreForm } from "@frontend/store";
 
 const FORM_ID = generateHash();
@@ -262,22 +261,17 @@ class TodoEditor extends React.Component<TodoEditorOutProps> {
                 />
               </InputGroup>
             </FormConnect>
-            <FormConnect
-              id={FORM_ID}
-              type="borderless"
+            <MarkdownEditor
               view="notes"
-            >
-              <InputGroup>
-                <label>Notes</label>
-                <CodeMirror
-                  name="todoNotes"
-                  mode="markdown"
-                  lineWrapping={true}
-                  onInput={() => this.save()}
-                  defaultValue={this.props.todoNotes}
-                />
-              </InputGroup>
-            </FormConnect>
+              onInput={() => this.save()}
+              onValue={(e) => dispatch("FORM_VALUE", {
+                type: e.type,
+                value: e.value,
+                name: "todoNotes",
+                id: FORM_ID
+              })}
+              defaultValue={this.props.todoNotes}
+            />
           </Filter>
         }
       />
