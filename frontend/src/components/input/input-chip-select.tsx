@@ -25,7 +25,7 @@ export class InputChipSelect extends Component<ChipSelectProps, State> {
   }
 
   render() {
-    const { onValue, defaultValue } = this.props;
+    const { onValue, name, defaultValue } = this.props;
     return (
       <InputWrapper
         type="chip-select"
@@ -36,9 +36,9 @@ export class InputChipSelect extends Component<ChipSelectProps, State> {
             defaultValue={defaultValue}
             onInput={this.props.onInput}
             onValue={(value) => {
-              console.log(value);
               if (onValue) {
                 onValue({
+                  name,
                   value,
                   type: "Array<string|undefined>",
                 });

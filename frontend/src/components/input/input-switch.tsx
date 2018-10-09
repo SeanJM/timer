@@ -24,7 +24,7 @@ export class InputSwitch extends Component<InputSwitchProps, InputSwitchState> {
   }
 
   onClick() {
-    const { onInput, onValue } = this.props;
+    const { onInput, onValue, name } = this.props;
     const value = !this.state.value;
 
     this.setState({
@@ -35,6 +35,7 @@ export class InputSwitch extends Component<InputSwitchProps, InputSwitchState> {
 
     if (onValue) {
       onValue({
+        name,
         value,
         type: "boolean",
       });

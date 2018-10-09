@@ -21,9 +21,10 @@ export class CodeMirror extends Component<CodeMirrorProps> {
   codeMirror: codeMirror.Editor;
 
   onValue() {
-    const { onValue } = this.props;
+    const { onValue, name } = this.props;
     if (onValue) {
       onValue({
+        name,
         type: "string",
         value: this.codeMirror.getValue(),
       });

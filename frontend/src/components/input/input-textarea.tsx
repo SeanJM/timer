@@ -28,11 +28,12 @@ export class InputTextarea extends Component<InputTextareaProps, InputTextareaSt
   }
 
   onValue() {
-    const { onValue } = this.props;
+    const { onValue, name } = this.props;
     if (onValue) {
       onValue({
-        value: this.node.value,
+        name,
         type: "string",
+        value: this.node.value,
       });
     }
   }

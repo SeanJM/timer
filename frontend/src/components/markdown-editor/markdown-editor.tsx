@@ -10,6 +10,7 @@ interface MarkdownEditorProps {
   onValue?: (e: InputValueEvent) => void;
   defaultValue?: string;
   isEditing?: boolean;
+  name?: string;
   view?: string;
 }
 
@@ -38,10 +39,11 @@ export class MarkdownEditor extends React.Component<MarkdownEditorProps, Markdow
   }
 
   onValue(e: CodeMirrorInputEvent) {
-    const { onValue } = this.props;
+    const { onValue, name } = this.props;
 
     if (onValue) {
       onValue({
+        name,
         type: "string",
         value: e.value,
       });

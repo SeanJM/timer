@@ -78,8 +78,9 @@ export class TitleAndInput extends Component<InputAndInputProps, State> {
   componentDidUpdate(prevProps) {
     if (this.props.defaultValue !== prevProps.defaultValue && !this.state.showInput) {
       this.props.onValue({
-        value: this.props.defaultValue || "",
+        name: this.props.name,
         type: "string",
+        value: this.props.defaultValue || "",
       });
     }
   }
