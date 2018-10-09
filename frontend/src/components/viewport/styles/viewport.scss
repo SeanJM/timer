@@ -4,13 +4,17 @@
   position: relative;
 }
 
+.viewport--body-overflow .viewport_body {
+  overflow-y: scroll;
+}
+
 .viewport_body {
   position: absolute;
   bottom: 0;
   top: 0;
   width: 100%;
-  overflow-y: scroll;
   padding-bottom: $u8;
+  overflow: hidden;
 }
 
 .viewport--titlebar {

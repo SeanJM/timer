@@ -10,7 +10,49 @@ interface ViewPortProps {
   className?: string;
 }
 
-export class Viewport extends Component<ViewPortProps> {
+interface ViewPortState {
+  bodyOverflow: boolean;
+}
+
+export class Viewport extends Component<ViewPortProps, ViewPortState> {
+  bodyNode: HTMLDivElement;
+  bodyContentNode: HTMLDivElement;
+  bodyOverflowChecker: any;
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      bodyOverflow: false
+    };
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.bodyOverflowChecker);
+  }
+
+  componentDidMount() {
+    const checker = () => {
+      const { bodyOverflow } = this.state;
+      const bodyContentNodeOffset = this.bodyContentNode.getBoundingClientRect();
+      const bodyNodeOffset = this.bodyNode.getBoundingClientRect();
+      const isBiggerThan = bodyContentNodeOffset.height > bodyNodeOffset.height;
+
+      if (isBiggerThan && !bodyOverflow) {
+        this.setState({
+          bodyOverflow: true
+        });
+      } else if (!isBiggerThan && bodyOverflow) {
+        this.setState({
+          bodyOverflow: false
+        });
+      }
+
+      this.bodyOverflowChecker = setTimeout(checker, 200);
+    };
+
+    checker();
+  }
+
   render() {
     const classList = ["viewport"];
     const {
@@ -47,6 +89,10 @@ export class Viewport extends Component<ViewPortProps> {
       classList.push(className);
     }
 
+    if (this.state.bodyOverflow) {
+      classList.push("viewport--body-overflow");
+    }
+
     return (
       <div className={classList.join(" ")}>
         {head
@@ -61,7 +107,15 @@ export class Viewport extends Component<ViewPortProps> {
         {scopebar
           ? <div className="viewport_scopebar">{scopebar}</div>
           : null}
-        <div className="viewport_body">{body}</div>
+        <div
+          ref={(node) => { this.bodyNode = node; }}
+          className="viewport_body">
+          <div
+            ref={(node) => { this.bodyContentNode = node; }}
+            className="viewport_body_content">
+            {body}
+          </div>
+        </div>
         {feet
           ? <div className="viewport_feet">{feet}</div>
           : null}
