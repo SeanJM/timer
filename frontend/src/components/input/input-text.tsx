@@ -38,7 +38,6 @@ export class InputText extends Component<InputTextProps, InputTextState> {
     const { onValue } = this.props;
     if (onValue) {
       onValue({
-        name: this.props.name,
         type: "string",
         value: this.node.value,
       });

@@ -33,7 +33,6 @@ export class InputTextarea extends Component<InputTextareaProps, InputTextareaSt
       onValue({
         value: this.node.value,
         type: "string",
-        name: this.props.name
       });
     }
   }

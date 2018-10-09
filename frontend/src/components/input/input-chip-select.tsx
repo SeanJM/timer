@@ -41,7 +41,6 @@ export class InputChipSelect extends Component<ChipSelectProps, State> {
                 onValue({
                   value,
                   type: "Array<string|undefined>",
-                  name: this.props.name,
                 });
               }
             }}

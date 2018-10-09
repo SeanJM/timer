@@ -48,7 +48,7 @@ export function Form(props: FormProps) {
                 dispatch("FORM_VALUE", {
                   type: e.type,
                   value: e.value,
-                  name: e.name,
+                  name: child.props.name,
                   id: props.id,
                 });
               }

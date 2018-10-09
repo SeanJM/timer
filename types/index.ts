@@ -56,7 +56,6 @@ export interface InputOnValue {
 
 export interface InputValueEvent {
   value: any;
-  name: string;
   type: string;
 }
 

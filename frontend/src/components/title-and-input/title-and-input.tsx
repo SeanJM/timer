@@ -80,7 +80,6 @@ export class TitleAndInput extends Component<InputAndInputProps, State> {
       this.props.onValue({
         value: this.props.defaultValue || "",
         type: "string",
-        name: this.props.name,
       });
     }
   }

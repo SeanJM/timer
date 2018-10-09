@@ -37,7 +37,6 @@ export class InputSwitch extends Component<InputSwitchProps, InputSwitchState> {
       onValue({
         value,
         type: "boolean",
-        name: this.props.name,
       });
     }
   }
