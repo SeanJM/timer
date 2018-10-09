@@ -213,7 +213,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                 type: "ADD",
                 value: {
                   categoryID,
-                  tags: tagFilters.includes.concat(tagFilters.any),
+                  tags: tagFilters && tagFilters.includes.concat(tagFilters.any),
                   name,
                 }
               })}
