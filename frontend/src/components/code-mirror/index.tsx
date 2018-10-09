@@ -9,9 +9,10 @@ export interface CodeMirrorInputEvent {
 interface CodeMirrorProps {
   onInput?: (e?: CodeMirrorInputEvent) => void;
   onValue?: (e?: InputValueEvent) => void;
+  autofocus?: boolean;
   defaultValue?: string;
-  mode?: "markdown";
   lineWrapping?: boolean;
+  mode?: "markdown";
   name?: string;
 }
 
@@ -50,6 +51,10 @@ export class CodeMirror extends Component<CodeMirrorProps> {
 
       this.onValue();
     });
+
+    if (this.props.autofocus) {
+      this.codeMirror.focus();
+    }
   }
 
   componentDidUpdate(prevProps: CodeMirrorProps) {
