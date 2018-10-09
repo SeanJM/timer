@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import codeMirror from "codemirror";
 import { InputValueEvent } from "@types";
 
-interface CodeMirrorInputEvent {
+export interface CodeMirrorInputEvent {
   value: string;
 }
 
@@ -20,12 +20,11 @@ export class CodeMirror extends Component<CodeMirrorProps> {
   codeMirror: codeMirror.Editor;
 
   onValue() {
-    const { onValue, name } = this.props;
+    const { onValue } = this.props;
     if (onValue) {
       onValue({
         type: "string",
         value: this.codeMirror.getValue(),
-        name,
       });
     }
   }
