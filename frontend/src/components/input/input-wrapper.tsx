@@ -1,49 +1,123 @@
 import * as React from "react";
-import { InputType } from "@frontend/components/input";
-import { IconType, Icon } from "@frontend/components/icon";
+import { InputValueEvent, Omit } from "@types";
 
-interface InputWrapperProps extends JSX.ElementChildrenAttribute {
-  focus: boolean;
-  type: InputType;
-  button?: JSX.Element;
-  className?: string;
-  icon?: IconType;
+interface InputRequiredProps {
+  onValue: (e: InputValueEvent) => void;
+  onFocus: (e: React.FocusEvent) => void;
+  onBlur: (e: React.FocusEvent) => void;
 }
 
-export function InputWrapper(props: InputWrapperProps) {
-  const className = [
-    "input-wrapper",
-    "input-wrapper-" + props.type
-  ];
+type InputWrapperProps<T> =
+  & Omit<T, keyof InputRequiredProps>
+  & Partial<InputRequiredProps>
+  & Partial<JSX.ElementChildrenAttribute>
+  & Partial<{
+    className: string;
+    control: JSX.Element;
+    icon: JSX.Element;
+    label: string;
+  }>;
 
-  if (props.focus) {
-    className.push("input-wrapper--focus");
-  }
+interface InputWrapperState {
+  hasFocus: boolean;
+  hasValue: boolean;
+}
 
-  if (props.button) {
-    className.push("input-wrapper-button");
-  }
+export function inputWrapper<T extends InputRequiredProps>(Component: React.ComponentType<T>) {
+  return class InputWrapped extends React.Component<InputWrapperProps<T>, InputWrapperState> {
+    constructor(props) {
+      super(props);
+      this.state = {
+        hasFocus: false,
+        hasValue: false,
+      };
+    }
 
-  if (props.icon) {
-    className.push("input-wrapper--icon");
-  }
+    onFocus(e: React.FocusEvent) {
+      this.setState({
+        hasFocus: true
+      });
 
-  if (props.className) {
-    className.push(props.className);
-  }
+      if (this.props.onFocus) {
+        this.props.onFocus(e);
+      }
+    }
 
-  if (props.focus) {
-    className.push("input-wrapper--focus");
-  }
+    onBlur(e: React.FocusEvent) {
+      this.setState({
+        hasFocus: false
+      });
 
-  return (
-    <div className={className.join(" ")}>
-      <div className="input-wrapper_input">
-        <div className="input-wrapper_face"></div>
-        {props.icon ? <Icon className="input-wrapper_icon" type={props.icon}/> : null}
-        {props.children}
-        {props.button}
-      </div>
-    </div>
-  );
+      if (this.props.onBlur) {
+        this.props.onBlur(e);
+      }
+    }
+
+    onValue(e: InputValueEvent) {
+      this.setState({
+        hasValue: !!e.value.length
+      });
+
+      if (this.props.onValue) {
+        this.props.onValue(e);
+      }
+    }
+
+    render() {
+      const {
+        className,
+        control,
+        icon,
+        label,
+      } = this.props;
+
+      const classList = [
+        "input-wrapper",
+      ];
+
+      if (control) {
+        classList.push("input-wrapper-button");
+      }
+
+      if (className) {
+        classList.push(className);
+      }
+
+      if (this.state.hasFocus) {
+        classList.push("input-wrapper--focus");
+      }
+
+      if (this.state.hasValue) {
+        classList.push("input-wrapper--value");
+      }
+
+      if (icon) {
+        classList.push("input-wrapper--icon");
+      }
+
+      if (label) {
+        classList.push("input-wrapper--label");
+      }
+
+      return (
+        <div className={classList.join(" ")}>
+          <div className="input-wrapper_input">
+            <div className="input-wrapper_face"></div>
+            {icon
+              ? React.cloneElement(icon, { className: "input-wrapper_icon" })
+              : null}
+            {label ? <label>{label}</label> : null}
+            {
+              <Component {...this.props}
+                onValue={(e) => this.onValue(e)}
+                onFocus={(e) => this.onFocus(e)}
+                onBlur={(e) => this.onBlur(e)}
+              />
+            }
+            {control}
+          </div>
+        </div>
+      );
+    }
+  };
 }

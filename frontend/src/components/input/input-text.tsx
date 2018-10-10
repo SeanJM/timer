@@ -1,22 +1,18 @@
 import * as React from "react";
 import { Component } from "react";
-import { InputWrapper } from "@frontend/components/input";
-import { IconType } from "@frontend/components/icon";
+import { inputWrapper } from "@frontend/components/input/input-wrapper";
 import { InputValueEvent } from "@types";
 
 interface InputTextProps {
-  onBlur?: (e: React.FocusEvent) => void;
-  onFocus?: (e: React.FocusEvent) => void;
+  onBlur: (e: React.FocusEvent) => void;
+  onFocus: (e: React.FocusEvent) => void;
+  onValue: (e: InputValueEvent) => void;
+
   onInput?: (e: React.FormEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  onValue?: (e: InputValueEvent) => void;
 
-  defaultValue?: string;
-  label?: string;
-  button?: JSX.Element;
-  className?: string;
   autofocus?: boolean;
-  icon?: IconType;
+  defaultValue?: string;
   name?: string;
 }
 
@@ -24,7 +20,7 @@ interface InputTextState {
   focus: boolean;
 }
 
-export class InputText extends Component<InputTextProps, InputTextState> {
+class InputTextView extends Component<InputTextProps, InputTextState> {
   node: HTMLInputElement;
 
   constructor(props) {
@@ -34,8 +30,24 @@ export class InputText extends Component<InputTextProps, InputTextState> {
     };
   }
 
+  onInput(e) {
+    const {
+      onInput,
+    } = this.props;
+
+    if (onInput) {
+      onInput(e);
+    }
+
+    this.onValue();
+  }
+
   onValue() {
-    const { onValue, name } = this.props;
+    const {
+      name,
+      onValue,
+    } = this.props;
+
     if (onValue) {
       onValue({
         name,
@@ -50,7 +62,6 @@ export class InputText extends Component<InputTextProps, InputTextState> {
     if (onFocus) {
       onFocus(e);
     }
-    this.setState({ focus: true });
   }
 
   onBlur(e: React.FocusEvent) {
@@ -58,7 +69,6 @@ export class InputText extends Component<InputTextProps, InputTextState> {
     if (onBlur) {
       onBlur(e);
     }
-    this.setState({ focus: false });
   }
 
   componentDidMount() {
@@ -77,37 +87,22 @@ export class InputText extends Component<InputTextProps, InputTextState> {
 
   render() {
     const {
-      button,
-      onInput,
       onKeyDown,
-      icon,
-      className,
     } = this.props;
 
     return (
-      <InputWrapper
-        className={className}
-        focus={this.state.focus}
+      <input
+        defaultValue={this.props.defaultValue}
+        ref={(node) => { this.node = node; }}
         type="text"
-        icon={icon}
-        button={button}>
-        <input
-          type="text"
-          defaultValue={this.props.defaultValue}
-          ref={(node) => {
-            this.node = node;
-          }}
-          onInput={(e) => {
-            if (onInput) {
-              onInput(e);
-            }
-            this.onValue();
-          }}
-          onFocus={(e) => this.onFocus(e)}
-          onBlur={(e) => this.onBlur(e)}
-          onKeyDown={(e) => onKeyDown && onKeyDown(e)}
-        />
-      </InputWrapper>
+
+        onBlur={(e) => this.onBlur(e)}
+        onFocus={(e) => this.onFocus(e)}
+        onInput={(e) => this.onInput(e)}
+        onKeyDown={(e) => onKeyDown && onKeyDown(e)}
+      />
     );
   }
 }
+
+export const InputText = inputWrapper<InputTextProps>(InputTextView);

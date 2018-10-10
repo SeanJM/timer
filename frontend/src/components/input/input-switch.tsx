@@ -1,12 +1,17 @@
-import * as React from "react";
+import React from "react";
+import Switch from "@components/switch";
 import { Component } from "react";
-import { InputWrapper, InputDefaultProps } from "@frontend/components/input";
-import Switch from "@frontend/components/switch";
+import { InputValueEvent } from "@types";
+import { inputWrapper } from "@components/input/input-wrapper";
 
-interface InputSwitchProps extends InputDefaultProps {
+interface InputSwitchProps {
   defaultValue?: boolean;
-  label?: string;
   name?: string;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
+  onInput?: (e: InputValueEvent) => void;
+  onBlur: (e: React.FocusEvent) => void;
+  onFocus: (e: React.FocusEvent) => void;
+  onValue: (e: InputValueEvent) => void;
 }
 
 interface InputSwitchState {
@@ -14,7 +19,7 @@ interface InputSwitchState {
   value: boolean;
 }
 
-export class InputSwitch extends Component<InputSwitchProps, InputSwitchState> {
+class InputSwitchView extends Component<InputSwitchProps, InputSwitchState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,56 +28,59 @@ export class InputSwitch extends Component<InputSwitchProps, InputSwitchState> {
     };
   }
 
+  onKeyDown(e: React.KeyboardEvent) {
+    if (this.props.onKeyDown) {
+      this.props.onKeyDown(e);
+    }
+  }
+
+  onFocus(e: React.FocusEvent) {
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
+  }
+
+  onBlur(e: React.FocusEvent) {
+    if (this.props.onBlur) {
+      this.props.onBlur(e);
+    }
+  }
+
   onClick() {
     const { onInput, onValue, name } = this.props;
     const value = !this.state.value;
+
+    const evt = {
+      name,
+      type: "boolean",
+      value,
+    };
 
     this.setState({
       value,
     });
 
-    if (onInput) { onInput(value); }
+    if (onInput) {
+      onInput(evt);
+    }
 
     if (onValue) {
-      onValue({
-        name,
-        value,
-        type: "boolean",
-      });
+      onValue(evt);
     }
   }
 
   render() {
-    const {
-      onFocus,
-      onBlur,
-      onKeyDown,
-      label,
-    } = this.props;
-
     return (
-      <InputWrapper focus={this.state.focus} type="switch">
-        {label
-          ? <label onClick={() => this.onClick()}>{label}</label>
-          : null}
-        <Switch
-          check={this.state.value}
-          onFocus={(e) => {
-            if (onFocus) { onFocus(e); }
-            this.setState({
-              focus: true
-            });
-          }}
-          onBlur={(e) => {
-            if (onBlur) { onBlur(e); }
-            this.setState({
-              focus: false
-            });
-          }}
-          onClick={() => this.onClick()}
-          onKeyDown={(e) => onKeyDown && onKeyDown(e)}
-        />
-      </InputWrapper>
+      <Switch
+        check={this.state.value}
+        onFocus={(e) => this.onFocus(e)}
+        onBlur={(e) => this.onBlur(e)}
+        onClick={() => this.onClick()}
+        onKeyDown={(e) => this.onKeyDown(e)}
+      />
     );
   }
 }
+
+export const InputSwitch =
+  inputWrapper<InputSwitchProps>(InputSwitchView);

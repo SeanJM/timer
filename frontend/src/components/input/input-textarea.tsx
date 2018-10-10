@@ -1,31 +1,22 @@
-import * as React from "react";
-import { Component } from "react";
-import { InputWrapper, InputDefaultProps } from "@frontend/components/input";
-import { IconType } from "@frontend/components/icon";
+import React, { Component } from "react";
 
-interface InputTextareaProps extends InputDefaultProps {
-  defaultValue?: string;
-  label?: string;
-  button?: JSX.Element;
-  className?: string;
+import { InputValueEvent } from "@types";
+import { inputWrapper } from "@components/input/input-wrapper";
+
+interface InputTextareaProps {
+  onBlur: (e: React.FocusEvent) => void;
+  onFocus: (e: React.FocusEvent) => void;
+  onInput?: (e: React.FormEvent) => void;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
+  onValue: (e: InputValueEvent) => void;
+
   autofocus?: boolean;
-  icon?: IconType;
-  name: string;
+  defaultValue?: string;
+  name?: string;
 }
 
-interface InputTextareaState {
-  focus: boolean;
-}
-
-export class InputTextarea extends Component<InputTextareaProps, InputTextareaState> {
+class InputTextareaView extends Component<InputTextareaProps> {
   node: HTMLTextAreaElement;
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      focus: false
-    };
-  }
 
   onValue() {
     const { onValue, name } = this.props;
@@ -43,7 +34,20 @@ export class InputTextarea extends Component<InputTextareaProps, InputTextareaSt
     if (onFocus) {
       onFocus(e);
     }
-    this.setState({ focus: true });
+  }
+
+  onInput(e: React.FormEvent) {
+    const { onInput } = this.props;
+    if (onInput) {
+      onInput(e);
+    }
+  }
+
+  onKeyDown(e: React.KeyboardEvent) {
+    const { onKeyDown } = this.props;
+    if (onKeyDown) {
+      onKeyDown(e);
+    }
   }
 
   onBlur(e: React.FocusEvent) {
@@ -51,7 +55,6 @@ export class InputTextarea extends Component<InputTextareaProps, InputTextareaSt
     if (onBlur) {
       onBlur(e);
     }
-    this.setState({ focus: false });
   }
 
   componentDidMount() {
@@ -69,37 +72,20 @@ export class InputTextarea extends Component<InputTextareaProps, InputTextareaSt
   }
 
   render() {
-    const {
-      button,
-      onInput,
-      onKeyDown,
-      icon,
-      className,
-    } = this.props;
-
     return (
-      <InputWrapper
-        className={className}
-        focus={this.state.focus}
-        type="textarea"
-        icon={icon}
-        button={button}>
-        <textarea
-          defaultValue={this.props.defaultValue}
-          ref={(node) => {
-            this.node = node;
-          }}
-          onInput={(e) => {
-            if (onInput) {
-              onInput(e);
-            }
-            this.onValue();
-          }}
-          onFocus={(e) => this.onFocus(e)}
-          onBlur={(e) => this.onBlur(e)}
-          onKeyDown={(e) => onKeyDown && onKeyDown(e)}
-        />
-      </InputWrapper>
+      <textarea
+        defaultValue={this.props.defaultValue}
+        ref={(node) => {
+          this.node = node;
+        }}
+        onInput={(e) => this.onInput(e)}
+        onFocus={(e) => this.onFocus(e)}
+        onBlur={(e) => this.onBlur(e)}
+        onKeyDown={(e) => this.onKeyDown(e)}
+      />
     );
   }
 }
+
+export const InputTextarea =
+  inputWrapper(InputTextareaView);
