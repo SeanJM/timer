@@ -2,6 +2,8 @@ import { DatabaseElement } from "@backend/class/element";
 import { FilterResponse } from "./filter";
 import "./verified";
 export * from "./filter";
+export * from "./input";
+export * from "./util";
 
 export interface CategoryElementAttributes extends
   Pick<DatabaseElement["attributes"],
@@ -49,16 +51,6 @@ export type CategoryFilterBy =
   | string
   | null
   ;
-
-export interface InputOnValue {
-  (value: any, name: string): void;
-}
-
-export interface InputValueEvent {
-  name: string;
-  type: string;
-  value: any;
-}
 
 export interface SwatchAttributes {
   value: string;
