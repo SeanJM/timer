@@ -1,52 +1,34 @@
-import React, { Component } from "react";
+import React from "react";
 import { ChipInput, ChipData, ChipInputInputEvent } from "@frontend/components/chip";
-import { InputWrapper } from "@frontend/components/input/input-wrapper";
+import { inputWrapper } from "@frontend/components/input/input-wrapper";
 import { InputValueEvent } from "@types";
-
-interface State {
-  focus: boolean;
-}
 
 export interface ChipSelectProps {
   data: ChipData[];
   formid?: string;
   name?: string;
-  onValue?: (e: InputValueEvent) => void;
-  onInput?: (e?: ChipInputInputEvent) => void;
   defaultValue?: string[];
+
+  onBlur: (e?: React.FocusEvent) => void;
+  onFocus: (e?: React.FocusEvent) => void;
+  onInput?: (e?: ChipInputInputEvent) => void;
+  onValue: (e: InputValueEvent) => void;
 }
 
-export class InputChipSelect extends Component<ChipSelectProps, State> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      focus: false
-    };
-  }
+function InputChipSelectView(props: ChipSelectProps) {
+  return (
+    <ChipInput
+      data={props.data}
+      defaultValue={props.defaultValue}
+      name={props.name}
 
-  render() {
-    const { onValue, name, defaultValue } = this.props;
-    return (
-      <InputWrapper
-        type="chip-select"
-        focus={this.state.focus}>
-        <div className="input-chip-select">
-          <ChipInput
-            data={this.props.data}
-            defaultValue={defaultValue}
-            onInput={this.props.onInput}
-            onValue={(value) => {
-              if (onValue) {
-                onValue({
-                  name,
-                  value,
-                  type: "Array<string|undefined>",
-                });
-              }
-            }}
-          />
-        </div>
-      </InputWrapper>
-    );
-  }
+      onBlur={props.onBlur}
+      onFocus={props.onFocus}
+      onInput={props.onInput}
+      onValue={props.onValue}
+    />
+  );
 }
+
+export const InputChipSelect =
+  inputWrapper<ChipSelectProps>(InputChipSelectView);
