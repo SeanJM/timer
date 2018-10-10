@@ -41,7 +41,7 @@ export function toFilterResponse(element: FilterElement): FilterResponse {
 
 function createFilter(req: FilterPostRequest, res: Response, database: Database) {
   const { categoryID } = req.params;
-  const category = database.getElementById(categoryID);
+  const categoryElement = database.getElementById(categoryID);
 
   const filterElement = database.createElement<FilterElement>("filter", {
     name: req.body.name,
@@ -50,8 +50,8 @@ function createFilter(req: FilterPostRequest, res: Response, database: Database)
     tags: []
   });
 
-  if (category) {
-    category.appendChild(filterElement);
+  if (categoryElement) {
+    categoryElement.appendChild(filterElement);
     res.send(toFilterResponse(filterElement));
     database.save();
   } else {
@@ -61,8 +61,14 @@ function createFilter(req: FilterPostRequest, res: Response, database: Database)
   }
 }
 
-function deleteFilter(req, res, database) {
+function deleteFilter(req: FilterPostRequest, res, database) {
+  const { categoryID, filterID } = req.params;
+  const categoryElement = database.getElementById(categoryID) as CategoryElement;
+  const filterElement = categoryElement.querySelector<FilterElement>(`#${filterID}`);
 
+  categoryElement.removeChild(filterElement);
+  res.send(`SUCCESSFULLY DELETED: ${filterID}`);
+  database.save();
 }
 
 function editFilter(req: FilterPostRequest, res, database) {
