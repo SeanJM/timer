@@ -1,15 +1,19 @@
 import React, { Component } from "react";
 import { DragMe, DragMeEvent } from "@frontend/components/drag-me";
-import { SlideShadow } from "./slide-shadow";
+import { InputValueEvent } from "@types";
 import { SlideSegments } from "@frontend/components/slide/slide-segments";
+import { SlideShadow } from "./slide-shadow";
+import { KEYNAME_BY_CODE } from "@constants";
 
 export interface SlideProps {
   length?: number;
+  name?: string;
   value?: number;
-  onValue?: (value: number) => void;
-  onInput?: (value: number) => void;
-  onFocus?: (e: React.FocusEvent) => void;
+
   onBlur?: (e: React.FocusEvent) => void;
+  onFocus?: (e: React.FocusEvent) => void;
+  onInput?: (e: InputValueEvent) => void;
+  onValue?: (e: InputValueEvent) => void;
 }
 
 export interface SlideState {
@@ -46,15 +50,27 @@ export class Slide extends Component<SlideProps, SlideState> {
 
   onDragMove(e: DragMeEvent) {
     let value = this.getValue(e.positionX);
+
     this.setState({
       shadowPositionX: e.positionX,
     });
-    this.props.onValue(value);
+
+    this.props.onValue({
+      name: this.props.name,
+      type: "number",
+      value,
+    });
   }
 
   onDragEnd(e: DragMeEvent) {
     const value = this.getValue(e.positionX);
-    this.props.onInput(value);
+
+    this.props.onInput({
+      name: this.props.name,
+      type: "number",
+      value,
+    });
+
     this.setState({
       isDragging: false
     });
@@ -73,13 +89,27 @@ export class Slide extends Component<SlideProps, SlideState> {
   }
 
   onKeyDown(e) {
-    if (e.which === 37) {
-      let value = Math.max(0, this.props.value - 1);
-      this.props.onInput(value);
-    } else if (e.which === 39) {
-      let value = Math.min(this.props.length, this.props.value + 1);
-      this.props.onInput(value);
+    const evt = {
+      name: this.props.name,
+      type: "number",
+      value: this.props.value,
+    };
+
+    if (KEYNAME_BY_CODE[e.which] === "LEFT") {
+      evt.value = Math.max(0, evt.value - 1);
+      this.props.onInput(evt);
+    } else if (KEYNAME_BY_CODE[e.which] === "RIGHT") {
+      evt.value = Math.min(this.props.length, evt.value + 1);
+      this.props.onInput(evt);
     }
+  }
+
+  componentDidMount() {
+    this.props.onValue({
+      name: this.props.name,
+      type: "number",
+      value: this.props.value,
+    });
   }
 
   render() {
@@ -94,22 +124,25 @@ export class Slide extends Component<SlideProps, SlideState> {
     return (
       <DragMe
         className={className.join(" ")}
-        onFocus={(e) => this.onFocus(e)}
+
         onBlur={(e) => this.onBlur(e)}
-        onDragStart={(e) => this.onDragStart(e)}
-        onDragMove={(e) => this.onDragMove(e)}
         onDragEnd={(e) => this.onDragEnd(e)}
+        onDragMove={(e) => this.onDragMove(e)}
+        onDragStart={(e) => this.onDragStart(e)}
+        onFocus={(e) => this.onFocus(e)}
         onKeyDown={(e) => this.onKeyDown(e)}
       >
         <SlideSegments
           length={length}
           value={value}/>
         <div className="slide-focus"/>
+
         {this.state.isDragging
           ? <SlideShadow
               length={length}
               positionX={this.state.shadowPositionX}/>
           : null}
+
         <div className="slide_thumb-container">
           <div
             className={"slide_thumb" + (this.state.isDragging ? " slide_thumb--active" : "")}
