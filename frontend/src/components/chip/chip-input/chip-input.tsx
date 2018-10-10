@@ -1,13 +1,17 @@
 import React, { Component } from "react";
+import _ from "lodash";
+import generateHash from "@generate-hash";
+
 import { Chip } from "@components/chip";
 import { ChipData } from "@components/chip/chip-types";
 import { Dropdown, DropdownItem, DropdownChangeEvent } from "@components/dropdown";
-import _ from "lodash";
-import generateHash from "@generate-hash";
-import { withStore, StoreState, StoreDropdown } from "@frontend/store";
+
+import { InputValueEvent } from "@types";
 import { KEYNAME_BY_CODE } from "@constants";
+import { withStore, StoreState, StoreDropdown } from "@frontend/store";
 
 export interface ChipInputInputEvent {
+  type: string;
   value: string[];
 }
 
@@ -15,8 +19,11 @@ export interface ChipInputInProps {
   data: ChipData[];
   defaultValue?: string[];
   filter?: string;
+  name?: string;
+  onBlur?: (e: React.FocusEvent) => void;
+  onFocus?: (e: React.FocusEvent) => void;
   onInput?: (e: ChipInputInputEvent) => void;
-  onValue?: (value: string[]) => void;
+  onValue?: (e: InputValueEvent<{ value: string[] }>) => void;
 }
 
 export interface ChipInputOutProps extends ChipInputInProps {
@@ -133,21 +140,31 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
   }
 
   onValue() {
-    const { onValue } = this.props;
+    const { onValue, name } = this.props;
     if (onValue) {
-      onValue(this.state.value);
+      onValue({
+        name,
+        type: "Array<string|undefined>",
+        value: this.state.value
+      });
     }
   }
 
-  onFocus() {
+  onFocus(e: React.FocusEvent) {
     this.open();
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
   }
 
-  onBlur() {
+  onBlur(e: React.FocusEvent) {
     this.close();
+    if (this.props.onBlur) {
+      this.props.onBlur(e);
+    }
   }
 
-  onInput() {
+  filterDidUpdate() {
     this.filterData();
   }
 
@@ -169,14 +186,34 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
   }
 
   onRemove(removeID: string) {
+    const { value } = this.state;
+    const { onInput } = this.props;
+
+    if (onInput) {
+      onInput({
+        type: "input",
+        value: this.state.value
+      });
+    }
+
     this.setState({
-      value: this.state.value.filter((chipIDchipID) => chipIDchipID !== removeID)
+      value: value.filter((chipIDchipID) => chipIDchipID !== removeID)
     }, () => this.onValue());
   }
 
-  onDropdownInput(e) {
+  onInput(e: DropdownChangeEvent) {
+    const { onInput } = this.props;
+
     this.input.value = "";
     this.filterData();
+
+    if (onInput) {
+      onInput({
+        type: "input",
+        value: this.state.value
+      });
+    }
+
     this.setState({
       value: this.state.value.concat(e.id)
     }, () => this.onValue());
@@ -219,14 +256,15 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
           className="chip-input_target"
           type="text"
           onKeyDown={(e) => this.onKeyDown(e)}
-          onFocus={() => this.onFocus()}
-          onInput={() => this.onInput()}
+          onFocus={(e) => this.onFocus(e)}
+          onBlur={(e) => this.onBlur(e)}
+          onInput={() => this.filterDidUpdate()}
         />
         {this.state.showDropdown
           ? (
             <ChipDropdownMenu
               onDropdownDidBlur={() => this.close()}
-              onInput={(e) => this.onDropdownInput(e)}
+              onInput={(e) => this.onInput(e)}
               value={this.state.value}
               show={this.state.showDropdown}
               data={this.state.filteredData}
