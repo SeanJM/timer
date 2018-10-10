@@ -25,6 +25,7 @@ import { withStore, StoreState, StoreForm, StoreFormInput } from "@frontend/stor
 import generateHash from "@generate-hash";
 import path, { PathQueryValue, PathParams } from "@path";
 import { Control } from "@frontend/components";
+import { Icon } from "@components/icon";
 
 const FORM_ID = generateHash();
 const CONTEXT_MENU_SORT = generateHash();
@@ -199,9 +200,9 @@ class TodoListView extends Component<TodoListOutProps, {}> {
           <Titlebar
             secondaryAction={
               <InputText
-                name="search"
-                icon="search"
                 defaultValue={this.props.query.search}
+                icon={<Icon type="search"/>}
+                name="search"
                 onInput={(e) => this.onSearchInput(e)}
               />
             }
