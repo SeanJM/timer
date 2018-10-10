@@ -106,7 +106,7 @@ class FilterListView extends Component<FilterOutProps, {}> {
                         type: "DELETE",
                         value: {
                           categoryID: params.categoryID,
-                          tagID: filter.id,
+                          filterID: filter.id,
                         }
                       })}
                     />
