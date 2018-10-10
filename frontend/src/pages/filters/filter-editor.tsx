@@ -1,15 +1,14 @@
 import React, { Component } from "react";
-import generateHash from "@generate-hash";
 
 import { Button } from "@components/button";
 import { ChipData } from "@components/chip";
 import { dispatch } from "@frontend/action";
-import { FormConnect } from "@components/form";
+import { FormConnect, FormValue } from "@components/form";
 import { InputChipSelect } from "@components/input";
 import { InputGroup } from "@components/input-group";
 import { InputText } from "@components/input";
 import { PathParams } from "@path";
-import { TagResponse, FilterTagTypes } from "@types";
+import { FilterTagTypes, FilterResponse } from "@types";
 import { TitleAndInput } from "@components/title-and-input";
 import { Titlebar } from "@components/titlebar";
 import { Viewport } from "@components/viewport";
@@ -18,7 +17,16 @@ import { withStore, StoreState } from "@frontend/store";
 
 import { path } from "@path";
 
-const FORM_ID = generateHash();
+const EMPTY_FILTER: FilterResponse = {
+  name: null,
+  id: null,
+  created: null,
+  tagFilters: {
+    excludes: [],
+    any: [],
+    includes: [],
+  }
+};
 
 interface FilterEditorInProps extends WithRouterProps {
   params: PathParams<{
@@ -34,47 +42,113 @@ interface FilterEditorOutProps extends Pick<WithRouterProps, "history"> {
   };
   filterID: string;
   categoryID: string;
-  categoryTags: TagResponse[];
   filterName: string;
-  form: {
-    tagFilters: { [key in FilterTagTypes]: string[] };
-    filterName: string;
-  };
+
+  includesTags: ChipData[];
+  excludesTags: ChipData[];
+  containsAnyTags: ChipData[];
 }
 
 function mapStateToProps(state: StoreState, props: FilterEditorInProps): FilterEditorOutProps {
   const categoryID = props.params.categoryID;
   const filterID = props.params.filterID;
   const category = state.todo.categories.find((a) => a.id === categoryID);
-  const filter = category.filters.find((a) => a.id === filterID);
-  const form = state.form[FORM_ID];
+  const filter = category.filters.find((a) => a.id === filterID) || EMPTY_FILTER;
 
   return {
     history: props.history,
     categoryID,
     filterID,
     filterName: filter.name,
-    form: {
-      tagFilters: {
-        includes: form ? (form.input.includesTags || { value: [] }).value : [],
-        excludes: form ? (form.input.excludesTags || { value: [] }).value : [],
-        any: form ? (form.input.containsAnyTag || { value: [] }).value : [],
-      },
-      filterName: form ? (form.input.filterName || { value: "" }).value : "",
-    },
+
+    includesTags:
+      category.tags
+        .filter((tag) => {
+          return (
+            filter.tagFilters.excludes.indexOf(tag.id) === -1 &&
+            filter.tagFilters.any.indexOf(tag.id) === -1
+          );
+        })
+        .map((tag) => {
+          return {
+            id: tag.id,
+            label: tag.name,
+            color: tag.color,
+          } as ChipData;
+        }),
+
+    excludesTags:
+      category.tags
+        .filter((tag) => {
+          return (
+            filter.tagFilters.includes.indexOf(tag.id) === -1 &&
+            filter.tagFilters.any.indexOf(tag.id) === -1
+          );
+        })
+        .map((tag) => {
+          return {
+            id: tag.id,
+            label: tag.name,
+            color: tag.color,
+          } as ChipData;
+        }),
+
+    containsAnyTags:
+      category.tags
+        .filter((tag) => {
+          return (
+            filter.tagFilters.includes.indexOf(tag.id) === -1 &&
+            filter.tagFilters.excludes.indexOf(tag.id) === -1
+          );
+        })
+        .map((tag) => {
+          return {
+            id: tag.id,
+            label: tag.name,
+            color: tag.color,
+          } as ChipData;
+        }),
+
     tagFilters: filter.tagFilters,
-    categoryTags: category.tags,
   };
 }
 
 export class FilterEditorView extends Component<FilterEditorOutProps> {
+  form: FormValue<{
+    filterName: string;
+    includesTags: string[];
+    excludesTags: string[];
+    containsAnyTags: string[];
+  }>;
+
+  constructor(props) {
+    super(props);
+    this.form = {};
+  }
+
+  formDidChange(value) {
+    this.form = value;
+  }
+
+  handleEvent(e) {
+    switch (e.type) {
+      case "formchange": {
+        this.formDidChange(e.value);
+      }
+    }
+  }
+
   tagsDidChange() {
     dispatch("FILTERS", {
       type: "EDIT",
       value: {
         categoryID: this.props.categoryID,
         filterID: this.props.filterID,
-        tagFilters: this.props.form.tagFilters,
+        tagFilters: {
+          includes: this.form.includesTags,
+          excludes: this.form.excludesTags,
+          any: this.form.containsAnyTags,
+        },
       }
     });
   }
@@ -85,28 +159,13 @@ export class FilterEditorView extends Component<FilterEditorOutProps> {
       value: {
         categoryID: this.props.categoryID,
         filterID: this.props.filterID,
-        name: this.props.form.filterName,
+        name: this.form.filterName,
       }
     });
   }
 
-  componentDidUpdate(prevProps: FilterEditorOutProps) {
-    const isFilterID = this.props.filterID === prevProps.filterID;
-
-    const nextTags = this.props.form.tagFilters;
-    const prevTags = prevProps.form.tagFilters;
-    const tagsDidChange =
-      nextTags.includes.length !== prevTags.includes.length ||
-      nextTags.excludes.length !== prevTags.excludes.length ||
-      nextTags.any.length !== prevTags.any.length;
-
-    if (isFilterID && tagsDidChange) {
-      this.tagsDidChange();
-    }
-  }
-
   render() {
-    const { categoryTags, tagFilters, history } = this.props;
+    const { tagFilters, history } = this.props;
     return (
       <Viewport
         titlebar={
@@ -122,88 +181,45 @@ export class FilterEditorView extends Component<FilterEditorOutProps> {
               />
             }
           >
-            <TitleAndInput
-              icon="edit"
-              name="filterName"
-              defaultValue={this.props.filterName}
-              title={this.props.form.filterName || this.props.filterName}
-              component={InputText}
-              onSubmit={() => this.nameDidChange()}
-              onValue={(e) => {
-                dispatch("FORM_VALUE", {
-                  id: FORM_ID,
-                  ...e,
-                });
-            }}
-            />
+            <FormConnect onChange={this}>
+              <TitleAndInput
+                icon="edit"
+                name="filterName"
+                defaultValue={this.props.filterName}
+                title={this.form.filterName || this.props.filterName}
+                component={InputText}
+                onSubmit={() => this.nameDidChange()}
+              />
+            </FormConnect>
           </Titlebar>
         }
         body={
-          <FormConnect type="borderless" id={FORM_ID}>
+          <FormConnect type="borderless" onChange={this}>
             <InputGroup>
               <label>Includes tags</label>
               <InputChipSelect
-                name="includesTags"
+                data={this.props.includesTags}
                 defaultValue={tagFilters.includes}
-                data={categoryTags
-                  .filter((tag) => {
-                    return (
-                      tagFilters.excludes.indexOf(tag.id) === -1 &&
-                      tagFilters.any.indexOf(tag.id) === -1
-                    );
-                  })
-                  .map((tag) => {
-                    return {
-                      id: tag.id,
-                      label: tag.name,
-                      color: tag.color,
-                    } as ChipData;
-                  })
-                }
+                name="includesTags"
+                onInput={() => this.tagsDidChange()}
               />
             </InputGroup>
             <InputGroup>
               <label>Excludes tags</label>
               <InputChipSelect
-                name="excludesTags"
+                data={this.props.excludesTags}
                 defaultValue={tagFilters.excludes}
-                data={categoryTags
-                  .filter((tag) => {
-                    return (
-                      tagFilters.includes.indexOf(tag.id) === -1 &&
-                      tagFilters.any.indexOf(tag.id) === -1
-                    );
-                  })
-                  .map((tag) => {
-                    return {
-                      id: tag.id,
-                      label: tag.name,
-                      color: tag.color,
-                    } as ChipData;
-                  })
-                }
+                name="excludesTags"
+                onInput={() => this.tagsDidChange()}
               />
             </InputGroup>
             <InputGroup>
               <label>Contains any tag</label>
               <InputChipSelect
-                name="containsAnyTag"
+                data={this.props.containsAnyTags}
                 defaultValue={tagFilters.any}
-                data={categoryTags
-                  .filter((tag) => {
-                    return (
-                      tagFilters.includes.indexOf(tag.id) === -1 &&
-                      tagFilters.excludes.indexOf(tag.id) === -1
-                    );
-                  })
-                  .map((tag) => {
-                    return {
-                      id: tag.id,
-                      label: tag.name,
-                      color: tag.color,
-                    } as ChipData;
-                  })
-                }
+                name="containsAnyTags"
+                onInput={() => this.tagsDidChange()}
               />
             </InputGroup>
           </FormConnect>
