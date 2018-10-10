@@ -12,6 +12,10 @@ export function filters(subscribe) {
       case "EDIT": {
         filterService.editFilter(value);
       }
+
+      case "DELETE": {
+        filterService.deleteFilter(value);
+      }
     }
   });
 }

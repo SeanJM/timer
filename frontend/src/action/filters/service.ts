@@ -9,6 +9,11 @@ function getElementByID<T extends { id: string }>(list: T[], id: string): T {
   return list.find((a) => a.id === id);
 }
 
+export interface FilterServiceDeleteValue {
+  categoryID: string;
+  filterID: string;
+}
+
 export interface FilterServiceCreateValue {
   name: string;
   categoryID: string;
@@ -39,9 +44,7 @@ export class FilterService {
     categoryElement.filters.push(filter);
 
     store.set({
-      todo: {
-        categories
-      }
+      todo: { categories }
     });
 
     ajax.post(`/filters/${value.categoryID}`, {
@@ -54,11 +57,11 @@ export class FilterService {
         const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
         const categoryElement = getElementByID(categories, value.categoryID);
         const filterIndex = categoryElement.filters.findIndex((a) => a.id === filter.id);
+
         categoryElement.filters[filterIndex] = filterResponse;
+
         store.set({
-          todo: {
-            categories,
-          }
+          todo: { categories }
         });
       })
       .catch((res: string) => {
@@ -68,9 +71,7 @@ export class FilterService {
         console.error(res);
         categoryElement.filters.splice(filterIndex, 1);
         store.set({
-          todo: {
-            categories,
-          }
+          todo: { categories }
         });
       });
   }
@@ -87,9 +88,7 @@ export class FilterService {
     categoryElement.filters[filterIndex] = nextFilterElement;
 
     store.set({
-      todo: {
-        categories
-      }
+      todo: { categories }
     });
 
     ajax.post(`/filters/${value.categoryID}/${value.filterID}`, {
@@ -98,16 +97,46 @@ export class FilterService {
         name: value.name,
         tagFilters: value.tagFilters,
       }
-    }).catch((res: string) => {
-      const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
-      const categoryElement = categories.find((a) => a.id === value.categoryID);
-      categoryElement.filters[filterIndex] = prevFilterElement;
-      store.set({
-        todo: {
-          categories
-        }
+    })
+      .catch((res: string) => {
+        const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
+        const categoryElement = categories.find((a) => a.id === value.categoryID);
+        categoryElement.filters[filterIndex] = prevFilterElement;
+        store.set({
+          todo: { categories }
+        });
+        console.error(res);
       });
-      console.error(res);
+  }
+
+  deleteFilter({ categoryID, filterID }: FilterServiceDeleteValue) {
+    const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
+    const categoryElement = categories.find((a) => a.id === categoryID);
+    const prevFilterElement = categoryElement.filters.find((a) => a.id === filterID);
+    const filterIndex = categoryElement.filters.indexOf(prevFilterElement);
+
+    categoryElement.filters.splice(filterIndex, 1);
+
+    store.set({
+      todo: {
+        categories
+      }
     });
+
+    ajax.post(`/filters/${categoryID}/${filterID}`, {
+      data: {
+        action: "delete"
+      }
+    })
+      .catch((err) => {
+        const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
+        const categoryElement = categories.find((a) => a.id === categoryID);
+
+        categoryElement.filters.splice(filterIndex, 0, prevFilterElement);
+        console.error(err);
+        store.set({
+          todo: { categories }
+        });
+      });
   }
 }
