@@ -1,7 +1,7 @@
 import * as React from "react";
 import { withStore, StoreState } from "@frontend/store";
-import { Icon , IconType } from "@frontend/components/icon";
 import { AppMenuMappedProps } from "@frontend/pages/type-menu";
+import { Icon , IconType } from "@frontend/components/icon";
 import path, { PathParams } from "@path";
 
 import {
