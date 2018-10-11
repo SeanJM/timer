@@ -9,6 +9,7 @@ export interface CodeMirrorInputEvent {
 interface CodeMirrorProps {
   onInput?: (e?: CodeMirrorInputEvent) => void;
   onValue?: (e?: InputValueEvent) => void;
+  className?: string;
   autofocus?: boolean;
   defaultValue?: string;
   lineWrapping?: boolean;
@@ -67,8 +68,16 @@ export class CodeMirror extends Component<CodeMirrorProps> {
   }
 
   render() {
+    const classList = [ "code-mirror" ];
+
+    if (this.props.className) {
+      classList.push(this.props.className);
+    }
+
     return (
-      <div className="code-mirror" ref={(node) => { this.node = node; }}>
+      <div
+        className={classList.join(" ")}
+        ref={(node) => { this.node = node; }}>
       </div>
     );
   }
