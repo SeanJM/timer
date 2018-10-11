@@ -1,5 +1,6 @@
 import _ from "lodash";
 import path, { PathQueryValue } from "@path";
+import destroy from "@destroy";
 import React from "react";
 import sortObjectBy from "@sort-object-by";
 import { dispatch } from "@frontend/action";
@@ -142,12 +143,19 @@ class TodoEditor extends React.Component<TodoEditorOutProps> {
     }
   }
 
+  componentDidUpdate(prevProps: TodoEditorOutProps) {
+    if (prevProps.todoID !== this.props.todoID) {
+      destroy(this.formValue);
+    }
+  }
+
   onFormChange(value) {
     this.formValue = value;
   }
 
   render() {
     const { history, location, query } = this.props;
+
     return (
       <Viewport
         titlebar={
