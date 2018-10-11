@@ -1,7 +1,7 @@
 @mixin list($font-size) {
   ul, ol {
-    margin-top: $font-size * 0.5;
-    margin-bottom: $font-size * 0.5;
+    margin-top: $font-size * 1;
+    margin-bottom: $font-size * 1;
     margin-left: $font-size * 1.8;
   }
 

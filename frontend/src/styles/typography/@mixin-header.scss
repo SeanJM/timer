@@ -1,10 +1,24 @@
 @mixin header($min, $max, $index) {
-  $base: $min + ($max - $min) / 6 * (6 - $index);
+  $font-size: $min + ($max - $min) / 6 * (6 - $index);
+
+  $u: $font-size * 0.3;
+  $u2: $u * 2;
+  $u3: $u * 3;
+  $u4: $u * 4;
+  $u5: $u * 5;
+  $u6: $u * 6;
 
   h#{$index} {
-    font-size: $base;
+    font-size: $font-size;
     font-weight: bold;
-    line-height: $base * 1.12;
-    letter-spacing: $base * -0.02;
+    line-height: $font-size * 1.12;
+    letter-spacing: $u * -0.03;
+
+    & + h6 { margin-top: $u; }
+    & + h5 { margin-top: $u; }
+    & + h4 { margin-top: $u; }
+    & + h3 { margin-top: $u2; }
+    & + h2 { margin-top: $u2; }
+    & + h1 { margin-top: $u2; }
   }
 }

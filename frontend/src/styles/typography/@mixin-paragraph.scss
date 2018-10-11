@@ -1,9 +1,23 @@
 @mixin paragraph($font-size) {
+  $u: $font-size * 0.5;
+
+  $u2: $u * 2;
+  $u3: $u * 3;
+  $u4: $u * 4;
+  $u5: $u * 5;
+  $u6: $u * 6;
+
   p {
     font-size: $font-size;
     line-height: $font-size * 1.325;
   }
 
-  p + p { margin-top: $u6; }
-  ul + p { margin-top: $u6; }
+  h1 + p { margin-top: $u2; }
+  h2 + p { margin-top: $u2; }
+  h3 + p { margin-top: $u2; }
+  h4 + p { margin-top: $u2; }
+  h5 + p { margin-top: $u2; }
+  h6 + p { margin-top: $u2; }
+  p + p { margin-top: $u3; }
+  ul + p { margin-top: $u3; }
 }

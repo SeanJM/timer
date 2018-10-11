@@ -93,8 +93,6 @@ export class TitleAndInput extends Component<InputAndInputProps, State> {
       className.push("title-and-input--show-input");
     }
 
-    console.log(this.props.title);
-
     return (
       <div className={className.join(" ")}>
         <div className="title-and-input_title">
