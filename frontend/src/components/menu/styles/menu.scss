@@ -64,15 +64,4 @@
 
 .menu-item--selected {
   color: $primary;
-
-  &:after {
-    position: absolute;
-    content: "";
-    left: 0;
-    bottom: 0;
-    top: 0;
-    width: $u;
-    background: $primary;
-    z-index: -1;
-  }
 }
