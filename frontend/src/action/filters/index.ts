@@ -11,6 +11,7 @@ export function filters(subscribe) {
 
       case "EDIT": {
         filterService.editFilter(value);
+        break;
       }
 
       case "DELETE": {
