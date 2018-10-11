@@ -1,0 +1,26 @@
+.viewport_body {
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  padding-bottom: $u8;
+}
+
+.viewport_body_content {
+  min-height: 100%;
+}
+
+.viewport--titlebar {
+  .viewport_body {
+    top: $titlebar-size;
+  }
+}
+
+.viewport--titlebar.viewport--toolbar {
+  .viewport_body {
+    top: ($titlebar-size * 2);
+  }
+}
+
+.viewport--feet .viewport_body {
+  bottom: $titlebar-size;
+}
