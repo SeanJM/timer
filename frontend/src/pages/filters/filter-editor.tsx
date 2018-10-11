@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { Button } from "@components/button";
 import { ChipData } from "@components/chip";
 import { dispatch } from "@frontend/action";
-import { FormConnect, FormValue } from "@components/form";
+import { Form, FormValue } from "@components/form";
 import { InputChipSelect } from "@components/input";
 import { InputGroup } from "@components/input-group";
 import { InputText } from "@components/input";
@@ -145,9 +145,9 @@ export class FilterEditorView extends Component<FilterEditorOutProps> {
         categoryID: this.props.categoryID,
         filterID: this.props.filterID,
         tagFilters: {
-          includes: this.form.includesTags,
-          excludes: this.form.excludesTags,
-          any: this.form.containsAnyTags,
+          includes: this.form.includesTags || [],
+          excludes: this.form.excludesTags || [],
+          any: this.form.containsAnyTags || [],
         },
       }
     });
@@ -181,7 +181,7 @@ export class FilterEditorView extends Component<FilterEditorOutProps> {
               />
             }
           >
-            <FormConnect onChange={this}>
+            <Form onChange={this}>
               <TitleAndInput
                 icon="edit"
                 name="filterName"
@@ -190,11 +190,11 @@ export class FilterEditorView extends Component<FilterEditorOutProps> {
                 component={InputText}
                 onSubmit={() => this.nameDidChange()}
               />
-            </FormConnect>
+            </Form>
           </Titlebar>
         }
         body={
-          <FormConnect type="borderless" onChange={this}>
+          <Form type="borderless" onChange={this}>
             <InputGroup>
               <label>Includes tags</label>
               <InputChipSelect
@@ -222,7 +222,7 @@ export class FilterEditorView extends Component<FilterEditorOutProps> {
                 onInput={() => this.tagsDidChange()}
               />
             </InputGroup>
-          </FormConnect>
+          </Form>
         }
       />
     );
