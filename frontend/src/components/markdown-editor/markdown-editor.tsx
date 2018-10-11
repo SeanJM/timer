@@ -4,6 +4,8 @@ import { Markdown } from "@components/markdown";
 import { DoubleClick } from "@components/double-click";
 import { InputValueEvent } from "types";
 import { KEYNAME_BY_CODE } from "@constants";
+import { Empty } from "@components/empty";
+import { Icon } from "@components/icon";
 
 interface MarkdownEditorProps {
   onInput?: (e: CodeMirrorInputEvent) => void;
@@ -31,11 +33,10 @@ export class MarkdownEditor extends React.Component<MarkdownEditorProps, Markdow
   onInput(e: CodeMirrorInputEvent) {
     const { onInput } = this.props;
 
+    this.onValue(e);
     if (onInput) {
       onInput(e);
     }
-
-    this.onValue(e);
   }
 
   onValue(e: CodeMirrorInputEvent) {
@@ -103,7 +104,12 @@ export class MarkdownEditor extends React.Component<MarkdownEditorProps, Markdow
               className="markdown-editor_result"
               onDoubleClick={() => this.onDoubleClick()}
             >
-              <Markdown>{this.state.value}</Markdown>
+              {this.state.value
+                 ? (
+                   <Markdown>{this.state.value}</Markdown>
+                 )
+                 : <Empty icon={<Icon type="edit-document"/>} title="Double click to edit"/>
+              }
             </DoubleClick>
           )}
       </div>
