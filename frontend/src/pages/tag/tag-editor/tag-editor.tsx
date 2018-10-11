@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Viewport } from "@frontend/components/viewport";
-import { FormConnect } from "@frontend/components/form";
+import { Form } from "@frontend/components/form";
 import { InputGroup } from "@frontend/components/input-group";
 import generateHash from "@generate-hash";
 import { WithRouterProps } from "@frontend/components/router";
@@ -101,7 +101,7 @@ class TagEditorView extends Component<TagEditorProps> {
             </Titlebar>
         }
         body={
-          <FormConnect type="borderless" id={FORM_ID}>
+          <Form type="borderless" id={FORM_ID}>
             <InputGroup>
               <label>Color</label>
               <Swatch
@@ -113,7 +113,7 @@ class TagEditorView extends Component<TagEditorProps> {
                 })}
               />
             </InputGroup>
-          </FormConnect>
+          </Form>
         }
       />
     );
