@@ -8,7 +8,8 @@ import { KEYNAME_BY_CODE } from "@constants";
 export interface SlideProps {
   length?: number;
   name?: string;
-  value?: number;
+  defaultValue?: number;
+  autofocus?: boolean;
 
   onBlur?: (e: React.FocusEvent) => void;
   onFocus?: (e: React.FocusEvent) => void;
@@ -17,19 +18,32 @@ export interface SlideProps {
 }
 
 export interface SlideState {
-  isFocus: boolean;
   isDragging: boolean;
+  isFocus: boolean;
   shadowPositionX: number;
+  value: number;
 }
 
 export class Slide extends Component<SlideProps, SlideState> {
+  node: HTMLDivElement;
+
   constructor(props) {
     super(props);
     this.state = {
-      isFocus: false,
       isDragging: false,
-      shadowPositionX: 0
+      isFocus: false,
+
+      shadowPositionX: 0,
+      value: this.props.defaultValue || 0,
     };
+  }
+
+  getValueEvent(props: Partial<InputValueEvent> = {}) {
+    return Object.assign({
+      name: this.props.name,
+      type: "number",
+      value: this.state.value,
+    }, props);
   }
 
   getValue(positionX: number) {
@@ -53,23 +67,16 @@ export class Slide extends Component<SlideProps, SlideState> {
 
     this.setState({
       shadowPositionX: e.positionX,
-    });
-
-    this.props.onValue({
-      name: this.props.name,
-      type: "number",
       value,
     });
   }
 
   onDragEnd(e: DragMeEvent) {
     const value = this.getValue(e.positionX);
+    const evt = this.getValueEvent({ value });
 
-    this.props.onInput({
-      name: this.props.name,
-      type: "number",
-      value,
-    });
+    this.props.onValue(evt);
+    this.props.onInput(evt);
 
     this.setState({
       isDragging: false
@@ -80,40 +87,58 @@ export class Slide extends Component<SlideProps, SlideState> {
     this.setState({
       isFocus: true
     });
+
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
   }
 
   onBlur(e) {
     this.setState({
       isFocus: false
     });
+
+    if (this.props.onBlur) {
+      this.props.onBlur(e);
+    }
   }
 
   onKeyDown(e) {
-    const evt = {
-      name: this.props.name,
-      type: "number",
-      value: this.props.value,
-    };
-
     if (KEYNAME_BY_CODE[e.which] === "LEFT") {
-      evt.value = Math.max(0, evt.value - 1);
+      let evt = this.getValueEvent({
+        value: Math.max(0, this.state.value - 1),
+      });
+      this.props.onValue(evt);
       this.props.onInput(evt);
     } else if (KEYNAME_BY_CODE[e.which] === "RIGHT") {
-      evt.value = Math.min(this.props.length, evt.value + 1);
+      let evt = this.getValueEvent({
+        value: Math.min(this.props.length, this.state.value + 1),
+      });
+      this.props.onValue(evt);
       this.props.onInput(evt);
     }
   }
 
+  componentDidUpdate(prevProps: SlideProps) {
+    if (prevProps.defaultValue !== this.props.defaultValue) {
+      let evt = this.getValueEvent({ value: this.props.defaultValue || 0 });
+      this.setState({ value: evt.value });
+      this.props.onValue(evt);
+    }
+  }
+
   componentDidMount() {
-    this.props.onValue({
-      name: this.props.name,
-      type: "number",
-      value: this.props.value,
-    });
+    this.props.onValue(
+      this.getValueEvent()
+    );
+
+    if (this.props.autofocus) {
+      this.node.focus();
+    }
   }
 
   render() {
-    const value = this.props.value;
+    const value = this.state.value;
     const length = this.props.length || 10;
     const className = ["slide"];
 
@@ -123,6 +148,7 @@ export class Slide extends Component<SlideProps, SlideState> {
 
     return (
       <DragMe
+        $ref={(node) => { this.node = node; }}
         className={className.join(" ")}
 
         onBlur={(e) => this.onBlur(e)}
@@ -135,6 +161,7 @@ export class Slide extends Component<SlideProps, SlideState> {
         <SlideSegments
           length={length}
           value={value}/>
+
         <div className="slide-focus"/>
 
         {this.state.isDragging
