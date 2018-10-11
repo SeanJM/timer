@@ -6,15 +6,17 @@ export type IconType =
   | "check"
   | "close"
   | "edit"
+  | "edit-document"
   | "filter"
-  | "folder-add"
   | "folder"
+  | "folder-add"
   | "history-back"
+  | "mouse-click"
   | "save"
   | "search"
   | "sort"
-  | "tag-filter"
   | "tag"
+  | "tag-filter"
   ;
 
 interface IconProps {
