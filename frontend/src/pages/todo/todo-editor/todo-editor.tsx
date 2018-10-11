@@ -1,5 +1,4 @@
 import _ from "lodash";
-import generateHash from "@generate-hash";
 import path, { PathQueryValue } from "@path";
 import React from "react";
 import sortObjectBy from "@sort-object-by";
@@ -8,7 +7,7 @@ import { dispatch } from "@frontend/action";
 import { Button } from "@components/button";
 import { ChipData } from "@components/chip";
 import { Filter } from "@components/filter";
-import { FormConnect, FormValue } from "@components/form";
+import { Form, FormValue } from "@components/form";
 import { InputChipSelect } from "@components/input/input-chip-select";
 import { InputGroup } from "@components/input-group";
 import { InputSlide, InputText } from "@components/input";
@@ -20,8 +19,6 @@ import { TitleAndInput } from "@components/title-and-input";
 import { Titlebar } from "@components/titlebar";
 import { Viewport } from "@components/viewport";
 import { withStore, StoreState } from "@frontend/store";
-
-const FORM_ID = generateHash();
 
 const EMPTY_TODO_RESPONSE: TodoResponse = {
   completedDate: null,
@@ -120,8 +117,6 @@ class TodoEditor extends React.Component<TodoEditorOutProps> {
       todoTags
     } = this.formValue;
 
-    console.log(todoTags);
-
     dispatch("TODO", {
       type: "EDIT",
       value: {
@@ -168,20 +163,19 @@ class TodoEditor extends React.Component<TodoEditorOutProps> {
               />
             }
           >
-            <TitleAndInput
-              icon="edit"
-              name="todoName"
-              defaultValue={this.props.todoName}
-              title={this.formValue.todoName || this.props.todoName}
-              component={InputText}
-              onSubmit={() => this.save()}
-              onValue={(e) => {
-                dispatch("FORM_VALUE", {
-                  id: FORM_ID,
-                  ...e,
-                });
-            }}
-            />
+            <Form
+              onChange={this}
+              type="borderless"
+            >
+              <TitleAndInput
+                component={InputText}
+                defaultValue={this.props.todoName}
+                icon="edit"
+                name="todoName"
+                onSubmit={() => this.save()}
+                title={this.formValue.todoName || this.props.todoName}
+              />
+            </Form>
           </Titlebar>
         }
         toolbar={
@@ -208,7 +202,7 @@ class TodoEditor extends React.Component<TodoEditorOutProps> {
         }
         body={
           <Filter view={query.todoEditView}>
-            <FormConnect
+            <Form
               onChange={this}
               type="borderless"
               view="settings"
@@ -237,17 +231,14 @@ class TodoEditor extends React.Component<TodoEditorOutProps> {
                   length={this.props.todoPriorityLength}
                 />
               </InputGroup>
-            </FormConnect>
+            </Form>
             <MarkdownEditor
               defaultValue={this.props.todoNotes}
+              name="todoNotes"
               view="notes"
+
               onInput={() => this.save()}
-              onValue={(e) => dispatch("FORM_VALUE", {
-                type: e.type,
-                value: e.value,
-                name: "todoNotes",
-                id: FORM_ID
-              })}
+              onValue={(e) => { this.formValue[e.name] = e.value; }}
             />
           </Filter>
         }
