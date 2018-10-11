@@ -13,6 +13,7 @@ import { InputText } from "@components/input";
 import { List } from "@components/list";
 import { RouteComponentProps } from "@components/router";
 import { routes } from "@frontend/routes";
+import { SmartScroll } from "@components/smart-scroll";
 import { TabBar, Tab } from "@components/tab-bar";
 import { TitleAndInput } from "@components/title-and-input";
 import { Titlebar } from "@components/titlebar";
@@ -282,73 +283,75 @@ class TodoListView extends Component<TodoListOutProps, {}> {
           </Titlebar>
         }
         body={
-          <Filter id={query.view}>
-            <List id="complete">
-              {this.props.completeTodos
-                .sort((a, b) => this.sortBy(a, b))
-                .map((todo) => (
-                  <Todo
-                    categoryID={categoryID}
-                    completedDate={todo.completedDate}
-                    created={todo.created}
-                    history={history}
-                    id={todo.id}
-                    isActive={params.todoID === todo.id}
-                    key={todo.id}
-                    priority={todo.priority}
-                    priorityLength={priorityLength}
-                    search={query.search}
-                    showAlt={showAlt}
-                    state={todo.state}
-                    title={todo.name}
-                  />
-                ))
-              }
-            </List>
-            <List id="incomplete">
-              {this.props.incompleteTodos
-                .sort((a, b) => this.sortBy(a, b))
-                .map((todo) => (
-                  <Todo
-                    categoryID={categoryID}
-                    created={todo.created}
-                    history={history}
-                    id={todo.id}
-                    isActive={params.todoID === todo.id}
-                    key={todo.id}
-                    priority={todo.priority}
-                    priorityLength={priorityLength}
-                    search={query.search}
-                    showAlt={showAlt}
-                    state={todo.state}
-                    title={todo.name}
-                  />
-                ))
-              }
-            </List>
-            <List id="all">
-              {this.props.todos
-                .sort((a, b) => this.sortBy(a, b))
-                .map((todo) => (
-                  <Todo
-                    categoryID={categoryID}
-                    completedDate={todo.completedDate}
-                    created={todo.created}
-                    history={history}
-                    id={todo.id}
-                    isActive={params.todoID === todo.id}
-                    key={todo.id}
-                    priority={todo.priority}
-                    priorityLength={priorityLength}
-                    search={query.search}
-                    showAlt={showAlt}
-                    state={todo.state}
-                    title={todo.name}
-                  />
-                ))
-              }
-            </List>
-          </Filter>
+          <SmartScroll>
+            <Filter id={query.view}>
+              <List id="complete">
+                {this.props.completeTodos
+                  .sort((a, b) => this.sortBy(a, b))
+                  .map((todo) => (
+                    <Todo
+                      categoryID={categoryID}
+                      completedDate={todo.completedDate}
+                      created={todo.created}
+                      history={history}
+                      id={todo.id}
+                      isActive={params.todoID === todo.id}
+                      key={todo.id}
+                      priority={todo.priority}
+                      priorityLength={priorityLength}
+                      search={query.search}
+                      showAlt={showAlt}
+                      state={todo.state}
+                      title={todo.name}
+                    />
+                  ))
+                }
+              </List>
+              <List id="incomplete">
+                {this.props.incompleteTodos
+                  .sort((a, b) => this.sortBy(a, b))
+                  .map((todo) => (
+                    <Todo
+                      categoryID={categoryID}
+                      created={todo.created}
+                      history={history}
+                      id={todo.id}
+                      isActive={params.todoID === todo.id}
+                      key={todo.id}
+                      priority={todo.priority}
+                      priorityLength={priorityLength}
+                      search={query.search}
+                      showAlt={showAlt}
+                      state={todo.state}
+                      title={todo.name}
+                    />
+                  ))
+                }
+              </List>
+              <List id="all">
+                {this.props.todos
+                  .sort((a, b) => this.sortBy(a, b))
+                  .map((todo) => (
+                    <Todo
+                      categoryID={categoryID}
+                      completedDate={todo.completedDate}
+                      created={todo.created}
+                      history={history}
+                      id={todo.id}
+                      isActive={params.todoID === todo.id}
+                      key={todo.id}
+                      priority={todo.priority}
+                      priorityLength={priorityLength}
+                      search={query.search}
+                      showAlt={showAlt}
+                      state={todo.state}
+                      title={todo.name}
+                    />
+                  ))
+                }
+              </List>
+            </Filter>
+          </SmartScroll>
         }
         feet={
           <TodoListProgress
