@@ -32,7 +32,7 @@ interface TodoOutProps extends WithRouterProps {
 function mapStateToProps(state: StoreState, props: TodoInProps): TodoOutProps {
   const params: TodoPathInParams = path.params(props.location.pathname, state.routes.schema);
   const category = state.todo.categories.find(a => a.id === params.categoryID);
-  const todo = category.todos.find(a => a.id === params.elementID);
+  const todo = category.todos.find((a) => a.id === params.elementID);
   return {
     ...props,
     params: {
