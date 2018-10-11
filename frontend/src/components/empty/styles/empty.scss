@@ -1,0 +1,14 @@
+.empty {
+  text-align: center;
+
+  .icon {
+    width: $u20;
+    height: $u20;
+    margin-bottom: $u3;
+    fill: $grey-light;
+  }
+
+  h5 {
+    color: $grey-light;
+  }
+}
