@@ -23,7 +23,6 @@ export class TabBar extends Component<TabBarProps, TabBarState> {
   }
 
   setWidths() {
-    console.log(this.state.maxWidth);
     this.setState({
       width: this.state.maxWidth,
     });
