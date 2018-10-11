@@ -13,6 +13,7 @@ export interface DragMeEvent {
 
 interface DragMeProps extends Partial<JSX.ElementChildrenAttribute> {
   className?: string;
+  $ref?: (e: HTMLDivElement) => void;
   onMouseDown?: (e: DragMeEvent) => void;
   onDragMove?: (e: DragMeEvent) => void;
   onDragEnd?: (e: DragMeEvent) => void;
@@ -144,13 +145,19 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
   render() {
     return (
       <div
-        tabIndex={0}
-        onKeyDown={(e) => this.onKeyDown(e)}
-        onFocus={(e) => this.onFocus(e)}
-        onBlur={(e) => this.onBlur(e)}
+        ref={(node) => {
+          this.node = node;
+          if (this.props.$ref) {
+            this.props.$ref(node);
+          }
+        }}
         className={this.props.className}
-        ref={(node) => { this.node = node; }}
-        onMouseDown={(e) => this.onMouseDown(e)}>
+        onBlur={(e) => this.onBlur(e)}
+        onFocus={(e) => this.onFocus(e)}
+        onKeyDown={(e) => this.onKeyDown(e)}
+        onMouseDown={(e) => this.onMouseDown(e)}
+        tabIndex={0}
+      >
         {this.props.children}
       </div>
     );
