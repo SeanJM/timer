@@ -10,10 +10,7 @@ import { InputValueEvent } from "@types";
 import { KEYNAME_BY_CODE } from "@constants";
 import { withStore, StoreState, StoreDropdown } from "@frontend/store";
 
-export interface ChipInputInputEvent {
-  type: string;
-  value: string[];
-}
+export type ChipValueEvent = InputValueEvent<{ value: string[] }>;
 
 export interface ChipInputInProps {
   data: ChipData[];
@@ -22,8 +19,8 @@ export interface ChipInputInProps {
   name?: string;
   onBlur?: (e: React.FocusEvent) => void;
   onFocus?: (e: React.FocusEvent) => void;
-  onInput?: (e: ChipInputInputEvent) => void;
-  onValue?: (e: InputValueEvent<{ value: string[] }>) => void;
+  onInput?: (e: ChipValueEvent) => void;
+  onValue?: (e: ChipValueEvent) => void;
 }
 
 export interface ChipInputOutProps extends ChipInputInProps {
@@ -139,7 +136,7 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
     }
   }
 
-  onValue() {
+  onValue(e: InputValueEvent) {
     const { onValue, name } = this.props;
     if (onValue) {
       onValue({
@@ -170,10 +167,16 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
 
   onBackSpace() {
     const { value } = this.state;
+
     if (!this.input.value.length) {
-      this.setState({
-        value: value.slice(0, -1)
-      }, () => this.onValue());
+      let evt = {
+        name: this.props.name,
+        type: "Array<string|undefined>",
+        value: value.slice(0, -1),
+      };
+
+      this.setState({ value: evt.value });
+      this.onValue(evt);
     }
   }
 
@@ -189,45 +192,66 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
     const { value } = this.state;
     const { onInput } = this.props;
 
-    if (onInput) {
-      onInput({
-        type: "input",
-        value: this.state.value
-      });
-    }
+    const evt = {
+      name: this.props.name,
+      type: "Array<string|undefined>",
+      value: value.filter((chipIDchipID) => chipIDchipID !== removeID),
+    };
 
     this.setState({
-      value: value.filter((chipIDchipID) => chipIDchipID !== removeID)
-    }, () => this.onValue());
+      value: evt.value
+    });
+
+    this.onValue(evt);
+    if (onInput) {
+      onInput(evt);
+    }
   }
 
   onInput(e: DropdownChangeEvent) {
     const { onInput } = this.props;
 
+    const evt = {
+      name: this.props.name,
+      type: "Array<string|undefined>",
+      value: this.state.value.concat(e.id),
+    };
+
     this.input.value = "";
     this.filterData();
 
+    this.setState({ value: evt.value });
+    this.onValue(evt);
     if (onInput) {
-      onInput({
-        type: "input",
-        value: this.state.value
-      });
+      onInput(evt);
     }
 
-    this.setState({
-      value: this.state.value.concat(e.id)
-    }, () => this.onValue());
   }
 
   componentDidMount() {
-    this.onValue();
+    const evt = {
+      name: this.props.name,
+      type: "Array<string|undefined>",
+      value: this.state.value,
+    };
+
+    this.onValue(evt);
   }
 
   componentDidUpdate(prevProps) {
-    if (!_.isEqual(prevProps.defaultValue, this.props.defaultValue)) {
-      this.setState({
-        value: this.props.defaultValue || []
-      }, () => this.onValue());
+    const isNotEqual =
+      !_.isEqual(prevProps.defaultValue, this.props.defaultValue) ||
+      typeof prevProps.defaultValue === "undefined" && Array.isArray(this.props.defaultValue);
+
+    if (isNotEqual) {
+      let evt = {
+        name: this.props.name,
+        type: "Array<string|undefined>",
+        value: this.props.defaultValue || [],
+      };
+
+      this.setState({ value: evt.value });
+      this.onValue(evt);
     }
   }
 
