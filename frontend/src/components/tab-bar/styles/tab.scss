@@ -1,0 +1,31 @@
+.tab {
+  display: inline-block;
+  height: $titlebar-size;
+  cursor: default;
+  position: relative;
+  user-select: none;
+  min-width: $u20;
+  text-align: center;
+}
+
+.tab--active {
+  &:after {
+    content: "";
+    position: absolute;
+    left: $u;
+    right: $u;
+    bottom: 0;
+    height: 4px;
+    background: $primary;
+  }
+}
+
+.tab_text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: $font-size;
+  line-height: $line-height;
+  padding: $u4 $u4;
+  width: 100%;
+}
