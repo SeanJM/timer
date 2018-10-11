@@ -55,7 +55,6 @@ const service = {
   handleEvent(e: KeyboardEvent) {
     const target = e.target as HTMLInputElement;
     const targetIsInput = /input|textarea/i.test(target.tagName);
-    console.log(e.which);
     if (!targetIsInput) {
       if (e.type === "keydown") {
         this.onKeyDown(KEYNAME_BY_CODE[e.which]);
