@@ -3,6 +3,7 @@ import { withStore, StoreState } from "@frontend/store";
 import { Button } from "@frontend/components/button";
 import { Titlebar } from "@frontend/components/titlebar";
 import { MenuItem } from "@frontend/components/menu";
+import { SmartScroll } from "@frontend/components/smart-scroll";
 import { dispatch } from "@frontend/action/";
 
 import {
@@ -59,7 +60,7 @@ export class CategoryList extends Component<AppMenuMappedProps, {}> {
     }
 
     return (
-      <div className={className.join(" ")}>
+      <SmartScroll className={className.join(" ")}>
         <Titlebar
           left={
             <TitleAndInput
@@ -103,7 +104,7 @@ export class CategoryList extends Component<AppMenuMappedProps, {}> {
             />
           ))}
         </div>
-      </div>
+      </SmartScroll>
     );
   }
 }

@@ -4,10 +4,10 @@
   width: 100%;
   bottom: 0;
   top: 0;
-  overflow-y: scroll;
   background: $black-light;
   transition: padding-left 0.3s, width 0.3s;
   z-index: 1;
+  border-left: 1px solid $black;
 
   .title-and-input {
     @extend %title-and-input-dark;
