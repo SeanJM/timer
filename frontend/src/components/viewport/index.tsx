@@ -1,5 +1,4 @@
 import React from "react";
-import { SmartScroll } from "@components/smart-scroll";
 
 interface ViewPortProps {
   head?: JSX.Element;
@@ -61,9 +60,9 @@ export function Viewport(props: ViewPortProps) {
       {scopebar
         ? <div className="viewport_scopebar">{scopebar}</div>
         : null}
-      <SmartScroll className="viewport_body">
+      <div className="viewport_body">
         {body}
-      </SmartScroll>
+      </div>
       {feet
         ? <div className="viewport_feet">{feet}</div>
         : null}
