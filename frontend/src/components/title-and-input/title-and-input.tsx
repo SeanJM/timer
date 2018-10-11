@@ -59,7 +59,7 @@ export class TitleAndInput extends Component<InputAndInputProps, State> {
 
   onEscKey() {
     this.setState({
-      showInput: true,
+      showInput: false,
     });
   }
 
@@ -92,6 +92,8 @@ export class TitleAndInput extends Component<InputAndInputProps, State> {
     if (this.state.showInput) {
       className.push("title-and-input--show-input");
     }
+
+    console.log(this.props.title);
 
     return (
       <div className={className.join(" ")}>
