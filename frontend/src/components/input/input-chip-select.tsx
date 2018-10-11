@@ -1,5 +1,5 @@
 import React from "react";
-import { ChipInput, ChipData, ChipInputInputEvent } from "@frontend/components/chip";
+import { ChipInput, ChipData } from "@frontend/components/chip";
 import { inputWrapper } from "@frontend/components/input/input-wrapper";
 import { InputValueEvent } from "@types";
 
@@ -11,7 +11,7 @@ export interface ChipSelectProps {
 
   onBlur: (e?: React.FocusEvent) => void;
   onFocus: (e?: React.FocusEvent) => void;
-  onInput?: (e?: ChipInputInputEvent) => void;
+  onInput?: (e?: InputValueEvent) => void;
   onValue: (e: InputValueEvent) => void;
 }
 
