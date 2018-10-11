@@ -1,7 +1,18 @@
-.viewport_body .markdown-editor_result {
-  padding: $u6;
+.markdown-editor_result {
+  .smart-scroll_content {
+    padding: $u6;
+  }
 }
 
 .markdown-editor {
-  min-height: $u50;
+  height: 100%;
+}
+
+.markdown-editor_editor {
+  height: 100%;
+
+  & .CodeMirror {
+    height: 100%;
+    border: 0;
+  }
 }

@@ -1,11 +1,14 @@
 import React from "react";
+
 import { CodeMirror, CodeMirrorInputEvent } from "@components/code-mirror";
-import { Markdown } from "@components/markdown";
 import { DoubleClick } from "@components/double-click";
-import { InputValueEvent } from "types";
-import { KEYNAME_BY_CODE } from "@constants";
 import { Empty } from "@components/empty";
 import { Icon } from "@components/icon";
+import { Markdown } from "@components/markdown";
+import { SmartScroll } from "@components/smart-scroll";
+
+import { InputValueEvent } from "types";
+import { KEYNAME_BY_CODE } from "@constants";
 
 interface MarkdownEditorProps {
   onInput?: (e: CodeMirrorInputEvent) => void;
@@ -87,16 +90,15 @@ export class MarkdownEditor extends React.Component<MarkdownEditorProps, Markdow
       >
         {this.state.isEditing
           ? (
-            <div className="markdown-editor_editor">
-              <CodeMirror
-                autofocus
-                defaultValue={this.props.defaultValue}
-                lineWrapping={true}
-                mode="markdown"
-                name="todoNotes"
-                onInput={(e) => this.onInput(e)}
-              />
-            </div>
+            <CodeMirror
+              className="markdown-editor_editor"
+              autofocus
+              defaultValue={this.props.defaultValue}
+              lineWrapping={true}
+              mode="markdown"
+              name="todoNotes"
+              onInput={(e) => this.onInput(e)}
+            />
           )
 
           : (
@@ -106,7 +108,9 @@ export class MarkdownEditor extends React.Component<MarkdownEditorProps, Markdow
             >
               {this.state.value
                  ? (
-                   <Markdown>{this.state.value}</Markdown>
+                   <SmartScroll>
+                     <Markdown>{this.state.value}</Markdown>
+                   </SmartScroll>
                  )
                  : <Empty icon={<Icon type="edit-document"/>} title="Double click to edit"/>
               }
