@@ -2,7 +2,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  background: $black;
+  background: $black-light;
   bottom: 0;
   transition: width 0.3s;
   z-index: 2;
@@ -92,18 +92,6 @@
 }
 
 .type-menu_categories_item--select {
-  &:after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: $u;
-    background: $primary;
-    z-index: -1;
-    transition: width 0.3s;
-  }
-
   .icon {
     fill: $primary;
   }
@@ -130,10 +118,6 @@
 
   label {
     opacity: 0;
-  }
-
-  .icon {
-    fill: #fff;
   }
 
   .type-menu_categories_item--select {
