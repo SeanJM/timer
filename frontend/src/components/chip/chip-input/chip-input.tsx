@@ -13,6 +13,7 @@ import { withStore, StoreState, StoreDropdown } from "@frontend/store";
 export type ChipValueEvent = InputValueEvent<{ value: string[] }>;
 
 export interface ChipInputInProps {
+  autofocus?: boolean;
   data: ChipData[];
   defaultValue?: string[];
   filter?: string;
@@ -97,37 +98,41 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
     };
   }
 
+  getValueEvent(props: Partial<InputValueEvent>) {
+    return {
+      name: this.props.name,
+      type: "Array<string|undefined>",
+      value: this.state.value,
+      ...props
+    };
+  }
+
   open() {
-    this.setState({
-      showDropdown: true
-    });
+    this.setState({ showDropdown: true });
   }
 
   close() {
-    this.setState({
-      showDropdown: false
-    });
+    this.setState({ showDropdown: false });
   }
 
   filterData() {
     const { data } = this.props;
     const filter = this.input.value.toLowerCase();
+    const filteredData = [];
     const idList = data.map((a) => a.id);
+
     let i = -1;
     const n = data.length;
-    const filtered = [];
 
     while (++i < n) {
       let isNotSelected = idList.indexOf(data[i].id) !== -1;
       let labelIsMatch = data[i].label.toLowerCase().indexOf(filter) > -1;
       if (isNotSelected && (!filter || labelIsMatch)) {
-        filtered.push(data[i]);
+        filteredData.push(data[i]);
       }
     }
 
-    this.setState({
-      filteredData: filtered
-    });
+    this.setState({ filteredData });
   }
 
   onClick(e: React.MouseEvent) {
@@ -137,13 +142,9 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
   }
 
   onValue(e: InputValueEvent) {
-    const { onValue, name } = this.props;
+    const { onValue } = this.props;
     if (onValue) {
-      onValue({
-        name,
-        type: "Array<string|undefined>",
-        value: this.state.value
-      });
+      onValue(e);
     }
   }
 
@@ -166,16 +167,10 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
   }
 
   onBackSpace() {
-    const { value } = this.state;
-
     if (!this.input.value.length) {
-      let evt = {
-        name: this.props.name,
-        type: "Array<string|undefined>",
-        value: value.slice(0, -1),
-      };
-
-      this.setState({ value: evt.value });
+      const value = this.state.value.slice(0, -1);
+      let evt = this.getValueEvent({ value });
+      this.setState({ value });
       this.onValue(evt);
     }
   }
@@ -189,20 +184,13 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
   }
 
   onRemove(removeID: string) {
-    const { value } = this.state;
     const { onInput } = this.props;
+    const value = this.state.value.filter((chipID) => chipID !== removeID);
+    const evt = this.getValueEvent({ value });
 
-    const evt = {
-      name: this.props.name,
-      type: "Array<string|undefined>",
-      value: value.filter((chipIDchipID) => chipIDchipID !== removeID),
-    };
-
-    this.setState({
-      value: evt.value
-    });
-
+    this.setState({ value });
     this.onValue(evt);
+
     if (onInput) {
       onInput(evt);
     }
@@ -210,47 +198,38 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
 
   onInput(e: DropdownChangeEvent) {
     const { onInput } = this.props;
-
-    const evt = {
-      name: this.props.name,
-      type: "Array<string|undefined>",
-      value: this.state.value.concat(e.id),
-    };
+    const value = this.state.value.concat(e.id);
+    const evt = this.getValueEvent({ value });
 
     this.input.value = "";
     this.filterData();
-
-    this.setState({ value: evt.value });
+    this.setState({ value });
     this.onValue(evt);
+
     if (onInput) {
       onInput(evt);
     }
-
   }
 
   componentDidMount() {
-    const evt = {
-      name: this.props.name,
-      type: "Array<string|undefined>",
-      value: this.state.value,
-    };
-
+    const evt = this.getValueEvent({ value: this.state.value });
     this.onValue(evt);
+    if (this.props.autofocus) {
+      this.input.focus();
+    }
   }
 
   componentDidUpdate(prevProps) {
+    const { defaultValue } = this.props;
+
     const isNotEqual =
-      !_.isEqual(prevProps.defaultValue, this.props.defaultValue) ||
-      typeof prevProps.defaultValue === "undefined" && Array.isArray(this.props.defaultValue);
+      !_.isEqual(prevProps.defaultValue, defaultValue) ||
+      typeof prevProps.defaultValue === "undefined" && Array.isArray(defaultValue);
 
     if (isNotEqual) {
-      let evt = {
-        name: this.props.name,
-        type: "Array<string|undefined>",
-        value: this.props.defaultValue || [],
-      };
-
-      this.setState({ value: evt.value });
+      const value = defaultValue || [];
+      let evt = this.getValueEvent({ value });
+      this.setState({ value });
       this.onValue(evt);
     }
   }
