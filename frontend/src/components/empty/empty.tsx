@@ -10,7 +10,7 @@ export function Empty(props: EmptyProps) {
   return (
     <div className="empty">
       {props.icon}
-      <h5>{props.title}</h5>
+      <h6>{props.title}</h6>
       {props.text ? <p>{props.text}</p> : null}
     </div>
   );

@@ -1,16 +1,19 @@
 .empty {
-  margin-top: $u4;
+  margin-top: $u8;
   text-align: center;
   user-select: none;
+  display: inline-block;
+  width: 100%;
 
   .icon {
-    width: $u20;
-    height: $u20;
+    width: $u16;
+    height: $u16;
     margin-bottom: $u3;
     fill: $grey-light;
   }
 
-  h5 {
+  h5,
+  h6 {
     color: $grey-light;
   }
 }
