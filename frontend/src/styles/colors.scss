@@ -8,6 +8,7 @@ $pink-light: lighten($pink, 15%);
 $blue: adjust-hue($red, 200deg);
 $blue-dark: darken($blue, 15%);
 $blue-light: lighten($blue, 15%);
+$blue-lightest: adjust-hue(lighten($blue, 28%), -5deg);
 
 $green: adjust-hue($red, 175deg);
 $green-light: lighten($green, 15%);
@@ -32,6 +33,7 @@ $grey-lightest: lighten($grey, 48%);
 
 $primary: $blue;
 $primary-light: $blue-light;
+$primary-lightest: $blue-lightest;
 $primary-dark: $blue-dark;
 
 $danger: $red;
