@@ -12,11 +12,12 @@
   &:after {
     content: "";
     position: absolute;
-    left: $u;
-    right: $u;
+    left: $u2;
+    right: $u2;
     bottom: 0;
     height: 4px;
     background: $primary;
+    z-index: 1;
   }
 }
 
