@@ -50,6 +50,7 @@ export interface StoreState {
   todo: {
     todoSettings?: CategoryAllResponse["todoSettings"],
     categories?: CategoryResponse[];
+    selected?: string[];
     isRequest?: null | boolean;
     isSuccess?: null | boolean;
   };
@@ -100,6 +101,7 @@ export const store = new Persistore<StoreState>(
     todo: {
       todoSettings: {},
       categories: [],
+      selected: [],
       isRequest: null,
       isSuccess: null,
     },
