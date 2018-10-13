@@ -1,81 +1,176 @@
 import React, { Component } from "react";
-import { ListItemProps } from "./list-item";
 import { KEYNAME_BY_CODE } from "@constants";
+import { ListItemProps } from "./list-item";
 
-type ListSelectedIndex = number[];
+type ListSelectedIndex = string[];
 
 export interface ListSelectEvent<T = {}> {
   type: string;
-  targetProps: T;
+  selected: T[];
+  deselected: T[];
+  target: T;
+}
+
+export interface ListKeyboardEvent<T = {}> {
+  keyname: string;
+  which: number;
+  selected: T[];
+  type: string;
 }
 
 interface ListProps extends Partial<JSX.ElementChildrenAttribute> {
   id?: string;
   multiselect?: boolean;
-  selectedIndex?: ListSelectedIndex;
+  selectedIDList?: ListSelectedIndex;
   onSelect?: (e: ListSelectEvent) => void;
-  onDeselect?: (e: ListSelectEvent) => void;
+  onKeyDown?: (e: ListKeyboardEvent) => void;
 }
 
 interface ListState {
-  canSelectMulti: boolean;
-  selectedIndex: ListSelectedIndex;
+  controlPressed: boolean;
+  shiftPressed: boolean;
+  selectedIDList: ListSelectedIndex;
 }
 
 type ListChild = React.ReactElement<ListItemProps>;
 
 export class List extends Component<ListProps, ListState> {
   constructor(props: ListProps) {
+    const children = React.Children.toArray(props.children) as ListChild[];
+    let i = -1;
+    const n = children.length;
+
+    while (++i < n) {
+      if (!children[i].props.id) {
+        throw new Error("List children require an id");
+      }
+    }
+
     super(props);
     this.state = {
-      selectedIndex: this.props.selectedIndex || [],
-      canSelectMulti: false,
+      controlPressed: false,
+      selectedIDList: this.props.selectedIDList || [],
+      shiftPressed: false,
     };
   }
 
-  childDidClick(e: React.MouseEvent, child: ListChild, index: number) {
-    let selectedIndex = this.state.selectedIndex.slice();
-    const indexOf = selectedIndex.indexOf(index);
+  onClick(e: React.MouseEvent, index: number) {
+    let prevSelectedIndex = this.state.selectedIDList;
+    let selectedIDList = this.state.selectedIDList.slice();
 
-    if (this.props.multiselect && this.state.canSelectMulti) {
-      if (indexOf === -1) {
-        selectedIndex.push(index);
-      } else {
-        selectedIndex.splice(indexOf, 1);
+    const children = React.Children.toArray(this.props.children) as ListChild[];
+    const childID = children[index].props.id;
+    const indexOf = selectedIDList.findIndex((id) => id === childID);
+    const { controlPressed, shiftPressed } = this.state;
+
+    if (this.props.multiselect && (controlPressed || shiftPressed)) {
+      if (controlPressed) {
+        if (indexOf === -1) {
+          selectedIDList.push(childID);
+        } else {
+          selectedIDList.splice(indexOf, 1);
+        }
+      }
+
+      if (shiftPressed) {
+        let lastID = selectedIDList.slice(-1)[0];
+        let i = children.findIndex((child) => child.props.id === lastID);
+
+        if (i < index) {
+          const n = index + 1;
+          while (++i < n) {
+            selectedIDList.push(children[i].props.id);
+          }
+        } else {
+          while (i > index) {
+            selectedIDList.push(children[i].props.id);
+            i--;
+          }
+        }
       }
     } else {
-      selectedIndex = [index];
+      selectedIDList = [ children[index].props.id ];
     }
 
-    this.setState({ selectedIndex });
+    this.setState({ selectedIDList });
 
-    if (this.props.onSelect && indexOf === -1) {
+    if (this.props.onSelect) {
+      let selected = [];
+      let deselected = [];
+      let i = -1;
+      const n = children.length;
+
+      while (++i < n) {
+        let props = children[i].props;
+        if (selectedIDList.indexOf(props.id) !== -1) {
+          selected.push(props);
+        } else if (prevSelectedIndex.indexOf(props.id) !== -1) {
+          deselected.push(props);
+        }
+      }
+
       this.props.onSelect({
         type: "listselect",
-        targetProps: child.props,
-      });
-    } else if (this.props.onDeselect && indexOf !== -1) {
-      this.props.onDeselect({
-        type: "listselect",
-        targetProps: child.props,
+        selected,
+        deselected,
+        target: children[index].props,
       });
     }
 
-    if (child.props.onClick) {
-      child.props.onClick(e);
+    if (children[index].props.onClick) {
+      children[index].props.onClick(e);
+    }
+  }
+
+  onKeyDown(e: React.KeyboardEvent) {
+    const children = React.Children.toArray(this.props.children) as ListChild[];
+    const { onKeyDown } = this.props;
+    const { selectedIDList } = this.state;
+
+    if (onKeyDown) {
+      const selected = [];
+      let i = -1;
+      const n = children.length;
+
+      while (++i < n) {
+        if (selectedIDList.indexOf(children[i].props.id) !== -1) {
+          selected.push(children[i].props.id);
+        }
+      }
+
+      onKeyDown({
+        keyname: KEYNAME_BY_CODE[e.which],
+        selected,
+        type: "listkeydown",
+        which: e.which,
+      });
     }
   }
 
   handleEvent(e: KeyboardEvent) {
     const isControl = KEYNAME_BY_CODE[e.which] === "CTRL";
-    if (e.type === "keydown" && isControl) {
-      this.setState({
-        canSelectMulti: true
-      });
-    } else if (e.type === "keyup" && isControl) {
-      this.setState({
-        canSelectMulti: false
-      });
+    const isShift = KEYNAME_BY_CODE[e.which] === "SHIFT";
+
+    if (e.type === "keydown") {
+      if (isControl) {
+        this.setState({
+          controlPressed: true
+        });
+      } else if (isShift) {
+        this.setState({
+          shiftPressed: true
+        });
+      }
+    } else {
+      if (isControl) {
+        this.setState({
+          controlPressed: false
+        });
+      } else if (isShift) {
+        this.setState({
+          shiftPressed: false
+        });
+      }
     }
   }
 
@@ -95,13 +190,15 @@ export class List extends Component<ListProps, ListState> {
 
     return (
       <div
-        id={this.props.id}
         className="list"
+        id={this.props.id}
+        tabIndex={0}
+        onKeyDown={(e: React.KeyboardEvent) => { this.onKeyDown(e); }}
       >
         {children.map((child, index) => {
           return React.cloneElement(child, {
-            onClick: (e) => this.childDidClick(e, child, index),
-            selected: this.state.selectedIndex.indexOf(index) !== -1,
+            onClick: (e) => this.onClick(e, index),
+            selected: this.state.selectedIDList.indexOf(child.props.id) !== -1,
           } as Partial<ListItemProps>);
         })}
       </div>
