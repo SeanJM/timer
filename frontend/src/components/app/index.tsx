@@ -10,7 +10,6 @@ import { CategoryListConnect } from "@frontend/pages/category-list";
 import { NotFound } from "@frontend/pages/not-found";
 import { FilterConnect } from "@frontend/pages/filters";
 import { ContextMenuContainerConnect } from "@frontend/components/context-menu";
-import { ShortCutService } from "@frontend/components/shortcut";
 
 export class App extends Component {
   componentDidMount() {
@@ -47,7 +46,6 @@ export class App extends Component {
         <ModalContainerConnect/>
         <ColorPickerSpawnConnect/>
         <ContextMenuContainerConnect/>
-        <ShortCutService/>
       </div>
     );
   }
