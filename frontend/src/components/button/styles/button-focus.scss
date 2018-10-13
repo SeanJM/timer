@@ -1,0 +1,29 @@
+.button:focus {
+  outline: none;
+
+  .button_face {
+    box-shadow: 0 1px $u2 $black;
+  }
+
+  &:after {
+    border: 2px solid $focus;
+    border-radius: 3px;
+    bottom: -1px;
+    left: -2px;
+    right: -2px;
+    top: -1px;
+  }
+}
+
+.button {
+  &:after {
+    content: "";
+    position: absolute;
+    border: 1px solid transparent;
+    bottom: -4px;
+    left: -6px;
+    right: -6px;
+    top: -4px;
+    transition: top 0.3s, left 0.3s, bottom 0.3s, right 0.3s, border 0.3s;
+  }
+}

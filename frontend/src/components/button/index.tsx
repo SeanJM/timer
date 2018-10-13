@@ -8,47 +8,68 @@ export type ButtonType =
   | "danger";
 
 interface ButtonProps extends Partial<JSX.ElementChildrenAttribute> {
-  onClick?: (event: React.MouseEvent) => void;
   active?: boolean;
+  autofocus?: boolean;
   className?: string;
   icon?: IconType;
+  onClick?: (event: React.MouseEvent | React.KeyboardEvent) => void;
   type?: ButtonType;
 }
 
-export function Button(props: ButtonProps) {
-  const { onClick } = props;
-  const classList = ["button"];
+export class Button extends React.Component<ButtonProps> {
+  node: HTMLSpanElement;
 
-  if (props.type) {
-    classList.push("button--" + props.type);
+  componentDidMount() {
+    if (this.props.autofocus) {
+      this.node.focus();
+    }
   }
 
-  if (props.children) {
-    classList.push("button-text");
+  buttonDidKeyDown(e: React.KeyboardEvent) {
+    const { onClick } = this.props;
+    if (e.which === 13 && onClick) {
+      onClick(e);
+    }
   }
 
-  if (props.icon) {
-    classList.push("button-icon");
-  }
+  render() {
+    const { onClick, type, icon, active, className } = this.props;
+    const classList = ["button"];
 
-  if (props.active) {
-    classList.push("button-active");
-  }
+    if (type) {
+      classList.push("button--" + type);
+    }
 
-  if (props.className) {
-    classList.push(props.className);
-  }
+    if (this.props.children) {
+      classList.push("button-text");
+    }
 
-  return (
-    <span
-      className={classList.join(" ")}
-      onClick={(e) => onClick && onClick(e)}
-    >
-      {props.icon ? <Icon type={props.icon} /> : null}
-      {props.children
-        ? <span className="button_text">{props.children}</span>
-        : null}
-      <span className="button_face" />
-    </span>
-  );
+    if (icon) {
+      classList.push("button-icon");
+    }
+
+    if (active) {
+      classList.push("button--active");
+    }
+
+    if (className) {
+      classList.push(className);
+    }
+
+    return (
+      <span
+        ref={(node) => { this.node = node; }}
+        className={classList.join(" ")}
+        onClick={(e) => onClick && onClick(e)}
+        onKeyDown={(e) => this.buttonDidKeyDown(e)}
+        tabIndex={0}
+      >
+        {icon ? <Icon type={icon} /> : null}
+        {this.props.children
+          ? <span className="button_text">{this.props.children}</span>
+          : null}
+        <span className="button_face" />
+      </span>
+    );
+  }
 }
