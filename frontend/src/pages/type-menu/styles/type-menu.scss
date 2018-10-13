@@ -1,13 +1,13 @@
 .type-menu {
-  position: absolute;
-  left: 0;
-  top: 0;
   background: $black-light;
   bottom: 0;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
   transition: width 0.3s;
-  z-index: 2;
   width: 100%;
-
+  z-index: 2;
 
   h6 {
     color: #fff;
