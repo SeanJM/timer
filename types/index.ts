@@ -1,8 +1,10 @@
 import { DatabaseElement } from "@backend/class/element";
 import { FilterResponse } from "./filter";
+import { TodoResponse, TodoElement } from "./todo";
 import "./verified";
 export * from "./filter";
 export * from "./input";
+export * from "./todo";
 export * from "./util";
 
 export interface CategoryElementAttributes extends
@@ -84,29 +86,6 @@ export type TagElement = DatabaseElement<{
   };
   children: any[];
 }>;
-
-export type TodoElement = DatabaseElement<{
-  tagName: "todo";
-  attributes: {
-    completedDate: null | number;
-    priority: number;
-    notes: null | string;
-    tags: string[];
-  };
-}>;
-
-export type TodoResponse =
-  Pick<TodoElement["attributes"],
-    | "completedDate"
-    | "created"
-    | "id"
-    | "name"
-    | "notes"
-    | "priority"
-    | "progress"
-    | "state"
-    | "tags"
-  >;
 
 export type Shortcut = string;
 
