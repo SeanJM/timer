@@ -1,0 +1,66 @@
+.button-confirm {
+  height: $input-size;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+
+  .icon {
+    width: $u4;
+    height: $u4;
+    position: absolute;
+    top: 50%;
+    margin-top: $u4/-2;
+    left: 50%;
+    margin-left: $u4/-2;
+  }
+}
+
+.button-confirm_select {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.button-confirm_affirmative {
+  background: $primary;
+  border-radius: 2px 0 0 2px;
+
+  .icon { fill: #fff; }
+}
+
+.button-confirm_negative {
+  background: $grey-light;
+  border-radius: 0 2px 2px 0;
+
+  .icon { fill: $grey; }
+}
+
+.button-confirm_affirmative,
+.button-confirm_negative {
+  position: relative;
+  display: inline-block;
+  width: 50%;
+  height: 100%;
+}
+
+.button-confirm--show-select {
+  width: $u18;
+
+  .button-confirm_select {
+    opacity: 1;
+    z-index: 1;
+  }
+}
+
+.button-confirm_click-capture {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+}
