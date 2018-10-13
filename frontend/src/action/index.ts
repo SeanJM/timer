@@ -1,6 +1,7 @@
 import Action from "@frontend/class/action";
 import color from "@frontend/action/color";
 import modal from "@frontend/action/modal";
+import { alert } from "@frontend/action/alert";
 import { category } from "@frontend/action/category";
 import { contextMenu } from "@frontend/action/context-menu";
 import { filters } from "@frontend/action/filters";
@@ -20,6 +21,7 @@ export function subscribe(name, callback): void {
   action.subscribe(name, callback);
 }
 
+alert(subscribe);
 category(subscribe);
 color(subscribe);
 contextMenu(subscribe);
