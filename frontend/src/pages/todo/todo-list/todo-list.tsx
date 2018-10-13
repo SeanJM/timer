@@ -9,7 +9,7 @@ import { dispatch } from "@frontend/action";
 import { emptyForm } from "@frontend/action/form";
 import { Filter } from "@components/filter";
 import { InputText } from "@components/input";
-import { List, ListSelectEvent } from "@components/list";
+import { List, ListSelectEvent, ListKeyboardEvent } from "@components/list";
 import { RouteComponentProps } from "@components/router";
 import { routes } from "@frontend/routes";
 import { SmartScroll } from "@components/smart-scroll";
@@ -30,6 +30,7 @@ import { Icon } from "@components/icon";
 const FORM_ID = generateHash();
 const CONTEXT_MENU_SORT = generateHash();
 const CONTEXT_MENU_FILTER = generateHash();
+const TODO_DELETE_ID = generateHash();
 
 interface TodoParams {
   categoryID?: string;
@@ -185,31 +186,29 @@ class TodoListView extends Component<TodoListOutProps, {}> {
 
   listDidSelect(e: ListSelectEvent<TodoResponse>) {
     const { history, categoryID } = this.props;
-    const { id } = e.targetProps;
-
-    dispatch("TODO", {
-      type: "SELECT",
-      value: {
-        id,
-      }
-    });
 
     history.push({
       pathname: path.reduce(routes.pathname, {
         type: "todo",
         categoryID,
-        todoID: id
+        todoID: e.target.id,
       })
     });
   }
 
-  listDidDeselect(e: ListSelectEvent<TodoResponse>) {
-    dispatch("TODO", {
-      type: "DESELECT",
-      value: {
-        id: e.targetProps.id,
-      }
-    });
+  listOnKeyDown(e: ListKeyboardEvent<TodoResponse>) {
+    if (e.keyname === "DELETE") {
+      console.log(e.selected);
+      dispatch("ALERT", {
+        type: "PUSH",
+        value: {
+          type: "TODO_DELETE",
+          id: TODO_DELETE_ID,
+          categoryID: this.props.categoryID,
+          todos: e.selected
+        }
+      });
+    }
   }
 
   render() {
@@ -317,7 +316,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                 id="complete"
                 multiselect
                 onSelect={(e: ListSelectEvent<TodoResponse>) => this.listDidSelect(e)}
-                onDeselect={(e: ListSelectEvent<TodoResponse>) => this.listDidDeselect(e)}
+                onKeyDown={(e: ListKeyboardEvent<TodoResponse>) => this.listOnKeyDown(e)}
               >
                 {this.props.completeTodos
                   .sort((a, b) => this.sortBy(a, b))
@@ -343,7 +342,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                 id="incomplete"
                 multiselect
                 onSelect={(e: ListSelectEvent<TodoResponse>) => this.listDidSelect(e)}
-                onDeselect={(e: ListSelectEvent<TodoResponse>) => this.listDidDeselect(e)}
+                onKeyDown={(e: ListKeyboardEvent<TodoResponse>) => this.listOnKeyDown(e)}
               >
                 {this.props.incompleteTodos
                   .sort((a, b) => this.sortBy(a, b))
@@ -367,8 +366,8 @@ class TodoListView extends Component<TodoListOutProps, {}> {
               <List
                 id="all"
                 multiselect
-                onDeselect={(e: ListSelectEvent<TodoResponse>) => this.listDidDeselect(e)}
                 onSelect={(e: ListSelectEvent<TodoResponse>) => this.listDidSelect(e)}
+                onKeyDown={(e: ListKeyboardEvent<TodoResponse>) => this.listOnKeyDown(e)}
               >
                 {this.props.todos
                   .sort((a, b) => this.sortBy(a, b))
