@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Icon, IconType } from "@frontend/components/icon";
 
-type ButtonType =
+export type ButtonType =
   | "primary"
   | "positive"
   | "negative"
