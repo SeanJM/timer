@@ -1,0 +1,25 @@
+.alert {
+  display: inline-block;
+  width: $u100;
+  margin-left: $u100/-2;
+  background: #fff;
+  text-align: left;
+  box-shadow: 0 $u $u6 rgba(0, 0, 0, 0.6);
+}
+
+.alert_title {
+  background: $grey-lightest;
+  padding: $u4;
+}
+
+.alert_content {
+  padding: $u4;
+}
+
+.alert_footer {
+  padding: 0 $u4 $u4;
+
+  .button + .button {
+    margin-left: $u;
+  }
+}

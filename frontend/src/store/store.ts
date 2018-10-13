@@ -10,26 +10,16 @@ import {
 } from "@types";
 
 import {
+  StoreAlert,
   StoreDropdown,
   StoreForm,
 } from "./store-types";
 
-export interface TodoNode {
-  attributes: {
-    state: string;
-    id: string;
-    name: string;
-    created: number;
-  };
-  children: any[];
-}
-
-export interface Category extends TodoNode {
-}
-
 export interface StoreState {
   shortcut: Shortcut;
   dropdown: StoreDropdown;
+
+  alerts: StoreAlert[];
 
   layout: {
     todoEditorDefaultWidth?: number;
@@ -79,6 +69,8 @@ export const store = new Persistore<StoreState>(
 
     contextMenu: [],
     dropdown: {},
+
+    alerts: [],
 
     shortcut: null,
 
@@ -143,6 +135,13 @@ export const store = new Persistore<StoreState>(
       console.log(validator);
       return validator.isValid;
     },
-    ignore: [/^form\./, /^slideOut\./, /^color\.colorPickers/, /^categories\.setName/, /^contextMenu/]
+    ignore: [
+      /^alerts/,
+      /^categories\.setName/,
+      /^color\.colorPickers/,
+      /^contextMenu/,
+      /^form\./,
+      /^slideOut\./,
+    ]
   }
 );

@@ -25,3 +25,9 @@ export interface StoreFormInput {
   isValid?: boolean;
   errorMessage?: string | null;
 }
+
+export interface StoreAlert {
+  id: string;
+  type: string;
+  value: any;
+}
