@@ -25,12 +25,13 @@ export function toTodoResponse(todoElement: TodoElement): TodoResponse {
 }
 
 export interface TodoRequestBody {
+  idList?: string[];
   name?: string;
-  progress?: number;
   notes?: string;
   priority?: number;
-  tags?: string[];
+  progress?: number;
   state?: "incomplete" | "complete";
+  tags?: string[];
   action:
     | "complete"
     | "create"
@@ -83,15 +84,39 @@ function createTodo(req: TodoRequest, res: Response, database: Database, categor
 }
 
 function deleteTodo(req: TodoRequest, res: Response, database, categoryElement: CategoryElement) {
-  let todoElement =
-    database.getElementById(req.params.todoID);
+  const idList = req.body.idList;
 
-  if (todoElement) {
-    categoryElement.removeChild(todoElement);
+  if (idList) {
+    let i = -1;
+    const n = idList.length;
+
+    while (++i < n) {
+      let todoElement =
+        database.getElementById(idList[i]);
+
+      console.log(idList[i]);
+
+      if (todoElement) {
+        categoryElement.removeChild(todoElement);
+      } else {
+        res.status(404).send(TODO_NOT_FOUND);
+        return;
+      }
+    }
+
     res.send();
     database.save();
   } else {
-    res.status(404).send(TODO_NOT_FOUND);
+    let todoElement =
+      database.getElementById(req.params.todoID);
+
+    if (todoElement) {
+      categoryElement.removeChild(todoElement);
+      res.send();
+      database.save();
+    } else {
+      res.status(404).send(TODO_NOT_FOUND);
+    }
   }
 }
 
@@ -159,12 +184,13 @@ function onPost(req: TodoRequest, res, database: Database) {
 
   const bodyValidator =
     new Validate({
-      "name?": "string",
-      "tags?": "Array<string|undefined>",
       "id?": "string",
+      "idList?": "Array<string|undefined>",
+      "name?": "string",
       "notes?": "string|null",
-      "progress?": "number",
       "priority?": "number",
+      "progress?": "number",
+      "tags?": "Array<string|undefined>",
       action: `
         | complete
         | create
