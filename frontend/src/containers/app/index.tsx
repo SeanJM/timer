@@ -10,6 +10,7 @@ import { CategoryListConnect } from "@frontend/pages/category-list";
 import { NotFound } from "@frontend/pages/not-found";
 import { FilterConnect } from "@frontend/pages/filters";
 import { ContextMenuContainerConnect } from "@frontend/components/context-menu";
+import { AlertsConnect } from "@frontend/containers";
 
 export class App extends Component {
   componentDidMount() {
@@ -43,9 +44,10 @@ export class App extends Component {
           </Router>
         </div>
 
-        <ModalContainerConnect/>
+        <AlertsConnect/>
         <ColorPickerSpawnConnect/>
         <ContextMenuContainerConnect/>
+        <ModalContainerConnect/>
       </div>
     );
   }
