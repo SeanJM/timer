@@ -121,4 +121,24 @@ export class TodoService {
       });
     });
   }
+
+  select({ id }) {
+    const selected: string[] = _.merge([], store.value.todo.selected);
+    selected.push(id);
+    store.set({
+      todo: {
+        selected,
+      }
+    });
+  }
+
+  deselect({ id }) {
+    const selected: string[] = _.merge([], store.value.todo.selected);
+    selected.filter((selectedId) => selectedId !== id);
+    store.set({
+      todo: {
+        selected,
+      }
+    });
+  }
 }

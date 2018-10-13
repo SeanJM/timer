@@ -20,6 +20,16 @@ export function todo(subscribe) {
         break;
       }
 
+      case "SELECT": {
+        service.select(value);
+        break;
+      }
+
+      case "DESELECT": {
+        service.deselect(value);
+        break;
+      }
+
       case "INCOMPLETE": {
         service.incomplete(value);
         break;
