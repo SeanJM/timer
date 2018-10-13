@@ -3,14 +3,13 @@ import React, { Component } from "react";
 import indexesOfWords from "@strings/indexes-of-words";
 import { Button } from "@components/button";
 import { CategorySortBy, CategoryFilterBy, FilterTagTypes } from "@types";
-import { ContextMenuFilterConnect } from "./context-menu-filter";
+import { ContextMenuFilterConnect, ContextMenuSort } from "./context-menu";
 import { contextMenuPush } from "@components/context-menu";
-import { ContextMenuSort } from "./context-menu-sort";
 import { dispatch } from "@frontend/action";
 import { emptyForm } from "@frontend/action/form";
 import { Filter } from "@components/filter";
 import { InputText } from "@components/input";
-import { List } from "@components/list";
+import { List, ListSelectEvent } from "@components/list";
 import { RouteComponentProps } from "@components/router";
 import { routes } from "@frontend/routes";
 import { SmartScroll } from "@components/smart-scroll";
@@ -184,6 +183,35 @@ class TodoListView extends Component<TodoListOutProps, {}> {
     });
   }
 
+  listDidSelect(e: ListSelectEvent<TodoResponse>) {
+    const { history, categoryID } = this.props;
+    const { id } = e.targetProps;
+
+    dispatch("TODO", {
+      type: "SELECT",
+      value: {
+        id,
+      }
+    });
+
+    history.push({
+      pathname: path.reduce(routes.pathname, {
+        type: "todo",
+        categoryID,
+        todoID: id
+      })
+    });
+  }
+
+  listDidDeselect(e: ListSelectEvent<TodoResponse>) {
+    dispatch("TODO", {
+      type: "DESELECT",
+      value: {
+        id: e.targetProps.id,
+      }
+    });
+  }
+
   render() {
     const {
       categoryID,
@@ -285,17 +313,21 @@ class TodoListView extends Component<TodoListOutProps, {}> {
         body={
           <SmartScroll>
             <Filter id={query.view}>
-              <List id="complete">
+              <List
+                id="complete"
+                multiselect
+                onSelect={(e: ListSelectEvent<TodoResponse>) => this.listDidSelect(e)}
+                onDeselect={(e: ListSelectEvent<TodoResponse>) => this.listDidDeselect(e)}
+              >
                 {this.props.completeTodos
                   .sort((a, b) => this.sortBy(a, b))
                   .map((todo) => (
                     <Todo
+                      active={params.todoID === todo.id}
                       categoryID={categoryID}
                       completedDate={todo.completedDate}
                       created={todo.created}
-                      history={history}
                       id={todo.id}
-                      isActive={params.todoID === todo.id}
                       key={todo.id}
                       priority={todo.priority}
                       priorityLength={priorityLength}
@@ -307,16 +339,20 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                   ))
                 }
               </List>
-              <List id="incomplete">
+              <List
+                id="incomplete"
+                multiselect
+                onSelect={(e: ListSelectEvent<TodoResponse>) => this.listDidSelect(e)}
+                onDeselect={(e: ListSelectEvent<TodoResponse>) => this.listDidDeselect(e)}
+              >
                 {this.props.incompleteTodos
                   .sort((a, b) => this.sortBy(a, b))
                   .map((todo) => (
                     <Todo
                       categoryID={categoryID}
                       created={todo.created}
-                      history={history}
                       id={todo.id}
-                      isActive={params.todoID === todo.id}
+                      active={params.todoID === todo.id}
                       key={todo.id}
                       priority={todo.priority}
                       priorityLength={priorityLength}
@@ -328,7 +364,12 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                   ))
                 }
               </List>
-              <List id="all">
+              <List
+                id="all"
+                multiselect
+                onDeselect={(e: ListSelectEvent<TodoResponse>) => this.listDidDeselect(e)}
+                onSelect={(e: ListSelectEvent<TodoResponse>) => this.listDidSelect(e)}
+              >
                 {this.props.todos
                   .sort((a, b) => this.sortBy(a, b))
                   .map((todo) => (
@@ -336,9 +377,8 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                       categoryID={categoryID}
                       completedDate={todo.completedDate}
                       created={todo.created}
-                      history={history}
                       id={todo.id}
-                      isActive={params.todoID === todo.id}
+                      active={params.todoID === todo.id}
                       key={todo.id}
                       priority={todo.priority}
                       priorityLength={priorityLength}
