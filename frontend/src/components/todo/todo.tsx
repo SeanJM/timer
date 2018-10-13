@@ -1,27 +1,26 @@
-import path from "@path";
 import React from "react";
+import { ButtonConfirm } from "@frontend/components/button-confirm";
 import { Control } from "@frontend/components/control";
 import { dispatch } from "@frontend/action/";
-import { ListItem, ListAction } from "@frontend/components/list";
-import { RouterHistory } from "@frontend/components/router";
-import { routes } from "@frontend/routes";
+import { ListItem } from "@frontend/components/list";
 import { Timestamp } from "@frontend/components/timestamp";
 import { TodoPriority } from "./todo-priority";
 import { TodoTitle } from "./todo-title";
 
 interface TodoProps {
+  active: boolean;
   categoryID: string;
   completedDate?: null | number;
   created: number;
-  search?: string;
-  history: RouterHistory;
   id: string;
-  isActive: boolean;
-  title: string;
+  onClick?: (e: React.MouseEvent) => void;
   priority: number;
   priorityLength: number;
+  search?: string;
+  selected?: boolean;
   showAlt: boolean;
   state: string;
+  title: string;
 }
 
 function TodoCheck(props: { checked: boolean, id: string, categoryID: string }) {
@@ -31,6 +30,7 @@ function TodoCheck(props: { checked: boolean, id: string, categoryID: string }) 
 
   return (
     <input type="checkbox"
+      readOnly
       checked={props.checked}
       onClick={() => dispatch("TODO", {
         type,
@@ -45,11 +45,15 @@ function TodoCheck(props: { checked: boolean, id: string, categoryID: string }) 
 
 function ButtonDelete(value: { id: string, categoryID: string }) {
   return (
-    <ListAction type="danger"
-      onClick={() => dispatch("TODO", { type: "DELETE", value })}
+    <ButtonConfirm
+      type="danger"
+      onClick={() => dispatch("TODO", {
+        type: "DELETE",
+        value
+      })}
     >
       Delete
-    </ListAction>
+    </ButtonConfirm>
   );
 }
 
@@ -59,10 +63,12 @@ export function Todo(props: TodoProps) {
   const {
     categoryID,
     created,
-    history,
+    selected,
+    onClick,
     id,
-    isActive,
+    active,
     search,
+    showAlt,
     state,
     title
   } = props;
@@ -71,18 +77,13 @@ export function Todo(props: TodoProps) {
 
   return (
     <ListItem
-      isActive={isActive}
+      active={active}
+      selected={selected}
       passive={state === "complete"}
       title={<TodoTitle search={search}>{title}</TodoTitle>}
       timestamp={<Timestamp>{created}</Timestamp>}
-
-      onClick={() => history.push({
-        pathname: path.reduce(routes.pathname, {
-          type: "todo",
-          categoryID,
-          todoID: id
-        })
-      })}
+      showAlt={showAlt}
+      onClick={onClick}
 
       secondaryAction={
         <TodoPriority
@@ -100,11 +101,8 @@ export function Todo(props: TodoProps) {
           />
         </Control>
       }
-      footer={
-        props.showAlt
-          ? <ButtonDelete id={id} categoryID={categoryID}/>
-          : null
-      }
+
+      altAction={<ButtonDelete id={id} categoryID={categoryID}/>}
     >
     </ListItem>
   );
