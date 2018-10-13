@@ -105,18 +105,30 @@ export class TodoService {
     });
   }
 
-  delete(e) {
-    ajax.post(path.join("/todo", e.categoryID, e.id), {
-      data: {
-        action: "delete"
+  delete(value: { categoryID: string, todos: TodoResponse[] }) {
+    const todoByID = value.todos.map((a) => a.id);
+    const prevCategories: CategoryResponse[] = _.merge([], store.value.todo.categories);
+    const nextCategories: CategoryResponse[] = _.merge([], store.value.todo.categories);
+    const category = nextCategories.find((a) => a.id === value.categoryID);
+
+    category.todos =
+      category.todos.filter((child) => todoByID.indexOf(child.id) === -1);
+
+    store.set({
+      todo: {
+        categories: nextCategories,
       }
-    }).then(() => {
-      const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
-      const category = categories.find((a) => a.id === e.categoryID);
-      category.todos = category.todos.filter((child) => child.id !== e.id);
+    });
+
+    ajax.post(path.join("/todo", value.categoryID), {
+      data: {
+        action: "delete",
+        idList: value.todos.map((a) => a.id),
+      }
+    }).catch(() => {
       store.set({
         todo: {
-          categories,
+          categories: prevCategories,
         }
       });
     });
