@@ -1,0 +1,10 @@
+.list-item-secondary-action .list-item_timestamp {
+  padding-left: $u3;
+}
+
+.list-item_secondary-action {
+  position: absolute;
+  right: $u2;
+  top: $u2;
+  z-index: 1;
+}

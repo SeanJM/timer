@@ -1,17 +1,21 @@
 import React, { Component } from "react";
 import { Link } from "@frontend/components/router";
+import { ListItemAltAction } from "./list-item_alt-action";
+import anime from "animejs";
 
-interface ListItemProps extends Partial<JSX.ElementChildrenAttribute> {
+export interface ListItemProps extends Partial<JSX.ElementChildrenAttribute> {
+  altAction?: JSX.Element;
+  body?: JSX.Element;
+  id?: string;
+  active?: boolean;
+  selected?: boolean;
+  passive?: boolean;
   primaryAction?: JSX.Element;
   secondaryAction?: JSX.Element;
+  showAlt?: boolean;
   timestamp?: JSX.Element;
-  body?: JSX.Element;
-  footer?: JSX.Element;
-  to?: string;
   title?: string | number | JSX.Element;
-  passive?: boolean;
-  isActive?: boolean;
-  id?: string;
+  to?: string;
   onClick?: (e: React.MouseEvent) => void;
 }
 
@@ -19,27 +23,43 @@ export class ListItem extends Component<ListItemProps> {
   secondaryNode: HTMLDivElement;
   primaryNode: HTMLDivElement;
   listItemNode: HTMLDivElement;
+  controlBoundsNode: HTMLDivElement;
 
-  componentDidMount() {
-    if (this.secondaryNode) {
-      let secondaryOffset = this.secondaryNode.getBoundingClientRect();
-      this.listItemNode.style.paddingRight = secondaryOffset.width + "px";
-    }
-    if (this.primaryNode) {
-      let primaryOffset = this.primaryNode.getBoundingClientRect();
-      this.listItemNode.style.paddingLeft = primaryOffset.width + "px";
+  altActionDidReceiveBoundingBox(e: ClientRect) {
+    setTimeout(() => {
+      anime({
+        targets: [ this.listItemNode ],
+        paddingLeft: [ 0, e.width ],
+        easing: "easeOutQuad",
+        duration: 200,
+      });
+    });
+  }
+
+  componentDidUpdate(prevProps: ListItemProps) {
+    if (prevProps.showAlt && !this.props.showAlt) {
+      setTimeout(() => {
+        anime({
+          targets: [ this.listItemNode ],
+          paddingLeft: 0,
+          easing: "easeOutQuad",
+          duration: 100,
+        });
+      }, 10);
     }
   }
 
   render() {
     const {
+      active,
+      altAction,
       body,
-      footer,
-      isActive,
       onClick,
       passive,
       primaryAction,
       secondaryAction,
+      selected,
+      showAlt,
       timestamp,
       title,
       to,
@@ -62,8 +82,12 @@ export class ListItem extends Component<ListItemProps> {
       className.push("list-item-passive");
     }
 
-    if (isActive) {
+    if (active) {
       className.push("list-item--active");
+    }
+
+    if (selected) {
+      className.push("list-item--selected");
     }
 
     return (
@@ -71,39 +95,50 @@ export class ListItem extends Component<ListItemProps> {
         ref={(node) => {this.listItemNode = node;}}
         id={this.props.id}
         className={className.join(" ")}>
-        {secondaryAction
-          ? <div
-            ref={(node) => {this.secondaryNode = node;}}
-            className="list-item_secondary-action">{secondaryAction}</div>
+        {altAction && showAlt
+          ? <ListItemAltAction onBoundingBox={(e) => this.altActionDidReceiveBoundingBox(e)}>{altAction}</ListItemAltAction>
           : null}
-        {primaryAction
-          ? <div
-            ref={(node) => {this.primaryNode = node;}}
-            className="list-item_primary-action">{primaryAction}</div>
-          : null}
-        <div className="list-item_content">
-          {title
-            ? (
-              <div className="list-item_title">
-                {typeof title === "function" ? title : <h6>{title}</h6>}
-              </div>
-            )
+
+        <div className="list-item-active"/>
+        <div className="list-item-select"/>
+
+        <div
+          ref={(node) => { this.controlBoundsNode = node; }}
+          className="list-item_control-bounds"
+        >
+          {secondaryAction
+            ? <div
+              ref={(node) => {this.secondaryNode = node;}}
+              className="list-item_secondary-action">{secondaryAction}</div>
             : null}
-          {timestamp
-            ? <div className="list-item_timestamp">{timestamp}</div>
+
+          {primaryAction
+            ? <div
+              ref={(node) => {this.primaryNode = node;}}
+              className="list-item_primary-action">{primaryAction}</div>
             : null}
-          {body
-            ? <div className="list-item_body">{body}</div>
-            : null}
-          {footer
-            ? <div className="list-item_feet">{footer}</div>
-            : null}
-          {to
-            ? <Link className="list-item_link" to={to} />
-            : onClick
-              ? <div className="list-item_link" onClick={onClick} />
+
+          <div className="list-item_content">
+            {title
+              ? (
+                <div className="list-item_title">
+                  {typeof title === "function" ? title : <h6>{title}</h6>}
+                </div>
+              )
               : null}
-          {this.props.children}
+            {timestamp
+              ? <div className="list-item_timestamp">{timestamp}</div>
+              : null}
+            {body
+              ? <div className="list-item_body">{body}</div>
+              : null}
+            {to
+              ? <Link className="list-item_link" to={to} />
+              : onClick
+                ? <div className="list-item_link" onClick={onClick} />
+                : null}
+            {this.props.children}
+          </div>
         </div>
       </div>
     );

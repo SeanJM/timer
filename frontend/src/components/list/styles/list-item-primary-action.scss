@@ -1,0 +1,26 @@
+.list-item-primary-action {
+  .list-item_control-bounds {
+    padding-left: $u11;
+  }
+}
+
+.list-item-primary-action .list-item_timestamp {
+  padding-left: $u3;
+}
+
+.list-item-primary-action.list-item-timestamp .list-item_title {
+  padding-bottom: 0;
+}
+
+.list-item_primary-action {
+  position: absolute;
+  left: $u2;
+  top: $u2;
+  z-index: 1;
+
+  input[type="checkbox"] {
+    margin-top: $u2;
+    margin-left: $u2;
+    margin-right: $u2;
+  }
+}
