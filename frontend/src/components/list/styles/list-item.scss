@@ -1,6 +1,15 @@
 .list-item {
   position: relative;
-  border-bottom: 1px solid $grey-light;
+  user-select: none;
+  &:after {
+    content: "";
+    background: rgba(0, 0, 0, 0.2);
+    bottom: 0;
+    height: 1px;
+    left: 0;
+    position: absolute;
+    right: 0;
+  }
 }
 
 .list-item_content {
@@ -48,19 +57,11 @@
 }
 
 .list-item--selected {
-  .list-item-select {
-    opacity: 1;
-    background: $primary-lightest;
-  }
-}
-
-.list-item--active {
   .timestamp,
   h6,
   p {
     color: #fff;
   }
-
   .list-item-select {
     opacity: 1;
     background: $primary;
