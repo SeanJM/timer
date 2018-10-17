@@ -85,6 +85,7 @@ class FilterListView extends Component<FilterOutProps, {}> {
             {filters.map((filter) => {
               return (
                 <ListItem
+                  id={filter.id}
                   key={filter.id}
                   title={filter.name}
                   timestamp={

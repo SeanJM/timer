@@ -120,6 +120,7 @@ class TagListView extends Component<Props, {}> {
             {this.props.tags.map((tag) => {
               return (
                 <ListItem
+                  id={tag.id}
                   title={tag.name}
                   onClick={() => {
                     history.push({
