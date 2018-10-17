@@ -94,8 +94,6 @@ function deleteTodo(req: TodoRequest, res: Response, database, categoryElement: 
       let todoElement =
         database.getElementById(idList[i]);
 
-      console.log(idList[i]);
-
       if (todoElement) {
         categoryElement.removeChild(todoElement);
       } else {
@@ -121,35 +119,86 @@ function deleteTodo(req: TodoRequest, res: Response, database, categoryElement: 
 }
 
 function completeTodo(req: TodoRequest, res, database, categoryElement: CategoryElement) {
-  let todoElement: TodoElement =
-    database.getElementById(req.params.todoID);
+  const idList = req.body.idList;
 
-  if (todoElement) {
-    todoElement.setAttributes({
-      state: "complete",
-      completedDate: new Date().getTime(),
-    });
+  if (idList) {
+    let i = -1;
+    const n = idList.length;
 
-    res.send(toTodoResponse(todoElement));
+    while (++i < n) {
+      let todoElement =
+        database.getElementById(idList[i]);
+
+      if (todoElement) {
+        todoElement.setAttributes({
+          state: "complete",
+          completedDate: new Date().getTime(),
+        });
+      } else {
+        res.status(404).send(TODO_NOT_FOUND);
+        return;
+      }
+    }
+
+    res.send();
     database.save();
   } else {
-    res.status(404).send(TODO_NOT_FOUND);
+    let todoElement: TodoElement =
+      database.getElementById(req.params.todoID);
+
+    if (todoElement) {
+      todoElement.setAttributes({
+        state: "complete",
+        completedDate: new Date().getTime(),
+      });
+
+      res.send(toTodoResponse(todoElement));
+      database.save();
+    } else {
+      res.status(404).send(TODO_NOT_FOUND);
+    }
   }
 }
 
 function incompleteTodo(req: TodoRequest, res, database, categoryElement: CategoryElement) {
-  let todoElement =
-    database.getElementById(req.params.todoID);
+  const idList = req.body.idList;
 
-  if (todoElement) {
-    todoElement.setAttributes({
-      state: "incomplete"
-    });
+  if (idList) {
+    let i = -1;
+    const n = idList.length;
 
-    res.send(toTodoResponse(todoElement));
+    while (++i < n) {
+      let todoElement =
+        database.getElementById(idList[i]);
+
+      if (todoElement) {
+        todoElement.setAttributes({
+          state: "incomplete",
+          completedDate: null,
+        });
+      } else {
+        res.status(404).send(TODO_NOT_FOUND);
+        return;
+      }
+    }
+
+    res.send();
     database.save();
   } else {
-    res.status(404).send(TODO_NOT_FOUND);
+    let todoElement: TodoElement =
+      database.getElementById(req.params.todoID);
+
+    if (todoElement) {
+      todoElement.setAttributes({
+        state: "incomplete",
+        completedDate: null,
+      });
+
+      res.send(toTodoResponse(todoElement));
+      database.save();
+    } else {
+      res.status(404).send(TODO_NOT_FOUND);
+    }
   }
 }
 
