@@ -1,5 +1,7 @@
 import { store, StoreState } from "@frontend/store";
 import { CategoryResponse, TodoResponse } from "@types";
+import { TodoEditValue } from "./types";
+
 import ajax from "@ajax";
 import _ from "lodash";
 import path from "@path";
@@ -77,35 +79,39 @@ export class TodoService {
     this.setTodoState("complete", value);
   }
 
-  edit(e) {
+  edit(value: TodoEditValue) {
     const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
-    const category = categories.find((a) => a.id === e.categoryID);
-    const todoIndex = category.todos.findIndex((a) => a.id === e.todoID);
-    const value = _.omitBy(_.omit(e, ["categoryID", "todoID"]), (a) => a == null);
-    const prevTodoElement = _.assign({}, category.todos[todoIndex]);
+    const category = categories.find((a) => a.id === value.categoryID);
+    const prevTodos: TodoResponse[] = _.merge([], category.todos);
 
-    Object.assign(category.todos[todoIndex], value);
+    value.editList.forEach((todo) => {
+      const todoIndex = category.todos.findIndex((a) => a.id === todo.todoID);
+      const value = _.omitBy(_.omit(todo, [ "todoID" ]), (a) => a == null && typeof a === "undefined");
+      Object.assign(category.todos[todoIndex], value);
+    });
+
     store.set({
       todo: {
         categories,
       }
     });
 
-    ajax.post(path.join("/todo", e.categoryID, e.todoID), {
+    ajax.post(path.join("/todo", value.categoryID), {
       data: {
         action: "edit",
-        ...value
+        editList: value.editList,
       }
     }).catch((res) => {
-      const categories = store.value.todo.categories;
-      const category = categories.find((a) => a.id === e.categoryID);
-      category.todos[todoIndex] = prevTodoElement;
+      const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
+      const categoryIndex = categories.findIndex((a) => a.id === value.categoryID);
+
+      categories[categoryIndex].todos = prevTodos;
+
       store.set({
         todo: {
           categories,
         }
       });
-      console.error(res);
     });
   }
 
