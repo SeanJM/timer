@@ -40,7 +40,8 @@
   font-size: $font-size - 1;
   line-height: $input-size;
 
-  .button:active & {
+  .button:active &,
+  .button--active & {
     line-height: $input-size + 1;
   }
 }
@@ -54,6 +55,7 @@
   border-radius: 2px;
   background: $grey-light;
 
+  .button--active &,
   .button:active & {
     background: $grey;
   }
