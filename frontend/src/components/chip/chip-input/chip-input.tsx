@@ -38,7 +38,7 @@ export interface ChipInputState {
 
 interface ChipDropdownMenuProps {
   onInput?: (e: DropdownChangeEvent) => void;
-  onDropdownDidBlur?: () => void;
+  dropdownDidBlur?: () => void;
   selectedIndex?: number;
   value: string[];
   show?: boolean;
@@ -71,7 +71,7 @@ function ChipDropdownMenu(props: ChipDropdownMenuProps) {
   return (
     <Dropdown
       onInput={props.onInput}
-      onBlur={props.onDropdownDidBlur}
+      onBlur={props.dropdownDidBlur}
       selectedIndex={props.selectedIndex}
       show={props.show}
      >
@@ -156,10 +156,12 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
   }
 
   onBlur(e: React.FocusEvent) {
-    this.close();
-    if (this.props.onBlur) {
-      this.props.onBlur(e);
-    }
+    setTimeout(() => {
+      this.close();
+      if (this.props.onBlur) {
+        this.props.onBlur(e);
+      }
+    }, 100);
   }
 
   filterDidUpdate() {
@@ -197,6 +199,7 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
   }
 
   onInput(e: DropdownChangeEvent) {
+    console.log(e);
     const { onInput } = this.props;
     const value = this.state.value.concat(e.id);
     const evt = this.getValueEvent({ value });
@@ -266,7 +269,7 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
         {this.state.showDropdown
           ? (
             <ChipDropdownMenu
-              onDropdownDidBlur={() => this.close()}
+              dropdownDidBlur={() => this.close()}
               onInput={(e) => this.onInput(e)}
               value={this.state.value}
               show={this.state.showDropdown}
