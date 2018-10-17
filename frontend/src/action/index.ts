@@ -8,14 +8,18 @@ import { filters } from "@frontend/action/filters";
 import { form } from "@frontend/action/form";
 import { layout } from "@frontend/action/layout";
 import { tags } from "@frontend/action/tags";
-import { todo } from "@frontend/action/todo";
+import { todo, TodoDispatch } from "@frontend/action/todo";
+
+interface Dispatch extends TodoDispatch {
+  (name: string, value?: any): void;
+}
 
 const action = new Action();
 action.debug = process.env.NODE_ENV === "development";
 
-export function dispatch(name: string, value?: any): void {
+export const dispatch: Dispatch = (name: string, value?: any): void => {
   action.dispatch(name, value);
-}
+};
 
 export function subscribe(name, callback): void {
   action.subscribe(name, callback);
