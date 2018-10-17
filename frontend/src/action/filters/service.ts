@@ -5,10 +5,6 @@ import _ from "lodash";
 import generateHash from "@generate-hash";
 import { FilterResponse } from "@types";
 
-function getElementByID<T extends { id: string }>(list: T[], id: string): T {
-  return list.find((a) => a.id === id);
-}
-
 export interface FilterServiceDeleteValue {
   categoryID: string;
   filterID: string;
@@ -55,7 +51,7 @@ export class FilterService {
     })
       .then((filterResponse: FilterResponse) => {
         const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
-        const categoryElement = getElementByID(categories, value.categoryID);
+        const categoryElement = categories.find((a) => a.id === value.categoryID);
         const filterIndex = categoryElement.filters.findIndex((a) => a.id === filter.id);
 
         categoryElement.filters[filterIndex] = filterResponse;
@@ -66,7 +62,7 @@ export class FilterService {
       })
       .catch((res: string) => {
         const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
-        const categoryElement = getElementByID(categories, value.categoryID);
+        const categoryElement = categories.find((a) => a.id === value.categoryID);
         const filterIndex = categoryElement.filters.findIndex((a) => a.id === filter.id);
         console.error(res);
         categoryElement.filters.splice(filterIndex, 1);
