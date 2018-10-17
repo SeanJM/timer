@@ -11,7 +11,7 @@ $blue-dark: darken($blue, 15%);
 $blue-light: lighten($blue, 15%);
 $blue-lightest: adjust-hue(lighten($blue, 32%), -5deg);
 
-$cyan: adjust-hue($red, 195deg);
+$cyan: saturate(lighten(adjust-hue($red, 195deg), 10%), 10%);
 $cyan-dark: darken($cyan, 15%);
 $cyan-light: lighten($cyan, 15%);
 $cyan-lightest: adjust-hue(lighten($cyan, 32%), -5deg);
@@ -47,3 +47,5 @@ $danger-light: $red-light;
 
 $positive: $green;
 $positive-light: $green-light;
+
+$focus: $cyan;
