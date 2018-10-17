@@ -122,11 +122,13 @@ class TodoEditor extends React.Component<TodoEditorOutProps> {
       type: "EDIT",
       value: {
         categoryID: this.props.categoryID,
-        todoID: this.props.todoID,
-        name: todoName,
-        tags: todoTags,
-        notes: todoNotes,
-        priority: todoPriority,
+        editList: [{
+          name: todoName,
+          notes: todoNotes,
+          priority: todoPriority,
+          tags: todoTags,
+          todoID: this.props.todoID,
+        }]
       }
     });
   }
