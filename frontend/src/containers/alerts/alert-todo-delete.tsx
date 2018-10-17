@@ -1,22 +1,26 @@
 import React from "react";
 
 import { Alert } from "@components/alert";
+import { AlertDefaultProps } from "./index";
 import { Button } from "@components/button";
 import { Control } from "@components/control";
-import { dispatch } from "@action";
-import { TodoResponse } from "@types";
+import pluralize from "@pluralize";
 
-export interface AlertTodoDeleteProps {
+import { dispatch } from "@action";
+
+export interface AlertTodoDeleteProps extends AlertDefaultProps {
   categoryID: string;
-  todos: TodoResponse[];
+  idList: string[];
   close: () => void;
 }
 
 export function AlertTodoDelete(props: AlertTodoDeleteProps) {
+  const { length } = props.idList;
   return (
     <Alert
-      title="Confirm"
-      content={<p>This cannot be undone</p>}
+      {...props}
+      title={`Confirm Delete`}
+      content={<p>{`Are you sure you want to delete ${length} ${pluralize("todo", "todos", length)}?`}</p>}
       control={
         <Control>
           <Button autofocus onClick={() => {
@@ -25,7 +29,7 @@ export function AlertTodoDelete(props: AlertTodoDeleteProps) {
               type: "DELETE",
               value: {
                 categoryID: props.categoryID,
-                todos: props.todos,
+                idList: props.idList,
               }
             });
           }} type="primary">OK</Button>
