@@ -1,65 +1,46 @@
+// tslint:disable:no-default-export
+
 import { KEYNAME_BY_CODE } from "@constants";
 import _ from "lodash";
 
-type EventListenerFunction = (e: ShortCutEvent) => void;
-type EventListenerObject = { handleEvent: EventListenerFunction };
-type EventListener = EventListenerFunction | EventListenerObject;
-
-interface ShortCutProps {
-  [key: string]: EventListenerFunction;
-}
-
-export interface ShortCutEvent {
-  type: string;
-  name: string;
-}
-
-interface ShortCutGroup {
-  queue: string[][];
-  name: string;
-  callback: EventListenerFunction;
-  index: number;
-  timer: any;
-}
-
-export class ShortCut {
+class ShortCut {
   pressed: string[];
   groups: ShortCutGroup[];
+  target: HTMLElement;
 
   subscribers: {
     name: string;
-    callback: EventListenerFunction;
+    callback: ShortCut.EventListenerFunction;
   }[];
 
-  constructor(props: ShortCutProps) {
+  constructor(target: HTMLElement) {
     this.groups = [];
-
-    for (var name in props) {
-      this.groups.push({
-        queue: name.replace(/\s+/g, "").split(",").map((a) => a.split("+")),
-        callback: props[name],
-        index: 0,
-        name,
-        timer: null,
-      });
-    }
-
-    document.addEventListener("keydown", this);
-    document.addEventListener("keyup", this);
+    this.pressed = [];
+    this.target = target;
+    this.target.addEventListener("keydown", this);
+    this.target.addEventListener("keyup", this);
   }
 
-  addEventListener(name: string, listener: EventListener) {
-    this.subscribers.push({
+  addEventListener(name: string, callback: ShortCut.EventListener) {
+    this.groups.push({
+      queue: name.replace(/\s+/g, "").split(",").map((a) => a.split("+")),
+      callback,
+      index: 0,
       name,
-      callback: typeof listener === "function"
-        ? listener
-        : listener.handleEvent,
+      timer: null,
     });
+
+    return this;
+  }
+
+  removeEventListener(name: string, listener: ShortCut.EventListener) {
+    this.groups = this.groups.filter((a) => a.callback !== listener);
+    return this;
   }
 
   destroy() {
-    document.removeEventListener("keydown", this);
-    document.removeEventListener("keyup", this);
+    this.target.removeEventListener("keydown", this);
+    this.target.removeEventListener("keyup", this);
   }
 
   shortcutsDidChange() {
@@ -73,10 +54,16 @@ export class ShortCut {
       if (_.difference(member, this.pressed).length === 0) {
         group.index += 1;
         if (group.index === group.queue.length) {
-          group.callback({
+          let evt = {
             type: "shortcut",
             name: group.name,
-          });
+          };
+
+          if (typeof group.callback === "function") {
+            group.callback(evt);
+          } else {
+            group.callback.handleEvent(evt);
+          }
         } else {
           clearTimeout(group.timer);
           group.timer = setTimeout(() => group.index = 0, 1000);
@@ -107,6 +94,28 @@ export class ShortCut {
   }
 }
 
-export function shortCut(props: ShortCutProps) {
-  return new ShortCut(props);
+namespace ShortCut {
+  export type EventListenerFunction =
+    (e: Event) => void;
+
+  export type EventListenerObject =
+    { handleEvent: EventListenerFunction };
+
+  export type EventListener =
+    EventListenerFunction | EventListenerObject;
+
+  export interface Event {
+    type: string;
+    name: string;
+  }
 }
+
+interface ShortCutGroup {
+  callback: ShortCut.EventListener;
+  index: number;
+  name: string;
+  queue: string[][];
+  timer: any;
+}
+
+export default ShortCut;
