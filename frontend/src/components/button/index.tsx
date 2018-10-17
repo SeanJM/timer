@@ -13,11 +13,23 @@ interface ButtonProps extends Partial<JSX.ElementChildrenAttribute> {
   className?: string;
   icon?: IconType;
   onClick?: (event: React.MouseEvent | React.KeyboardEvent) => void;
+  toggle?: boolean;
   type?: ButtonType;
 }
 
-export class Button extends React.Component<ButtonProps> {
+interface ButtonState {
+  active?: boolean;
+}
+
+export class Button extends React.Component<ButtonProps, ButtonState> {
   node: HTMLSpanElement;
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      active: this.props.active || false,
+    };
+  }
 
   componentDidMount() {
     if (this.props.autofocus) {
@@ -28,12 +40,22 @@ export class Button extends React.Component<ButtonProps> {
   buttonDidKeyDown(e: React.KeyboardEvent) {
     const { onClick } = this.props;
     if (e.which === 13 && onClick) {
+      this.setState({
+        active: true
+      });
+    }
+  }
+
+  buttonDidKeyUp(e: React.KeyboardEvent) {
+    const { onClick } = this.props;
+    if (e.which === 13 && onClick) {
       onClick(e);
     }
   }
 
   render() {
-    const { onClick, type, icon, active, className } = this.props;
+    const { onClick, type, icon, className, toggle } = this.props;
+    const { active } = this.state;
     const classList = ["button"];
 
     if (type) {
@@ -52,6 +74,10 @@ export class Button extends React.Component<ButtonProps> {
       classList.push("button--active");
     }
 
+    if (toggle) {
+      classList.push("button--toggle");
+    }
+
     if (className) {
       classList.push(className);
     }
@@ -62,6 +88,7 @@ export class Button extends React.Component<ButtonProps> {
         className={classList.join(" ")}
         onClick={(e) => onClick && onClick(e)}
         onKeyDown={(e) => this.buttonDidKeyDown(e)}
+        onKeyUp={(e) => this.buttonDidKeyUp(e)}
         tabIndex={0}
       >
         {icon ? <Icon type={icon} /> : null}
