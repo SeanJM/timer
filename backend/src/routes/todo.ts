@@ -26,10 +26,19 @@ export function toTodoResponse(todoElement: TodoElement): TodoResponse {
 
 export interface TodoRequestBody {
   idList?: string[];
+
+  editList: Array<{
+    name?: string;
+    notes?: string;
+    priority?: number;
+    state?: "incomplete" | "complete";
+    tags?: string[];
+    todoID: string;
+  }>;
+
   name?: string;
   notes?: string;
   priority?: number;
-  progress?: number;
   state?: "incomplete" | "complete";
   tags?: string[];
   action:
@@ -203,28 +212,33 @@ function incompleteTodo(req: TodoRequest, res, database, categoryElement: Catego
 }
 
 function editTodo(req: TodoRequest, res, database: Database, categoryElement: CategoryElement) {
-  let todoElement =
-    database.getElementById<TodoElement>(req.params.todoID);
+  const { editList } = req.body;
+  let i = -1;
+  const n = editList.length;
 
-  if (todoElement) {
-    todoElement.setAttributes({
-      name: req.body.name || todoElement.attributes.name,
-      tags: req.body.tags || todoElement.attributes.tags,
-      notes: req.body.notes || todoElement.attributes.notes,
-      progress:
-        isNaN(req.body.progress)
-          ? todoElement.attributes.progress
-          : req.body.progress,
-      priority:
-        isNaN(req.body.priority)
-          ? todoElement.attributes.priority
-          : req.body.priority,
-    });
-    res.send(toTodoResponse(todoElement));
-    database.save();
-  } else {
-    res.status(404).send(TODO_NOT_FOUND);
+  while (++i < n) {
+    let todoElement =
+      database.getElementById<TodoElement>(editList[i].todoID);
+
+    if (todoElement) {
+      todoElement.setAttributes({
+        name: editList[i].name || todoElement.attributes.name,
+        notes: editList[i].notes || todoElement.attributes.notes,
+        tags: editList[i].tags || todoElement.attributes.tags,
+
+        priority:
+          isNaN(editList[i].priority)
+            ? todoElement.attributes.priority
+            : editList[i].priority,
+      });
+    } else {
+      res.status(404).send(TODO_NOT_FOUND);
+      return;
+    }
   }
+
+  res.send();
+  database.save();
 }
 
 function onPost(req: TodoRequest, res, database: Database) {
@@ -235,6 +249,7 @@ function onPost(req: TodoRequest, res, database: Database) {
     new Validate({
       "id?": "string",
       "idList?": "Array<string|undefined>",
+      "editList?": "Array<EditRequest|undefined>",
       "name?": "string",
       "notes?": "string|null",
       "priority?": "number",
@@ -247,6 +262,15 @@ function onPost(req: TodoRequest, res, database: Database) {
         | edit
         | incomplete
       `,
+    }, {
+      EditRequest: {
+        "name?": "string",
+        "notes?": "string",
+        "priority?": "number",
+        "state?": "incomplete | complete",
+        "tags?": "string[]",
+        "todoID": "string",
+      }
     });
 
   const validated = bodyValidator.validate(req.body);
