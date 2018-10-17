@@ -35,7 +35,7 @@ function TodoCheck(props: { checked: boolean, id: string, categoryID: string }) 
       onClick={() => dispatch("TODO", {
         type,
         value: {
-          id: props.id,
+          idList: [ props.id ],
           categoryID: props.categoryID,
         }
       })}
