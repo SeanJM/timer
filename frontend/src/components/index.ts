@@ -1,5 +1,5 @@
+export * from "@frontend/components/alert";
 export * from "@frontend/components/titlebar";
-export * from "@frontend/components/app";
 export * from "@frontend/components/button";
 export * from "@frontend/components/control";
 export * from "@frontend/components/modal";
