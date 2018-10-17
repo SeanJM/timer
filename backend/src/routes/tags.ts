@@ -61,12 +61,12 @@ function deleteTag(req: TagPostRequest, res: Response, database: Database) {
 function createTag(req: TagPostRequest, res: Response, database: Database) {
   const category = database.getElementById(req.params.categoryID);
 
-  const tag = database.createElement("tag", {
+  const tag = database.createElement<TagElement>("tag", {
     id: generateHash(12),
     name: req.body.name,
     color: req.body.color,
     created: new Date().getTime(),
-  } as TagResponse);
+  });
 
   if (category) {
     category.appendChild(tag);
