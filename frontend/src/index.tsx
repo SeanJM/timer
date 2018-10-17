@@ -1,5 +1,5 @@
 import "./index.scss";
-import { App } from "@frontend/components/app";
+import { App } from "@frontend/containers/app";
 import ReactDOM from "react-dom";
 import React from "react";
 
