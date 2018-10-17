@@ -7,36 +7,49 @@ interface AlertsProps extends Partial<JSX.ElementChildrenAttribute> {
   alerts: StoreAlert[];
 }
 
+export interface AlertDefaultProps {
+  type: string;
+  id: string;
+  onEsc: () => void;
+  close: () => void;
+}
+
 function mapStateToProps(state: StoreState): AlertsProps {
   return {
     alerts: state.alerts,
   };
 }
 
-export function AlertsView(props: AlertsProps) {
-  const classList = [ "alerts" ];
+export class AlertsView extends React.Component<AlertsProps> {
+  render() {
+    const classList = [ "alerts" ];
 
-  if (props.alerts.length) {
-    classList.push("alerts--open");
+    if (this.props.alerts.length) {
+      classList.push("alerts--open");
+    }
+
+    return (
+      <div className={classList.join(" ")}>
+        {this.props.alerts.map((a) => {
+          const AlertElement = alertByType[a.type];
+
+          const close = () => dispatch("ALERT", {
+            type: "POP",
+            value: { id: a.id }
+          });
+
+          return (
+            <AlertElement
+              {...a}
+              key={a.id}
+              onEsc={close}
+              close={close}
+            />
+          );
+        })}
+      </div>
+    );
   }
-
-  return (
-    <div className={classList.join(" ")}>
-      {props.alerts.map((a) => {
-        const AlertElement = alertByType[a.type];
-        return (
-          <AlertElement
-            {...a}
-            key={a.id}
-            close={() => dispatch("ALERT", {
-              type: "POP",
-              value: { id: a.id }
-            })}
-          />
-        );
-      })}
-    </div>
-  );
 }
 
 export const AlertsConnect = withStore(AlertsView, mapStateToProps)();
