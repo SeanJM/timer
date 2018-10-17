@@ -16,22 +16,22 @@ a {
 
 @include header(
   $font-size * 1.07,
-  $font-size * 2.7, 1);
+  $font-size * 2, 1);
 @include header(
   $font-size * 1.07,
-  $font-size * 2.7, 2);
+  $font-size * 2, 2);
 @include header(
   $font-size * 1.07,
-  $font-size * 2.7, 3);
+  $font-size * 2, 3);
 @include header(
   $font-size * 1.07,
-  $font-size * 2.7, 4);
+  $font-size * 2, 4);
 @include header(
   $font-size * 1.07,
-  $font-size * 2.7, 5);
+  $font-size * 2, 5);
 @include header(
   $font-size * 1.07,
-  $font-size * 2.7, 6);
+  $font-size * 2, 6);
 
 small {
   $font-size: 9px;
