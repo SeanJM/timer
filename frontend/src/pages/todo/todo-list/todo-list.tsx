@@ -11,7 +11,6 @@ import { contextMenuPush } from "@components/context-menu";
 import { Control } from "@components/control";
 import { dispatch } from "@frontend/action";
 import { emptyForm } from "@frontend/action/form";
-import { Filter } from "@components/filter";
 import { Icon } from "@components/icon";
 import { InputText } from "@components/input";
 import { List, ListSelectEvent, ListKeyboardEvent } from "@components/list";
@@ -57,8 +56,9 @@ interface TodoListOutProps extends TodoListInProps {
   tagFilters: { [key in FilterTagTypes]: string[] };
   filterBy: CategoryFilterBy;
   todos: TodoResponse[];
-  completeTodos: TodoResponse[];
+  filteredTodos: TodoResponse[];
   incompleteTodos: TodoResponse[];
+  completeTodos: TodoResponse[];
   input: StoreFormInput;
   todoID: null | string;
 }
@@ -75,6 +75,15 @@ function applySearch(search: string, todo: TodoResponse) {
   return search
     ? indexesOfWords(todo.name, search) !== -1
     : true;
+}
+
+function applyView(query: string, todo: TodoResponse) {
+  if (query === "complete") {
+    return isComplete(todo);
+  } else if (query === "incomplete") {
+    return isIncomplete(todo);
+  }
+  return true;
 }
 
 function applyFilter(filter: FilterResponse | null, todo: TodoResponse) {
@@ -111,7 +120,7 @@ function mapStateToProps(state: StoreState, props: TodoListInProps): TodoListOut
   const filter = category &&
     category.filters.find((a) => a.id === category.filterBy);
 
-  const filteredTodos =
+  const todos =
     category.todos.filter((todo) =>
       applyFilter(filter, todo) &&
       applySearch(search, todo)
@@ -128,9 +137,10 @@ function mapStateToProps(state: StoreState, props: TodoListInProps): TodoListOut
     name: category && category.name,
     sortBy: category && category.sortBy,
     filterBy: category && category.filterBy,
-    todos: filteredTodos,
-    completeTodos: filteredTodos.filter(isComplete),
-    incompleteTodos: filteredTodos.filter(isIncomplete),
+    todos,
+    filteredTodos: todos.filter((todo) => applyView(props.query.view, todo)),
+    incompleteTodos: todos.filter(isIncomplete),
+    completeTodos: todos.filter(isComplete),
     input: form.input.todo_value || { name: "todo_value", value: undefined },
     todoID: params.todoID,
   };
@@ -325,88 +335,32 @@ class TodoListView extends Component<TodoListOutProps, {}> {
         }
         body={
           <SmartScroll>
-            <Filter id={query.view}>
-              <List
-                id="complete"
-                multiselect
-                onSelect={(e: ListSelectEvent) => this.listDidSelect(e)}
-                onShortCut={(e: ListKeyboardEvent) => this.listOnKeyDown(e)}
-                shortcuts={[ "DELETE", "D", "U", "LEFT", "RIGHT" ]}
-              >
-                {this.props.completeTodos
-                  .sort((a, b) => this.sortBy(a, b))
-                  .map((todo) => (
-                    <Todo
-                      active={params.todoID === todo.id}
-                      categoryID={categoryID}
-                      completedDate={todo.completedDate}
-                      created={todo.created}
-                      id={todo.id}
-                      key={todo.id}
-                      priority={todo.priority}
-                      priorityLength={priorityLength}
-                      search={query.search}
-                      showAlt={showAlt}
-                      state={todo.state}
-                      title={todo.name}
-                    />
-                  ))
-                }
-              </List>
-              <List
-                id="incomplete"
-                multiselect
-                onSelect={(e: ListSelectEvent) => this.listDidSelect(e)}
-                onShortCut={(e: ListKeyboardEvent) => this.listOnKeyDown(e)}
-                shortcuts={[ "DELETE", "D", "U", "LEFT", "RIGHT" ]}
-              >
-                {this.props.incompleteTodos
-                  .sort((a, b) => this.sortBy(a, b))
-                  .map((todo) => (
-                    <Todo
-                      categoryID={categoryID}
-                      created={todo.created}
-                      id={todo.id}
-                      active={params.todoID === todo.id}
-                      key={todo.id}
-                      priority={todo.priority}
-                      priorityLength={priorityLength}
-                      search={query.search}
-                      showAlt={showAlt}
-                      state={todo.state}
-                      title={todo.name}
-                    />
-                  ))
-                }
-              </List>
-              <List
-                id="all"
-                multiselect
-                onSelect={(e: ListSelectEvent) => this.listDidSelect(e)}
-                onShortCut={(e: ListKeyboardEvent) => this.listOnKeyDown(e)}
-                shortcuts={[ "DELETE", "D", "U", "LEFT", "RIGHT" ]}
-              >
-                {this.props.todos
-                  .sort((a, b) => this.sortBy(a, b))
-                  .map((todo) => (
-                    <Todo
-                      categoryID={categoryID}
-                      completedDate={todo.completedDate}
-                      created={todo.created}
-                      id={todo.id}
-                      active={params.todoID === todo.id}
-                      key={todo.id}
-                      priority={todo.priority}
-                      priorityLength={priorityLength}
-                      search={query.search}
-                      showAlt={showAlt}
-                      state={todo.state}
-                      title={todo.name}
-                    />
-                  ))
-                }
-              </List>
-            </Filter>
+            <List
+              multiselect
+              onSelect={(e: ListSelectEvent) => this.listDidSelect(e)}
+              onShortCut={(e: ListKeyboardEvent) => this.listOnKeyDown(e)}
+              shortcuts={[ "DELETE", "D", "U", "LEFT", "RIGHT" ]}
+            >
+              {this.props.filteredTodos
+                .sort((a, b) => this.sortBy(a, b))
+                .map((todo) => (
+                  <Todo
+                    categoryID={categoryID}
+                    completedDate={todo.completedDate}
+                    created={todo.created}
+                    id={todo.id}
+                    active={params.todoID === todo.id}
+                    key={todo.id}
+                    priority={todo.priority}
+                    priorityLength={priorityLength}
+                    search={query.search}
+                    showAlt={showAlt}
+                    state={todo.state}
+                    title={todo.name}
+                  />
+                ))
+              }
+            </List>
           </SmartScroll>
         }
         feet={
