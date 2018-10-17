@@ -19,6 +19,12 @@
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
+      "@store": [
+        "frontend/src/store"
+      ],
+      "@action": [
+        "frontend/src/action"
+      ],
       "@types": [
         "types/"
       ],
@@ -36,6 +42,7 @@
       ],
       "@*": [
         "/*",
+        "frontend/src/scripts/*",
         "packages/*"
       ]
     }
