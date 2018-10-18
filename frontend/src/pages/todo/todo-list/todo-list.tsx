@@ -195,7 +195,38 @@ class TodoListView extends Component<TodoListOutProps, {}> {
     });
   }
 
-  listDidSelect(e: ListSelectEvent) {
+  openFilterMenu = () => {
+    dispatch("CONTEXT_MENU", {
+      type: "OPEN",
+      value: {
+        id: CONTEXT_MENU_FILTER
+      }
+    });
+  }
+
+  openSortMenu = () => {
+    dispatch("CONTEXT_MENU", {
+      type: "OPEN",
+      value: {
+        id: CONTEXT_MENU_SORT
+      }
+    });
+  }
+
+  addTodo = (name: string) => {
+    const { tagFilters } = this.props;
+    const { categoryID } = this.props.params;
+    dispatch("TODO", {
+      type: "ADD",
+      value: {
+        categoryID,
+        tags: tagFilters && tagFilters.includes.concat(tagFilters.any),
+        name,
+      }
+    });
+  }
+
+  listDidSelect = (e: ListSelectEvent) => {
     const { history, categoryID } = this.props;
     this.selected = e.selected;
     history.push({
@@ -207,7 +238,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
     });
   }
 
-  listOnKeyDown(e: ShortCut.Event) {
+  listOnKeyDown = (e: ShortCut.Event) => {
     if (e.name === "DELETE") {
       dispatch("ALERT", {
         type: "PUSH",
@@ -237,11 +268,39 @@ class TodoListView extends Component<TodoListOutProps, {}> {
     }
   }
 
+  viewComplete = () => {
+    const { history, query } = this.props;
+    history.push({
+      query: {
+        ...query,
+        view: "complete"
+      }
+    });
+  }
+
+  viewIncomplete = () => {
+    const { history, query } = this.props;
+    history.push({
+      query: {
+        ...query,
+        view: "incomplete"
+      }
+    });
+  }
+
+  viewAll = () => {
+    const { history, query } = this.props;
+    history.push({
+      query: {
+        ...query,
+        view: "all"
+      }
+    });
+  }
+
   render() {
     const {
       categoryID,
-      tagFilters,
-      history,
       params,
       priorityLength,
       showAlt,
@@ -264,14 +323,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
             <TitleAndInput
               component={InputText}
               title={this.props.name}
-              onSubmit={(name) => dispatch("TODO", {
-                type: "ADD",
-                value: {
-                  categoryID,
-                  tags: tagFilters && tagFilters.includes.concat(tagFilters.any),
-                  name,
-                }
-              })}
+              onSubmit={this.addTodo}
             />
           </Titlebar>
         }
@@ -282,25 +334,11 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                 <Button
                   icon="filter"
                   toggle={!!this.props.filterBy}
-                  onClick={() => {
-                    dispatch("CONTEXT_MENU", {
-                      type: "OPEN",
-                      value: {
-                        id: CONTEXT_MENU_FILTER
-                      }
-                    });
-                  }}
+                  onClick={this.openFilterMenu}
                 />
                 <Button
                   icon="sort"
-                  onClick={() => {
-                    dispatch("CONTEXT_MENU", {
-                      type: "OPEN",
-                      value: {
-                        id: CONTEXT_MENU_SORT
-                      }
-                    });
-                  }}
+                  onClick={this.openSortMenu}
                 />
               </Control>
             }
@@ -308,30 +346,15 @@ class TodoListView extends Component<TodoListOutProps, {}> {
             <TabBar>
               <Tab
                 isActive={query.view === "complete"}
-                onClick={() => history.push({
-                  query: {
-                    ...query,
-                    view: "complete"
-                  }
-                })}>Complete</Tab>
+                onClick={this.viewComplete}>Complete</Tab>
 
               <Tab
                 isActive={query.view === "incomplete"}
-                onClick={() => history.push({
-                  query: {
-                    ...query,
-                    view: "incomplete"
-                  }
-                })}>Incomplete</Tab>
+                onClick={this.viewIncomplete}>Incomplete</Tab>
 
               <Tab
                 isActive={query.view === "all"}
-                onClick={() => history.push({
-                  query: {
-                    ...query,
-                    view: "all"
-                  }
-                })}>All</Tab>
+                onClick={this.viewAll}>All</Tab>
             </TabBar>
           </Titlebar>
         }
@@ -339,7 +362,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
           <SmartScroll>
             <List
               multiselect
-              onSelect={(e: ListSelectEvent) => this.listDidSelect(e)}
+              onSelect={this.listDidSelect}
               shortcuts={{
                 "DELETE": this.listOnKeyDown,
                 "D": this.listOnKeyDown,
@@ -352,11 +375,11 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                 .sort((a, b) => this.sortBy(a, b))
                 .map((todo) => (
                   <Todo
+                    active={params.todoID === todo.id}
                     categoryID={categoryID}
                     completedDate={todo.completedDate}
                     created={todo.created}
                     id={todo.id}
-                    active={params.todoID === todo.id}
                     key={todo.id}
                     priority={todo.priority}
                     priorityLength={priorityLength}
