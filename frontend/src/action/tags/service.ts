@@ -93,13 +93,13 @@ export class Service {
     });
   }
 
-  delete(value) {
+  delete({ categoryID, idList }) {
     const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
-    const category = categories.find((a) => a.id === value.categoryID);
-    const indexOf = category.tags.findIndex((a) => a.id === value.tagID);
-    const prevTag = category.tags[indexOf];
+    const category = categories.find((a) => a.id === categoryID);
+    const prevTags: CategoryResponse["tags"] = _.merge([], category.tags);
 
-    category.tags.splice(indexOf, 1);
+    category.tags =
+      category.tags.filter((tag) => idList.indexOf(tag.id) === -1);
 
     store.set({
       todo: {
@@ -107,16 +107,16 @@ export class Service {
       }
     });
 
-    ajax.post(path.join("/tags/", value.categoryID), {
+    ajax.post(path.join("/tags", categoryID), {
       data: {
         action: "delete",
-        id: value.tagID,
+        idList,
       }
     })
       .catch(function () {
         const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
-        const category = categories.find((a) => a.id === value.categoryID);
-        category.tags.splice(indexOf, 0, prevTag);
+        const category = categories.find((a) => a.id === categoryID);
+        category.tags = prevTags;
         store.set({
           todo: {
             categories,

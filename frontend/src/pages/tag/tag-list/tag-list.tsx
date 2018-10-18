@@ -10,12 +10,11 @@ import { ColorPicker } from "@types";
 import path, { PathParams } from "@path";
 import { dispatch } from "@frontend/action";
 import * as pathlist from "@frontend/routes";
-import { List, ListItem } from "@frontend/components/list";
+import { List, ListItem, ListSelectEvent } from "@frontend/components/list";
 import { Timestamp } from "@frontend/components/timestamp";
 import { emptyForm } from "@frontend/action/form";
 import { TitleAndInput, TitleAndInputPassedProps } from "@frontend/components/title-and-input";
 import { Titlebar } from "@frontend/components/titlebar";
-import { Button } from "@frontend/components/button";
 
 const FORM_ID = generateHash();
 const COLOR_PICKER_ID = "tag_name";
@@ -85,6 +84,12 @@ function mapStateToProps(state: StoreState, props: WithRouterProps): Props {
 
 class TagListView extends Component<Props, {}> {
   node: HTMLInputElement;
+  selected: string[];
+
+  constructor(props) {
+    super(props);
+    this.selected = [];
+  }
 
   componentWillReceiveProps(nextProps: Props) {
     if (this.props.colorPicker.isOpen && !nextProps.colorPicker.isOpen && nextProps.colorPicker.value) {
@@ -95,6 +100,21 @@ class TagListView extends Component<Props, {}> {
         value: nextProps.colorPicker.value,
       });
     }
+  }
+
+  onSelect = (e: ListSelectEvent) => {
+    this.selected = e.selected;
+  }
+
+  shortcutDidDelete = () => {
+    dispatch("ALERT", {
+      type: "PUSH",
+      value: {
+        type: "TAG_DELETE",
+        categoryID: this.props.params.categoryID,
+        idList: this.selected,
+      }
+    });
   }
 
   render() {
@@ -116,7 +136,13 @@ class TagListView extends Component<Props, {}> {
           </Titlebar>
         }
         body={
-          <List>
+          <List
+            multiselect
+            onSelect={this.onSelect}
+            shortcuts={{
+              "DELETE": this.shortcutDidDelete,
+            }}
+          >
             {this.props.tags.map((tag) => {
               return (
                 <ListItem
@@ -136,13 +162,6 @@ class TagListView extends Component<Props, {}> {
                       background={tag.color}
                     />
                   }
-                  secondaryAction={<Button icon="close" onClick={() => dispatch("TAG", {
-                    type: "DELETE",
-                    value: {
-                      categoryID: params.categoryID,
-                      tagID: tag.id,
-                    }
-                  })}/>}
                   timestamp={<Timestamp>{tag.created}</Timestamp>}
                   key={tag.id}>
                 </ListItem>

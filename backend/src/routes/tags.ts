@@ -3,7 +3,7 @@ import Validate from "verified";
 import { Database } from "@backend/class/database";
 import generateHash from "@generate-hash";
 import express from "express";
-import { TagResponse, TodoElement, TagElement } from "@types";
+import { TagResponse, TodoElement, TagElement, CategoryElement } from "@types";
 import path from "@path";
 
 interface TagPostRequest extends Request {
@@ -15,6 +15,7 @@ interface TagPostRequest extends Request {
     name: string;
     color: string;
     id: string;
+    idList: string[];
   };
 }
 
@@ -34,27 +35,46 @@ export function toTagResponse(tagElement: TagElement): TagResponse {
 }
 
 function deleteTag(req: TagPostRequest, res: Response, database: Database) {
-  const validateDelete = new Validate({
+  const { categoryID } = req.params;
+
+  const categoryElement =
+    database.getElementById<CategoryElement>(categoryID);
+
+  const validateDelete =
+    new Validate({
     action: "delete",
-    "id": "string",
+    "idList": "string[]",
   });
 
-  if (validateDelete.validate(req.body).isValid) {
-    const categoryElement = database.getElementById(req.params.categoryID);
-    const tagElement = categoryElement.querySelector<TagElement>("#" + req.body.id);
-    const todos = categoryElement.querySelectorAll<TodoElement>("todo");
+  if (!categoryElement) {
+    res.status(404).send("TAG__CATEGORY_ID_NOT_FOUND");
+  } else if (!validateDelete.validate(req.body).isValid) {
+    res.status(500).send("TAG__INVALID_REQUEST");
+  } else {
+    let i = -1;
+    const idList = req.body.idList;
+    const n = idList.length;
 
-    todos.forEach((todo) => {
-      todo.attributes.tags = todo.attributes.tags.filter((tagID) => {
-        return tagElement.attributes.id !== tagID;
+    while (++i < n) {
+      const tagElement = categoryElement.querySelector<TagElement>(`#${idList[i]}`);
+      const todos = categoryElement.querySelectorAll<TodoElement>("todo");
+
+      if (!tagElement) {
+        res.status(404).send(`TAG__TAG_ID_NOT_FOUND_(${idList[i]})`);
+        return;
+      }
+
+      todos.forEach((todo) => {
+        todo.attributes.tags = todo.attributes.tags.filter((tagID) => {
+          return tagElement.attributes.id !== tagID;
+        });
       });
-    });
 
-    categoryElement.removeChild(tagElement);
+      categoryElement.removeChild(tagElement);
+    }
+
     res.send();
     database.save();
-  } else {
-    res.status(500).send("TAG__ID_IS_NOT_STRING");
   }
 }
 
@@ -100,6 +120,7 @@ function onPost(req: TagPostRequest, res, database) {
     "categoryID?": "string",
     "color?": "string",
     "id?": "string",
+    "idList?": "string[]",
     "name?": "string",
   });
 
