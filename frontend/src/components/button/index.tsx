@@ -14,7 +14,7 @@ interface ButtonProps extends Partial<JSX.ElementChildrenAttribute> {
   icon?: IconType;
   onClick?: (event: React.MouseEvent | React.KeyboardEvent) => void;
   toggle?: boolean;
-  type?: ButtonType;
+  variant?: ButtonType;
 }
 
 interface ButtonState {
@@ -54,12 +54,12 @@ export class Button extends React.Component<ButtonProps, ButtonState> {
   }
 
   render() {
-    const { onClick, type, icon, className, toggle } = this.props;
+    const { onClick, variant, icon, className, toggle } = this.props;
     const { active } = this.state;
     const classList = ["button"];
 
-    if (type) {
-      classList.push("button--" + type);
+    if (variant) {
+      classList.push("button--" + variant);
     }
 
     if (this.props.children) {

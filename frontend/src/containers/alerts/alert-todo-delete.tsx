@@ -32,7 +32,7 @@ export function AlertTodoDelete(props: AlertTodoDeleteProps) {
                 idList: props.idList,
               }
             });
-          }} type="primary">OK</Button>
+          }} variant="primary">OK</Button>
           <Button onClick={props.close}>Cancel</Button>
         </Control>
       }

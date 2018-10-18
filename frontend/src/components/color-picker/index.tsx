@@ -131,7 +131,7 @@ class ColorPickerView extends React.Component<ColorPickerProps, ColorPickerState
                 id: this.props.id,
                 value: this.state.value,
               });
-            }} type="primary">OK</Button>
+            }} variant="primary">OK</Button>
             <Button onClick={() => {
               dispatch("COLOR_PICKER", {
                 type: "CLOSE",

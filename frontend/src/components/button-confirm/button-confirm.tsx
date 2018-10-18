@@ -38,7 +38,7 @@ export class ButtonConfirm extends React.Component<ButtonConfirmProps, ButtonCon
             onClick={() => this.setState({ showSelect: true })}
           />
           : null}
-        <Button type={this.props.type}>{this.props.children}</Button>
+        <Button variant={this.props.type}>{this.props.children}</Button>
         <div className="button-confirm_select">
           <div
             className="button-confirm_affirmative"
