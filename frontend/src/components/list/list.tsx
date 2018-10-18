@@ -12,19 +12,12 @@ export interface ListSelectEvent {
   target: string;
 }
 
-export interface ListKeyboardEvent {
-  name: string;
-  selected: string[];
-  type: string;
-}
-
 interface ListProps extends Partial<JSX.ElementChildrenAttribute> {
   id?: string;
   multiselect?: boolean;
   onSelect?: (e: ListSelectEvent) => void;
-  onShortCut?: (e: ListKeyboardEvent) => void;
   selectedIDList?: ListSelectedIndex;
-  shortcuts?: string[];
+  shortcuts?: { [ key: string ]: (e: ShortCut.Event) => void };
 }
 
 interface ListState {
@@ -161,30 +154,6 @@ export class List extends Component<ListProps, ListState> {
     }
   }
 
-  onShortCut(e: ShortCut.Event) {
-    const children = React.Children.toArray(this.props.children) as ListChild[];
-    const { onShortCut } = this.props;
-    const { selectedIDList } = this.state;
-
-    if (onShortCut) {
-      const selected: string[] = [];
-      let i = -1;
-      const n = children.length;
-
-      while (++i < n) {
-        if (selectedIDList.indexOf(children[i].props.id) !== -1) {
-          selected.push(children[i].props.id);
-        }
-      }
-
-      onShortCut({
-        name: e.name,
-        selected,
-        type: e.type,
-      });
-    }
-  }
-
   onKeyDown(e: KeyboardEvent) {
     const keyname = KEYNAME_BY_CODE[e.which];
 
@@ -196,7 +165,7 @@ export class List extends Component<ListProps, ListState> {
       this.setState({
         shiftPressed: true
       });
-    } else if (keyname === "ESC") {
+    } else if (e.target === this.node && keyname === "ESC") {
       this.setState({
         selectedIDList: []
       });
@@ -228,18 +197,12 @@ export class List extends Component<ListProps, ListState> {
       this.onKeyDown(e as KeyboardEvent);
     } else if (e.type === "keyup") {
       this.onKeyUp(e as KeyboardEvent);
-    } else if (e.type === "shortcut") {
-      console.log(this);
-      this.onShortCut(e as ShortCut.Event);
     }
   }
 
   componentDidMount() {
     if (this.props.shortcuts) {
-      this.shortcut = new ShortCut(this.node);
-      this.props.shortcuts.forEach((key: string) =>
-        this.shortcut.addEventListener(key, this)
-      );
+      this.shortcut = new ShortCut(this.node, this.props.shortcuts);
     }
 
     this.indexChildrenByID();
