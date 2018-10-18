@@ -3,6 +3,10 @@
 import { KEYNAME_BY_CODE } from "@constants";
 import _ from "lodash";
 
+export interface ShortCutProps {
+  [ key: string ]: () => void;
+}
+
 class ShortCut {
   pressed: string[];
   groups: ShortCutGroup[];
@@ -13,12 +17,17 @@ class ShortCut {
     callback: ShortCut.EventListenerFunction;
   }[];
 
-  constructor(target: HTMLElement) {
+  constructor(target: HTMLElement, props?) {
     this.groups = [];
     this.pressed = [];
     this.target = target;
     this.target.addEventListener("keydown", this);
     this.target.addEventListener("keyup", this);
+    if (props) {
+      for (var k in props) {
+        this.addEventListener(k, props[k]);
+      }
+    }
   }
 
   addEventListener(name: string, callback: ShortCut.EventListener) {
@@ -54,7 +63,7 @@ class ShortCut {
       if (_.difference(member, this.pressed).length === 0) {
         group.index += 1;
         if (group.index === group.queue.length) {
-          let evt = {
+          let evt: ShortCut.Event = {
             type: "shortcut",
             name: group.name,
           };
