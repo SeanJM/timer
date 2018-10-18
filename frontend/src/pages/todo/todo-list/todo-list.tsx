@@ -13,7 +13,7 @@ import { dispatch } from "@frontend/action";
 import { emptyForm } from "@frontend/action/form";
 import { Icon } from "@components/icon";
 import { InputText } from "@components/input";
-import { List, ListSelectEvent, ListKeyboardEvent } from "@components/list";
+import { List, ListSelectEvent } from "@components/list";
 import { RouteComponentProps } from "@components/router";
 import { routes } from "@frontend/routes";
 import { SmartScroll } from "@components/smart-scroll";
@@ -24,6 +24,7 @@ import { Todo } from "@components/todo";
 import { TodoListProgress } from "./todo-list-progress";
 import { TodoResponse, FilterResponse } from "types";
 import { Viewport } from "@components/viewport";
+import ShortCut from "@frontend/scripts/shortcut";
 
 const FORM_ID = generateHash();
 const CONTEXT_MENU_SORT = generateHash();
@@ -148,6 +149,7 @@ function mapStateToProps(state: StoreState, props: TodoListInProps): TodoListOut
 
 class TodoListView extends Component<TodoListOutProps, {}> {
   node: HTMLInputElement;
+  selected: string[];
 
   handleChange() {
     const { filterBy, query, history } = this.props;
@@ -195,7 +197,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
 
   listDidSelect(e: ListSelectEvent) {
     const { history, categoryID } = this.props;
-
+    this.selected = e.selected;
     history.push({
       pathname: path.reduce(routes.pathname, {
         type: "todo",
@@ -205,7 +207,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
     });
   }
 
-  listOnKeyDown(e: ListKeyboardEvent) {
+  listOnKeyDown(e: ShortCut.Event) {
     if (e.name === "DELETE") {
       dispatch("ALERT", {
         type: "PUSH",
@@ -213,7 +215,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
           type: "TODO_DELETE",
           id: TODO_DELETE_ID,
           categoryID: this.props.categoryID,
-          idList: e.selected
+          idList: this.selected
         }
       });
     } else if (e.name === "D") {
@@ -221,7 +223,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
         type: "COMPLETE",
         value: {
           categoryID: this.props.categoryID,
-          idList: e.selected
+          idList: this.selected
         }
       });
     } else if (e.name === "U") {
@@ -229,7 +231,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
         type: "INCOMPLETE",
         value: {
           categoryID: this.props.categoryID,
-          idList: e.selected
+          idList: this.selected
         }
       });
     }
@@ -338,8 +340,13 @@ class TodoListView extends Component<TodoListOutProps, {}> {
             <List
               multiselect
               onSelect={(e: ListSelectEvent) => this.listDidSelect(e)}
-              onShortCut={(e: ListKeyboardEvent) => this.listOnKeyDown(e)}
-              shortcuts={[ "DELETE", "D", "U", "LEFT", "RIGHT" ]}
+              shortcuts={{
+                "DELETE": this.listOnKeyDown,
+                "D": this.listOnKeyDown,
+                "U": this.listOnKeyDown,
+                "+": this.listOnKeyDown,
+                "-": this.listOnKeyDown
+              }}
             >
               {this.props.filteredTodos
                 .sort((a, b) => this.sortBy(a, b))
