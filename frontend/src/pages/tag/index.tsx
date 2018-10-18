@@ -3,6 +3,7 @@ import { withStore } from "@frontend/store";
 import { StoreState } from "@frontend/store";
 import { TagEditorConnect } from "./tag-editor";
 import { TagListConnect } from "./tag-list";
+import { TagNotFound } from "./tag-not-found";
 import { WithRouterProps } from "@frontend/components/router";
 import { PanelGroup, Panel } from "@frontend/components/panel-group";
 import { dispatch } from "@frontend/action";
@@ -16,23 +17,29 @@ type TagPathParams = PathParams<{
 interface TagOutProps extends WithRouterProps {
   params: TagPathParams;
   tagEditorDefaultWidth: number;
+  tagExists: boolean;
 }
 
 function mapStateToProps(state: StoreState, props: WithRouterProps): TagOutProps {
   const params = path.params(props.location.pathname, state.routes.schema);
+  const { categoryID, elementID } = params;
+  const categoryElement = state.todo.categories.find((a) => a.id === categoryID);
+  const tagExists = !!categoryElement.tags.find((tag) => tag.id === elementID);
   return {
     ...props,
     params: {
-      categoryID: params.categoryID,
-      tagID: params.elementID,
+      categoryID,
+      tagID: elementID,
     },
     tagEditorDefaultWidth: state.layout.tagEditorDefaultWidth,
+    tagExists,
   };
 }
 
 export class Tag extends Component<TagOutProps, {}> {
   render() {
     const { tagID } = this.props.params;
+    const { tagExists } = this.props;
     return (
       <PanelGroup>
         <Panel>
@@ -52,7 +59,10 @@ export class Tag extends Component<TagOutProps, {}> {
                 });
               }}
             >
-              <TagEditorConnect {...this.props}/>
+              { tagExists
+                ? <TagEditorConnect {...this.props}/>
+                : <TagNotFound/>
+              }
             </Panel>
           )
           : null}
