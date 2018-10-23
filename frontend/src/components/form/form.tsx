@@ -1,30 +1,8 @@
 import * as React from "react";
 import { InputValueEvent } from "@types";
 
-export type FormValue<T = {}> = Partial<T> & {
-  [key: string]: InputValueEvent["value"];
-};
-
-interface FormChangeEvent {
-  type: string;
-  value: FormValue;
-}
-
-interface FormOnChangeFunction {
-  (e: FormChangeEvent): void;
-}
-
-interface FormProps extends JSX.ElementChildrenAttribute {
-  id?: string;
-  type?: "borderless";
-  showValidation?: boolean;
-  onSubmit?: (e: React.FormEvent) => void;
-  onChange?: FormOnChangeFunction | { handleEvent: FormOnChangeFunction };
-  [key: string]: any;
-}
-
-export class Form extends React.Component<FormProps> {
-  value: FormValue;
+class Form extends React.Component<Form.Props> {
+  value: Form.Value;
 
   constructor(props) {
     super(props);
@@ -90,3 +68,29 @@ export class Form extends React.Component<FormProps> {
     );
   }
 }
+
+namespace Form {
+  export interface Props extends JSX.ElementChildrenAttribute {
+    id?: string;
+    type?: "borderless";
+    showValidation?: boolean;
+    onSubmit?: (e: React.FormEvent) => void;
+    onChange?: Form.OnChangeFunction | { handleEvent: Form.OnChangeFunction };
+    [key: string]: any;
+  }
+
+  export type Value<T = {}> = Partial<T> & {
+    [key: string]: InputValueEvent["value"];
+  };
+
+  export interface ChangeEvent {
+    type: string;
+    value: Form.Value;
+  }
+
+  export interface OnChangeFunction {
+    (e: Form.ChangeEvent): void;
+  }
+}
+
+export { Form };
