@@ -1,0 +1,31 @@
+%button-clear {
+  .button_face {
+    background: none;
+  }
+
+  .button_text {
+    color: $primary;
+  }
+
+  .icon {
+    fill: $grey;
+  }
+}
+
+%button-compact {
+  .button {
+    height: $u7;
+
+    .icon {
+      height: $u3;
+      margin-top: $u3/-2;
+      margin-left: $u3/-2;
+      width: $u3;
+    }
+  }
+
+  .button_face {
+    top: 0;
+    bottom: 0;
+  }
+}
