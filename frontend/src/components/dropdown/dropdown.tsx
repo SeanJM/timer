@@ -119,7 +119,7 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
       }
 
       case "ENTER": {
-        if (onInput) {
+        if (onInput && children[selectedIndex]) {
           onInput({
             id: children[selectedIndex].props.id
           });
