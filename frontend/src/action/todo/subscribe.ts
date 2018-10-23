@@ -38,6 +38,16 @@ export function todo(subscribe: Subscribe) {
 
       case "ADD": {
         service.addTodo(value);
+        break;
+      }
+
+      case "DECREASE_PRIORITY": {
+        service.decreasePriority(value);
+        break;
+      }
+
+      case "INCREASE_PRIORITY": {
+        service.increasePriority(value);
       }
     }
   });

@@ -163,4 +163,39 @@ export class TodoService {
       }
     });
   }
+
+  decreasePriority({ categoryID, idList }: { categoryID: string, idList: string[] }) {
+    const categories = store.value.todo.categories;
+    const category = categories.find((categoryElement) => categoryElement.id === categoryID);
+    const editList: TodoEditValue["editList"] = [];
+
+    category.todos.forEach((todo) => {
+      if (idList.indexOf(todo.id) !== -1) {
+        editList.push({
+          todoID: todo.id,
+          priority: Math.max(0, todo.priority - 1),
+        });
+      }
+    });
+
+    this.edit({ categoryID, editList });
+  }
+
+  increasePriority({ categoryID, idList }: { categoryID: string, idList: string[] }) {
+    const categories = store.value.todo.categories;
+    const category = categories.find((categoryElement) => categoryElement.id === categoryID);
+    const editList: TodoEditValue["editList"] = [];
+    const { priorityLength } = store.value.todo.todoSettings;
+
+    category.todos.forEach((todo) => {
+      if (idList.indexOf(todo.id) !== -1) {
+        editList.push({
+          todoID: todo.id,
+          priority: Math.min(priorityLength, todo.priority + 1),
+        });
+      }
+    });
+
+    this.edit({ categoryID, editList });
+  }
 }
