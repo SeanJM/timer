@@ -1,3 +1,4 @@
+// tslint:disable:no-default-export
 export default function getSearch(url: string): string {
   return url.indexOf("?") === -1
     ? ""

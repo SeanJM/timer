@@ -1,16 +1,17 @@
-import React from "react";
-import { history, RouterHistory } from "@frontend/components/router/history";
-import getLocation from "@frontend/components/router/get-location";
 import path from "@path";
-import { RouterLocation } from "@frontend/components/router/types";
+import React from "react";
 import { PathQueryValue } from "@path/query";
+
+import { history } from "@components/router/history";
+import { RouterLocation } from "./types";
+import { History } from "./class/history";
 
 export interface WithRouterProps extends
   Partial<JSX.ElementChildrenAttribute>
   {
+    history: History;
     location: RouterLocation;
     query: PathQueryValue;
-    history: RouterHistory;
   }
 
 interface State extends Pick<WithRouterProps, "location" | "query"> {}
@@ -18,7 +19,7 @@ interface State extends Pick<WithRouterProps, "location" | "query"> {}
 export function withRouter<P extends {}>(C: React.ComponentType<P>) {
   return class extends React.Component<P, State> {
     constructor(props) {
-      const location = getLocation(window.location.hash.substring(1));
+      const location = history.getLocation(window.location.hash.substring(1));
       super(props);
       this.state = {
         location,
@@ -26,21 +27,24 @@ export function withRouter<P extends {}>(C: React.ComponentType<P>) {
       };
     }
 
-    handleEvent() {
-      const location = getLocation(window.location.hash.substring(1));
-      let query = path.query(location.search).value;
+    handleEvent(e: History.ChangeEvent) {
       this.setState({
-        location,
-        query,
+        location: {
+          hash: e.hash,
+          href: e.href,
+          pathname: e.pathname,
+          search: e.search,
+        },
+        query: e.query,
       });
     }
 
     componentDidMount() {
-      window.addEventListener("hashchange", this);
+      history.onChange(this);
     }
 
     componentWillUnmount() {
-      window.removeEventListener("hashchange", this);
+      history.offChange(this);
     }
 
     render() {
