@@ -4,13 +4,16 @@ import modal from "@frontend/action/modal";
 import { alert } from "@frontend/action/alert";
 import { category } from "@frontend/action/category";
 import { contextMenu } from "@frontend/action/context-menu";
+import { dialog, DialogDispatch } from "@frontend/action/dialog";
 import { filters } from "@frontend/action/filters";
 import { form } from "@frontend/action/form";
 import { layout } from "@frontend/action/layout";
 import { tags } from "@frontend/action/tags";
 import { todo, TodoDispatch } from "@frontend/action/todo";
 
-interface Dispatch extends TodoDispatch {
+interface Dispatch extends
+  DialogDispatch,
+  TodoDispatch {
   (name: string, value?: any): void;
 }
 
@@ -29,6 +32,7 @@ alert(subscribe);
 category(subscribe);
 color(subscribe);
 contextMenu(subscribe);
+dialog(subscribe);
 filters(subscribe);
 form(subscribe);
 layout(subscribe);

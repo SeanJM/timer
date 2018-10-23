@@ -1,0 +1,54 @@
+.dialog {
+  box-shadow: 0 $u2 $u8 rgba(0, 0, 0, 0.7);
+  position: absolute;
+  width: $u148;
+  z-index: 10;
+}
+
+.dialog_head {
+  @extend %titlebar-compact;
+  background: $black-light;
+  border: 1px solid $black;
+  border-bottom: 0;
+  border-radius: 3px 3px 0 0;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.13) inset;
+
+  .titlebar {
+    padding-right: 0 !important;
+  }
+
+  .titlebar:after {
+    border-bottom: 0;
+  }
+
+  h6 {
+    color: #fff;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.dialog_body {
+  @extend %list-compact;
+  @extend %smart-scroll-compact;
+  @extend %button-clear;
+  background: #fff;
+  border: 1px solid $grey;
+  border-top: 0;
+
+  .split-view_left {
+    background: $grey-lightest;
+
+    .list-item_title {
+      padding-left: $u4;
+    }
+
+    border-right: 2px solid $grey-light;
+  }
+
+  .split-view {
+    height: $u80;
+  }
+}
