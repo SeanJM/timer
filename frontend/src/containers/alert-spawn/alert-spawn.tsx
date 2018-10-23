@@ -52,4 +52,4 @@ export class AlertsView extends React.Component<AlertsProps> {
   }
 }
 
-export const AlertsConnect = withStore(AlertsView, mapStateToProps)();
+export const AlertSpawnConnect = withStore(AlertsView, mapStateToProps)();
