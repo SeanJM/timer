@@ -9,11 +9,12 @@ export interface DragMeEvent {
   positionY: number;
   width: number;
   height: number;
+  target: HTMLDivElement;
 }
 
 interface DragMeProps extends Partial<JSX.ElementChildrenAttribute> {
   className?: string;
-  $ref?: (e: HTMLDivElement) => void;
+  autofocus?: boolean;
   onMouseDown?: (e: DragMeEvent) => void;
   onDragMove?: (e: DragMeEvent) => void;
   onDragEnd?: (e: DragMeEvent) => void;
@@ -44,6 +45,10 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
   }
 
   componentDidMount() {
+    if (this.props.autofocus) {
+      this.node.focus();
+    }
+
     document.body.addEventListener("mousemove", this);
     document.body.addEventListener("mouseup", this);
   }
@@ -51,6 +56,10 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
   componentWillUnmount() {
     document.body.removeEventListener("mousemove", this);
     document.body.removeEventListener("mouseup", this);
+  }
+
+  dispatchRef = (node) => {
+    this.node = node;
   }
 
   onMouseMove(e) {
@@ -68,7 +77,7 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
     }
   }
 
-  onMouseDown(e: React.MouseEvent) {
+  dispatchMouseDown = (e: React.MouseEvent) => {
     this.setState({
       isMouseDown: true,
       pageX: e.pageX,
@@ -80,7 +89,7 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
     document.body.style.userSelect = "none";
   }
 
-  onMouseUp(e) {
+  dispatchMouseUp = (e) => {
     if (this.state.isMouseDown) {
       this.setState({
         isMouseDown: false,
@@ -93,19 +102,19 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
     document.body.style.userSelect = null;
   }
 
-  onKeyDown(e) {
+  dispatchKeyDown(e) {
     if (this.props.onKeyDown) {
       this.props.onKeyDown(e);
     }
   }
 
-  onFocus(e) {
+  dispatchFocus = (e) => {
     if (this.props.onFocus) {
       this.props.onFocus(e);
     }
   }
 
-  onBlur(e) {
+  dispatchBlur = (e) => {
     if (this.props.onBlur) {
       this.props.onBlur(e);
     }
@@ -119,7 +128,7 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
       }
 
       case "mouseup": {
-        this.onMouseUp(e);
+        this.dispatchMouseUp(e);
       }
     }
   }
@@ -128,34 +137,28 @@ export class DragMe extends React.Component<DragMeProps, DragMeState> {
     const offset = this.node.getBoundingClientRect();
     const offsetX = e.pageX - offset.left;
     const offsetY = e.pageY - offset.top;
-    const nextPageX = Math.max(0, Math.min(offsetX, offset.width));
-    const nextPageY = Math.max(0, Math.min(offsetY, offset.height));
     return {
       offsetX,
       offsetY,
-      pageX: nextPageX,
-      pageY: nextPageY,
-      positionX: nextPageX / offset.width,
-      positionY: nextPageY / offset.height,
+      pageX: e.pageX,
+      pageY: e.pageY,
+      positionX: offsetX / offset.width,
+      positionY: offsetY / offset.height,
       width: offset.width,
       height: offset.height,
+      target: this.node,
     };
   }
 
   render() {
     return (
       <div
-        ref={(node) => {
-          this.node = node;
-          if (this.props.$ref) {
-            this.props.$ref(node);
-          }
-        }}
         className={this.props.className}
-        onBlur={(e) => this.onBlur(e)}
-        onFocus={(e) => this.onFocus(e)}
-        onKeyDown={(e) => this.onKeyDown(e)}
-        onMouseDown={(e) => this.onMouseDown(e)}
+        onBlur={this.dispatchBlur}
+        onFocus={this.dispatchFocus}
+        onKeyDown={this.dispatchKeyDown}
+        onMouseDown={this.dispatchMouseDown}
+        ref={this.dispatchRef}
         tabIndex={0}
       >
         {this.props.children}
