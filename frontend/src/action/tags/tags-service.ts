@@ -1,10 +1,9 @@
+import _ from "lodash";
 import ajax from "@ajax";
+import generateHash from "@generate-hash";
+import path from "@path";
 import { store } from "@frontend/store";
 import { TagResponse, CategoryResponse } from "@types";
-import { replaceById } from "@replace-by-id";
-import path from "@path";
-import generateHash from "@generate-hash";
-import _ from "lodash";
 
 export interface TagEditValue {
   categoryID: string;
@@ -14,18 +13,29 @@ export interface TagEditValue {
 }
 
 export class Service {
-  createTag(e) {
+  create(value) {
+    const { categoryID, idList, color, name } = value;
     const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
-    const category = categories.find((a) => a.id === e.categoryID);
+    const category = categories.find((a) => a.id === categoryID);
 
     const nextTag: TagResponse = {
       created: new Date().getTime(),
-      name: e.name,
-      color: e.color,
+      name,
+      color,
       id: generateHash(),
     };
 
     category.tags.push(nextTag);
+
+    if (idList) {
+      idList.forEach((id: string) => {
+         category.todos.forEach((todo) => {
+           if (todo.id === id) {
+             todo.tags.push(nextTag.id);
+           }
+         });
+      });
+    }
 
     store.set({
       todo: {
@@ -33,17 +43,41 @@ export class Service {
       }
     });
 
-    ajax.post(path.join("/tags/", e.categoryID), {
+    ajax.post(path.join("/tags/", categoryID), {
       data: {
         action: "create",
-        color: e.color ? e.color.substring(1) : null,
-        name: e.name,
+        color: color ? color.substring(1) : null,
+        idList,
+        name,
       } as Pick<TagResponse, "color" | "name">
     })
       .then(function (tag: TagResponse) {
         const categories: CategoryResponse[] = _.merge([], store.value.todo.categories);
-        const category = categories.find((a) => a.id === e.categoryID);
-        replaceById(category.tags, { ...tag, color: "#" + tag.color }, nextTag);
+        const category = categories.find((a) => a.id === categoryID);
+
+        category.tags.forEach((a) => {
+          if (a.id === nextTag.id) {
+            Object.assign(a, {
+              ...tag,
+              color: tag.color ? "#" + tag.color : null
+            });
+          }
+        });
+
+        /**
+          Replace the temporariliy created tag ids
+        */
+        if (idList) {
+          idList.forEach((id: string) => {
+             category.todos.forEach((todo) => {
+               if (todo.id === id) {
+                 todo.tags =
+                   todo.tags.map((id) => id === nextTag.id ? tag.id : id);
+               }
+             });
+          });
+        }
+
         store.set({
           todo: {
             categories,
