@@ -1,13 +1,6 @@
 import React from "react";
 
-interface DoubleClickProps extends JSX.ElementChildrenAttribute {
-  children: JSX.Element;
-  className?: string;
-  onDoubleClick?: (e: React.MouseEvent) => void;
-  onKeyDown?: (e: React.KeyboardEvent) => void;
-}
-
-export class DoubleClick extends React.Component<DoubleClickProps> {
+class DoubleClick extends React.Component<DoubleClick.Props> {
   clickCount: number;
   clickTimeout: any;
   clickDelay: number;
@@ -54,3 +47,14 @@ export class DoubleClick extends React.Component<DoubleClickProps> {
     );
   }
 }
+
+namespace DoubleClick {
+  export interface Props extends JSX.ElementChildrenAttribute {
+    children: JSX.Element;
+    className?: string;
+    onDoubleClick?: (e: React.MouseEvent) => void;
+    onKeyDown?: (e: React.KeyboardEvent) => void;
+  }
+}
+
+export { DoubleClick };
