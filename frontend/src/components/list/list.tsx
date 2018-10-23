@@ -1,56 +1,25 @@
 import React, { Component } from "react";
-import { KEYNAME_BY_CODE } from "@constants";
-import { ListItemProps } from "./list-item";
 import ShortCut from "@shortcut";
+import { KEYNAME_BY_CODE } from "@constants";
+import { ListItem } from "./list-item";
 
-type ListSelectedIndex = string[];
+export const ListContext = React.createContext<List.ContextValue>({} as List.ContextValue);
 
-export interface ListSelectEvent {
-  type: string;
-  selected: string[];
-  deselected: string[];
-  target: string;
-}
+type ListChild = React.ReactElement<ListItem.Props>;
 
-interface ListProps extends Partial<JSX.ElementChildrenAttribute> {
-  id?: string;
-  multiselect?: boolean;
-  onSelect?: (e: ListSelectEvent) => void;
-  selectedIDList?: ListSelectedIndex;
-  shortcuts?: { [ key: string ]: (e: ShortCut.Event) => void };
-}
-
-interface ListState {
-  controlPressed: boolean;
-  shiftPressed: boolean;
-  selectedIDList: ListSelectedIndex;
-}
-
-type ListChild = React.ReactElement<ListItemProps>;
-
-export class List extends Component<ListProps, ListState> {
+class List extends Component<List.Props, List.State> {
   node: HTMLDivElement;
   shortcut: ShortCut;
   previousIndex: number;
   firstIndex: number;
   indexByID: string[];
 
-  constructor(props: ListProps) {
-    const children = React.Children.toArray(props.children) as ListChild[];
-    let i = -1;
-    const n = children.length;
-
-    while (++i < n) {
-      if (!children[i].props.id) {
-        throw new Error("List children require an id");
-      }
-    }
-
+  constructor(props: List.Props) {
     super(props);
 
     this.state = {
       controlPressed: false,
-      selectedIDList: this.props.selectedIDList || [],
+      selectedIDList: [].concat(this.props.selectedIDList) || [],
       shiftPressed: false,
     };
 
@@ -86,7 +55,7 @@ export class List extends Component<ListProps, ListState> {
     }
   }
 
-  selectIndex(index: number) {
+  selectByIndex(index: number) {
     let selectedIDList = this.state.selectedIDList
       .slice()
       .sort((a, b) => {
@@ -94,14 +63,14 @@ export class List extends Component<ListProps, ListState> {
       });
 
     const children = [].concat(this.props.children) as ListChild[];
-    const childID = children[index].props.id;
+    const id = children[index].props.id;
     const { controlPressed, shiftPressed } = this.state;
-    let nextSelectedIndex = selectedIDList.indexOf(childID);
+    let nextSelectedIndex = selectedIDList.indexOf(id);
 
     if (this.props.multiselect && (controlPressed || shiftPressed)) {
       if (controlPressed) {
         if (nextSelectedIndex === -1) {
-          selectedIDList.push(childID);
+          selectedIDList.push(id);
         } else {
           selectedIDList.splice(nextSelectedIndex, 1);
         }
@@ -146,12 +115,8 @@ export class List extends Component<ListProps, ListState> {
     this.indexByID = indexByID;
   }
 
-  onClick(e: React.MouseEvent, index: number) {
-    const children = React.Children.toArray(this.props.children) as ListChild[];
-    this.selectIndex(index);
-    if (children[index].props.onClick) {
-      children[index].props.onClick(e);
-    }
+  dispatchClick = (e: React.MouseEvent, id: string) => {
+    this.selectByIndex(this.indexByID.indexOf(id));
   }
 
   onKeyDown(e: KeyboardEvent) {
@@ -171,9 +136,10 @@ export class List extends Component<ListProps, ListState> {
       });
     } else if (e.target === this.node) {
       if (keyname === "DOWN") {
-        this.selectIndex(Math.min(this.previousIndex + 1, [].concat(this.props.children).length - 1));
+        const length = [].concat(this.props.children).length - 1;
+        this.selectByIndex(Math.min(this.previousIndex + 1, length));
       } else if (keyname === "UP") {
-        this.selectIndex(Math.max(0, this.previousIndex - 1));
+        this.selectByIndex(Math.max(0, this.previousIndex - 1));
       }
     }
   }
@@ -220,40 +186,62 @@ export class List extends Component<ListProps, ListState> {
   }
 
   componentDidUpdate(prevProps) {
-    const prevChildren = [].concat(prevProps.children);
-    const nextChildren = [].concat(this.props.children);
-
-    const prevChildrenLen = prevChildren.length;
-    const nextChildrenLen = nextChildren.length;
-    const prevMidIndex = Math.floor(prevChildren[prevChildrenLen / 2]);
-    const nextMidIndex = Math.floor(nextChildren[nextChildrenLen / 2]);
-
-    const prevIDList = this.getID([ 0, prevMidIndex, prevChildrenLen - 1 ], prevChildren);
-    const nextIDList = this.getID([ 0, nextMidIndex, nextChildrenLen - 1 ], nextChildren);
-
-    if (prevChildrenLen !== nextChildrenLen || prevIDList[0] !== nextIDList[0] || prevIDList[1] !== nextIDList[1] || prevIDList[2] !== nextIDList[2]) {
-      this.indexChildrenByID();
-    }
+    this.indexChildrenByID();
   }
 
   render() {
-    const children =
-      React.Children.toArray(this.props.children) as ListChild[];
+    const classList = ["list"];
+    const { className } = this.props;
+
+    if (className) {
+      classList.push(className);
+    }
 
     return (
-      <div
-        className="list"
-        id={this.props.id}
-        ref={(node) => { this.node = node; }}
-        tabIndex={0}
-      >
-        {children.map((child, index) => {
-          return React.cloneElement(child, {
-            onClick: (e) => this.onClick(e, index),
-            selected: this.state.selectedIDList.indexOf(child.props.id) !== -1,
-          } as Partial<ListItemProps>);
-        })}
-      </div>
+      <ListContext.Provider value={{
+        selectedIDList: this.state.selectedIDList,
+        dispatchClick: this.dispatchClick,
+      }}>
+        <div
+          className={classList.join(" ")}
+          id={this.props.id}
+          ref={(node) => { this.node = node; }}
+          tabIndex={0}
+        >
+          {this.props.children}
+        </div>
+      </ListContext.Provider>
     );
   }
 }
+
+namespace List {
+  export interface SelectEvent {
+    type: string;
+    selected: string[];
+    deselected: string[];
+    target: string;
+  }
+
+  export interface ContextValue {
+    selectedIDList: string[];
+    dispatchClick: (e: React.MouseEvent, id: string) => void;
+  }
+
+  export interface Props extends Partial<JSX.ElementChildrenAttribute> {
+    className?: string;
+    id?: string;
+    multiselect?: boolean;
+    onSelect?: (e: List.SelectEvent) => void;
+    selectedIDList?: string[] | string;
+    shortcuts?: { [ key: string ]: (e: ShortCut.Event) => void };
+  }
+
+  export interface State {
+    controlPressed: boolean;
+    shiftPressed: boolean;
+    selectedIDList: string[];
+  }
+}
+
+export { List };

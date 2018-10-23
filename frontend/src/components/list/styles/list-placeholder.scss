@@ -1,0 +1,33 @@
+%list-compact {
+  .list {
+    padding: $u 0;
+
+    hr {
+      margin-bottom: $u;
+      margin-left: $u4;
+      margin-right: 0;
+      margin-top: $u;
+    }
+  }
+
+  .list-item:after {
+    background: none;
+  }
+
+  .list-item_title {
+    h6 {
+      font-size: $font-size - 1;
+      line-height: $font-size + $u;
+      font-weight: normal;
+    }
+  }
+
+  .list-item_link {
+    top: 0;
+    bottom: 0;
+  }
+
+  .list-item_content {
+    padding: 0;
+  }
+}

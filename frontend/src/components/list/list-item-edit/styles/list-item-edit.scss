@@ -1,0 +1,23 @@
+.list-item--edit {
+  .list-item_title {
+    opacity: 0;
+  }
+}
+
+.list-item-edit-input {
+  background: 0;
+  border: 0;
+  bottom: 0;
+  left: 0;
+  padding-left: $u4;
+  padding-right: $u4;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  font-size: $font-size - 1;
+  color: #fff;
+
+  &:focus {
+    outline: none;
+  }
+}

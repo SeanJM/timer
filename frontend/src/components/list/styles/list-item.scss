@@ -13,6 +13,7 @@
 }
 
 .list-item_content {
+  padding: $u 0 $u2;
   position: relative;
 }
 
@@ -39,11 +40,6 @@
   right: 0;
   top: -$u2;
   bottom: -$u3;
-}
-
-.list-item_control-bounds {
-  padding: $u2 0 $u3;
-  position: relative;
 }
 
 .list-item-select {
