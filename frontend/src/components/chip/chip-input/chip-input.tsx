@@ -1,14 +1,13 @@
-import React, { Component } from "react";
 import _ from "lodash";
 import generateHash from "@generate-hash";
-
-import { Chip } from "@components/chip";
-import { ChipData } from "@components/chip/chip-types";
-import { Dropdown, DropdownItem, DropdownChangeEvent } from "@components/dropdown";
-
+import React, { Component } from "react";
 import { InputValueEvent } from "@types";
-import { KEYNAME_BY_CODE } from "@constants";
 import { withStore, StoreState, StoreDropdown } from "@frontend/store";
+
+import { Chip, ChipRemoveEvent } from "@components/chip";
+import { ChipData, ChipSubmitEvent } from "@components/chip/chip-types";
+import { ChipInputAutoWidth } from "./chip-input-auto-width";
+import { Dropdown, DropdownItem, DropdownChangeEvent } from "@components/dropdown";
 
 export type ChipValueEvent = InputValueEvent<{ value: string[] }>;
 
@@ -21,6 +20,7 @@ export interface ChipInputInProps {
   onBlur?: (e: React.FocusEvent) => void;
   onFocus?: (e: React.FocusEvent) => void;
   onInput?: (e: ChipValueEvent) => void;
+  onSubmit?: (e: ChipSubmitEvent) => void;
   onValue?: (e: ChipValueEvent) => void;
 }
 
@@ -111,7 +111,7 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
     this.setState({ showDropdown: true });
   }
 
-  close() {
+  close = () => {
     this.setState({ showDropdown: false });
   }
 
@@ -135,12 +135,6 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
     this.setState({ filteredData });
   }
 
-  onClick(e: React.MouseEvent) {
-    if (e.target === this.parentNode) {
-      this.input.focus();
-    }
-  }
-
   onValue(e: InputValueEvent) {
     const { onValue } = this.props;
     if (onValue) {
@@ -148,14 +142,20 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
     }
   }
 
-  onFocus(e: React.FocusEvent) {
+  onClick = (e: React.MouseEvent) => {
+    if (e.target === this.parentNode) {
+      this.input.focus();
+    }
+  }
+
+  onFocus = (e: React.FocusEvent) => {
     this.open();
     if (this.props.onFocus) {
       this.props.onFocus(e);
     }
   }
 
-  onBlur(e: React.FocusEvent) {
+  onBlur = (e: React.FocusEvent) => {
     setTimeout(() => {
       this.close();
       if (this.props.onBlur) {
@@ -164,11 +164,11 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
     }, 100);
   }
 
-  filterDidUpdate() {
+  filterDidUpdate = () => {
     this.filterData();
   }
 
-  onBackSpace() {
+  onBackspace = () => {
     if (!this.input.value.length) {
       const value = this.state.value.slice(0, -1);
       let evt = this.getValueEvent({ value });
@@ -177,17 +177,17 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
     }
   }
 
-  onKeyDown({ which }: React.KeyboardEvent) {
-    switch (KEYNAME_BY_CODE[which]) {
-      case "BACKSPACE": {
-        this.onBackSpace();
-      }
+  onSubmit = (e) => {
+    const { onSubmit } = this.props;
+    console.log(this.state.filteredData, onSubmit);
+    if (onSubmit && !this.state.filteredData.length) {
+      onSubmit(e);
     }
   }
 
-  onRemove(removeID: string) {
+  onRemove = (e: ChipRemoveEvent) => {
     const { onInput } = this.props;
-    const value = this.state.value.filter((chipID) => chipID !== removeID);
+    const value = this.state.value.filter((chipID) => chipID !== e.id);
     const evt = this.getValueEvent({ value });
 
     this.setState({ value });
@@ -198,7 +198,7 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
     }
   }
 
-  onInput(e: DropdownChangeEvent) {
+  onInput = (e: DropdownChangeEvent) => {
     console.log(e);
     const { onInput } = this.props;
     const value = this.state.value.concat(e.id);
@@ -240,37 +240,36 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
   render() {
     const { data } = this.props;
     const dataById: { [key: string]: ChipData } = _.keyBy(data, "id");
+    const dataValue = this.state.value.map((id) => dataById[id]).filter((data) => data).sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1);
     return (
       <div
         ref={(node) => { this.parentNode = node; }}
         onClick={(e) => this.onClick(e)} className="chip-input">
-        {this.state.value
-          .map((id) => {
-            const data = dataById[id];
+        {dataValue
+          .map((data) => {
             return (
               <Chip
                 id={data.id}
                 key={data.id}
                 label={data.label}
-                onRemove={() => this.onRemove(data.id)}
+                onRemove={this.onRemove}
               />
             );
           })
         }
-        <input
-          ref={(node) => {this.input = node;}}
-          className="chip-input_target"
-          type="text"
-          onKeyDown={(e) => this.onKeyDown(e)}
-          onFocus={(e) => this.onFocus(e)}
-          onBlur={(e) => this.onBlur(e)}
-          onInput={() => this.filterDidUpdate()}
+        <ChipInputAutoWidth
+          $ref={(node) => { this.input = node; }}
+          onBackspace={this.onBackspace}
+          onSubmit={this.onSubmit}
+          onFocus={this.onFocus}
+          onBlur={this.onBlur}
+          onInput={this.filterDidUpdate}
         />
         {this.state.showDropdown
           ? (
             <ChipDropdownMenu
-              dropdownDidBlur={() => this.close()}
-              onInput={(e) => this.onInput(e)}
+              dropdownDidBlur={this.close}
+              onInput={this.onInput}
               value={this.state.value}
               show={this.state.showDropdown}
               data={this.state.filteredData}

@@ -6,3 +6,9 @@ export interface ChipData {
   color?: string;
   icon?: IconType;
 }
+
+export interface ChipSubmitEvent {
+  clearValue: () => void;
+  type: "submit";
+  value: string;
+}

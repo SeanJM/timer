@@ -1,6 +1,11 @@
 import React from "react";
 import { Icon } from "@frontend/components/icon";
 
+export interface ChipRemoveEvent {
+  type: "chipremove";
+  id: string;
+}
+
 export interface ChipProps {
   id: string;
   label: string;
@@ -9,7 +14,7 @@ export interface ChipProps {
   check?: boolean;
   isSelect?: boolean;
   onClick?: (e: React.MouseEvent) => void;
-  onRemove?: (e: React.MouseEvent) => void;
+  onRemove?: (e: ChipRemoveEvent) => void;
 }
 
 function ChipColor(props) {
@@ -22,40 +27,59 @@ function ChipColor(props) {
   );
 }
 
-export function Chip(props: ChipProps) {
-  const className = ["chip"];
-
-  if (props.type) {
-    className.push("chip--" + props.type);
+export class Chip extends React.Component<ChipProps> {
+  removeDidClick = () => {
+    const { onRemove, id } = this.props;
+    onRemove({
+      type: "chipremove",
+      id,
+    })
   }
 
-  if (props.color) {
-    className.push("chip--color");
-  }
+  render() {
+    const className = ["chip"];
+    const {
+      check,
+      color,
+      isSelect,
+      label,
+      onClick,
+      onRemove,
+      type,
+    } = this.props;
 
-  if (props.check) {
-    className.push("chip--check");
-  }
+    if (type) {
+      className.push("chip--" + type);
+    }
 
-  if (props.onRemove) {
-    className.push("chip--remove");
-  }
+    if (color) {
+      className.push("chip--color");
+    }
 
-  return (
-    <div
-      onClick={props.onClick}
-      className={className.join(" ")}>
-      <div className="chip_face"></div>
-      {props.color
-        ? <ChipColor color={props.color}/>
-        : null}
-      {props.isSelect
-        ? <div className="chip_check"><Icon type="check"/></div>
-        : null}
-      <div className="chip_label">{props.label}</div>
-      {props.onRemove
-        ? <div className="chip_remove" onClick={props.onRemove}><Icon type="close"/></div>
-        : null}
-    </div>
-  );
+    if (check) {
+      className.push("chip--check");
+    }
+
+    if (onRemove) {
+      className.push("chip--remove");
+    }
+
+    return (
+      <div
+        onClick={onClick}
+        className={className.join(" ")}>
+        <div className="chip_face"></div>
+        {color
+          ? <ChipColor color={color}/>
+          : null}
+        {isSelect
+          ? <div className="chip_check"><Icon type="check"/></div>
+          : null}
+        <div className="chip_label">{label}</div>
+        {onRemove
+          ? <div className="chip_remove" onClick={this.removeDidClick}><Icon type="close"/></div>
+          : null}
+      </div>
+    );
+  }
 }
