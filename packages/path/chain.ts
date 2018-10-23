@@ -1,17 +1,18 @@
 import join from "./join";
 import normalize from "./normalize";
 import params from "./params";
+import pathname from "./pathname";
 import pop from "./pop";
 import push from "./push";
 import query from "@path/query";
-import replace from "./replace";
 import reduce from "@path/reduce";
+import replace from "./replace";
 import slice from "@path/slice";
 import splice from "./splice";
 
-export default function chain(pathname: string) {
+export default function chain(value: string) {
   const self = {
-    value: pathname,
+    value,
 
     join(...args: string[]) {
       this.value = join(this.value, ...args);
@@ -20,6 +21,11 @@ export default function chain(pathname: string) {
 
     normalize() {
       this.value = normalize(this.value);
+      return this;
+    },
+
+    pathname<T>() {
+      this.value = pathname(this.value);
       return this;
     },
 

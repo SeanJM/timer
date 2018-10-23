@@ -49,13 +49,11 @@ export class PathQuery<T extends {} = {}> {
     let res = [];
     this.forEach((value, key) => {
       let property = encodeURI(key);
-      const isString = typeof value === "string" && value.length;
-      const isNumber = !isNaN(Number(value));
       if (Array.isArray(value)) {
         value.forEach((member) => {
           res.push(property + "[]=" + encodeURI(member));
         });
-      } else if (isNumber || isString) {
+      } else if (value != null && typeof value !== "undefined") {
         res.push(property + "=" + encodeURI(value as string));
       }
     });
