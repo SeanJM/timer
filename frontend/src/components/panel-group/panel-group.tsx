@@ -61,8 +61,6 @@ export class PanelGroup extends Component<PanelGroupProps, PanelGroupState> {
       childrenMappedWidths[i] = children[i].props.defaultWidth || defaultWidth;
     }
 
-    console.log(_.sum(childrenMappedWidths), nodeWidth);
-
     this.setState({ childrenMappedWidths });
   }
 
