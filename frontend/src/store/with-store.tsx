@@ -12,7 +12,7 @@ function defaultMapStateToProps(state, props) {
 type HigherOrderFactory = (component: typeof Component) => typeof Component;
 type MapStateToProps = (state: StoreState, props?: object) => object;
 
-export function withStore<T>(
+export function withStore<T = {}>(
   WrappedComponent: React.ComponentType,
   mapStateToProps?: MapStateToProps): (...args: HigherOrderFactory[]) => React.ComponentType<T> {
 
