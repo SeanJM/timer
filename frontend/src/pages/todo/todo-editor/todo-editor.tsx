@@ -6,9 +6,9 @@ import sortObjectBy from "@sort-object-by";
 import { dispatch } from "@frontend/action";
 
 import { Button } from "@components/button";
-import { ChipData } from "@components/chip";
+import { ChipData, ChipSubmitEvent } from "@components/chip";
 import { Filter } from "@components/filter";
-import { Form, FormValue } from "@components/form";
+import { Form } from "@components/form";
 import { InputChipSelect } from "@components/input/input-chip-select";
 import { InputGroup } from "@components/input-group";
 import { InputSlide, InputText } from "@components/input";
@@ -89,7 +89,7 @@ function mapStateToProps(state: StoreState, props: TodoEditorInProps): TodoEdito
 }
 
 class TodoEditor extends React.Component<TodoEditorOutProps> {
-  formValue: FormValue<{
+  formValue: Form.Value<{
     todoName: string;
     todoNotes: string;
     todoPriority: number;
@@ -108,6 +108,22 @@ class TodoEditor extends React.Component<TodoEditorOutProps> {
         this.onFormChange(e.value);
       }
     }
+  }
+
+  userDidSubmit = (e: ChipSubmitEvent) => {
+    const { categoryID, todoID } = this.props;
+
+    dispatch("ALERT", {
+      type: "PUSH",
+      value: {
+        categoryID,
+        // Maybe handle multiple selections later?
+        idList: [ todoID ],
+        name: e.value,
+        type: "CREATE_TAG",
+        clearValue: e.clearValue
+      }
+    });
   }
 
   save() {
@@ -222,6 +238,7 @@ class TodoEditor extends React.Component<TodoEditorOutProps> {
                 <InputChipSelect
                   defaultValue={this.props.todoTags}
                   onInput={() => this.save()}
+                  onSubmit={this.userDidSubmit}
                   name="todoTags"
                   data={this.props.tags.map((tag) => {
                     return {

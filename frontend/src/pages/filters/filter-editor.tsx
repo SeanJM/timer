@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { Button } from "@components/button";
 import { ChipData } from "@components/chip";
 import { dispatch } from "@frontend/action";
-import { Form, FormValue } from "@components/form";
+import { Form } from "@components/form";
 import { InputChipSelect } from "@components/input";
 import { InputGroup } from "@components/input-group";
 import { InputText } from "@components/input";
@@ -114,7 +114,7 @@ function mapStateToProps(state: StoreState, props: FilterEditorInProps): FilterE
 }
 
 export class FilterEditorView extends Component<FilterEditorOutProps> {
-  form: FormValue<{
+  form: Form.Value<{
     filterName: string;
     includesTags: string[];
     excludesTags: string[];
