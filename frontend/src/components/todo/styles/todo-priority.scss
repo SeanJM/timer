@@ -7,7 +7,7 @@
   width: $u2;
   height: $u2;
   border-radius: 50%;
-  background: $grey-lightest;
+  border: 1px solid $black;
 }
 
 .todo-priority_element + .todo-priority_element {
@@ -15,17 +15,5 @@
 }
 
 .todo-priority_element-active {
-  background: $primary;
-}
-
-.todo-priority-3-3 {
-  .todo-priority_element-active {
-    background: $pink;
-  }
-}
-
-.todo-priority-2-3 {
-  .todo-priority_element-active {
-    background: $orange;
-  }
+  background: $black;
 }
