@@ -20,11 +20,13 @@ export interface ChipInputAutoWidthState {
 export class ChipInputAutoWidth extends Component<ChipInputAutoWidthProps, ChipInputAutoWidthState> {
   mirror: HTMLDivElement;
   input: HTMLInputElement;
+  minWidth: number;
 
   constructor(props) {
     super(props);
+    this.minWidth = 10;
     this.state = {
-      width: "auto"
+      width: this.minWidth
     };
   }
 
@@ -40,7 +42,7 @@ export class ChipInputAutoWidth extends Component<ChipInputAutoWidthProps, ChipI
     this.mirror.style.position = "absolute";
     this.mirror.style.top = "10px";
     this.mirror.style.whiteSpace = "nowrap";
-    this.mirror.innerHTML = this.props.defaultValue;
+    this.mirror.innerHTML = this.props.defaultValue || "";
 
     document.body.appendChild(this.mirror);
     this.resize();
@@ -62,7 +64,7 @@ export class ChipInputAutoWidth extends Component<ChipInputAutoWidthProps, ChipI
 
   resize() {
     this.setState({
-      width: Math.max(10, this.mirror.getBoundingClientRect().width)
+      width: Math.max(this.minWidth, this.mirror.getBoundingClientRect().width)
     });
   }
 
@@ -73,7 +75,7 @@ export class ChipInputAutoWidth extends Component<ChipInputAutoWidthProps, ChipI
       onInput(e);
     }
 
-    this.mirror.innerHTML = this.input.value;
+    this.mirror.innerHTML = this.input.value || "";
     this.resize();
   }
 
