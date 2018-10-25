@@ -53,7 +53,7 @@ export class Slide extends Component<SlideProps, SlideState> {
     } else {
       value = Math.floor(value);
     }
-    return value;
+    return Math.min(Math.max(0, value), this.props.length);
   }
 
   onDragStart(e: DragMeEvent) {
@@ -66,7 +66,7 @@ export class Slide extends Component<SlideProps, SlideState> {
     let value = this.getValue(e.positionX);
 
     this.setState({
-      shadowPositionX: e.positionX,
+      shadowPositionX: Math.max(0, e.positionX),
       value,
     });
   }
@@ -131,10 +131,6 @@ export class Slide extends Component<SlideProps, SlideState> {
     this.props.onValue(
       this.getValueEvent()
     );
-
-    if (this.props.autofocus) {
-      this.node.focus();
-    }
   }
 
   render() {
@@ -148,7 +144,7 @@ export class Slide extends Component<SlideProps, SlideState> {
 
     return (
       <DragMe
-        $ref={(node) => { this.node = node; }}
+        autofocus
         className={className.join(" ")}
 
         onBlur={(e) => this.onBlur(e)}
