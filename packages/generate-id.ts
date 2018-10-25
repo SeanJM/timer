@@ -40,7 +40,7 @@ function generateByPattern(index) {
 
 export default function generateId(index: number | string = 12) {
   if (typeof index === "number") {
-    return generateByLength(index)
+    return generateByLength(index);
   }
   return generateByPattern(index);
 };
