@@ -31,3 +31,9 @@ export interface StoreAlert {
   type: string;
   value: any;
 }
+
+export interface StoreDialog {
+  id: string;
+  type: string;
+  value: any;
+}

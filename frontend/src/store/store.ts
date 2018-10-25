@@ -11,6 +11,7 @@ import {
 
 import {
   StoreAlert,
+  StoreDialog,
   StoreDropdown,
   StoreForm,
 } from "./store-types";
@@ -20,6 +21,7 @@ export interface StoreState {
   dropdown: StoreDropdown;
 
   alerts: StoreAlert[];
+  dialogs: StoreDialog[];
 
   layout: {
     todoEditorDefaultWidth?: number;
@@ -69,8 +71,8 @@ export const store = new Persistore<StoreState>(
 
     contextMenu: [],
     dropdown: {},
-
     alerts: [],
+    dialogs: [],
 
     shortcut: null,
 
