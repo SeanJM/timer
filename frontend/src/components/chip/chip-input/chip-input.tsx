@@ -149,22 +149,33 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
   }
 
   onFocus = (e: React.FocusEvent) => {
+    const { onFocus } = this.props;
     this.open();
-    if (this.props.onFocus) {
-      this.props.onFocus(e);
+    if (onFocus) {
+      onFocus(e);
     }
   }
 
   onBlur = (e: React.FocusEvent) => {
+    const { onBlur } = this.props;
     setTimeout(() => {
       this.close();
-      if (this.props.onBlur) {
-        this.props.onBlur(e);
+      if (onBlur) {
+        onBlur(e);
       }
     }, 100);
   }
 
-  filterDidUpdate = () => {
+  filterDidUpdate = (e: React.FormEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    const { showDropdown } = this.state;
+
+    if (target.value.length && !showDropdown) {
+      this.setState({ showDropdown: true });
+    } else if (!target.value.length && showDropdown) {
+      this.setState({ showDropdown: false });
+    }
+
     this.filterData();
   }
 
@@ -206,8 +217,11 @@ export class ChipInputView extends Component<ChipInputOutProps, ChipInputState> 
 
     this.input.value = "";
     this.filterData();
-    this.setState({ value });
     this.onValue(evt);
+
+    this.setState({
+      value,
+    });
 
     if (onInput) {
       onInput(evt);
