@@ -25,6 +25,12 @@
       "@action": [
         "frontend/src/action"
       ],
+      "@router": [
+        "frontend/src/components/router"
+      ],
+      "@action/*": [
+        "frontend/src/action/*"
+      ],
       "@types": [
         "types/"
       ],
@@ -33,6 +39,9 @@
       ],
       "@components/*": [
         "frontend/src/components/*"
+      ],
+      "@containers/*": [
+        "frontend/src/containers/*"
       ],
       "@frontend/*": [
         "frontend/src/*"
