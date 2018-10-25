@@ -1,20 +1,21 @@
-import React, { Component } from "react";
-import { InputText } from "@frontend/components/input";
-import { WithRouterProps } from "@frontend/components/router";
-import { Swatch } from "@frontend/components/swatch";
-import generateHash from "@generate-hash";
-import { Viewport } from "@frontend/components/viewport";
-import { withStore, StoreState, StoreFormInput } from "@frontend/store";
-import { TagResponse, CategoryResponse } from "@types";
-import { ColorPicker } from "@types";
-import path, { PathParams } from "@path";
-import { dispatch } from "@frontend/action";
 import * as pathlist from "@frontend/routes";
-import { List, ListItem, ListSelectEvent } from "@frontend/components/list";
-import { Timestamp } from "@frontend/components/timestamp";
+import generateHash from "@generate-hash";
+import path, { PathParams } from "@path";
+import React, { Component } from "react";
+import { ColorPicker } from "@types";
+import { dispatch } from "@frontend/action";
 import { emptyForm } from "@frontend/action/form";
+import { InputText } from "@frontend/components/input";
+import { List, ListItem } from "@frontend/components/list";
+import { SmartScroll } from "@frontend/components/smart-scroll";
+import { Swatch } from "@frontend/components/swatch";
+import { TagResponse, CategoryResponse } from "@types";
+import { Timestamp } from "@frontend/components/timestamp";
 import { TitleAndInput, TitleAndInputPassedProps } from "@frontend/components/title-and-input";
 import { Titlebar } from "@frontend/components/titlebar";
+import { Viewport } from "@frontend/components/viewport";
+import { WithRouterProps } from "@frontend/components/router";
+import { withStore, StoreState, StoreFormInput } from "@frontend/store";
 
 const FORM_ID = generateHash();
 const COLOR_PICKER_ID = "tag_name";
@@ -102,7 +103,7 @@ class TagListView extends Component<Props, {}> {
     }
   }
 
-  onSelect = (e: ListSelectEvent) => {
+  onSelect = (e: List.SelectEvent) => {
     this.selected = e.selected;
   }
 
@@ -127,47 +128,52 @@ class TagListView extends Component<Props, {}> {
               title="Tags"
               component={(props: TitleAndInputPassedProps) =>
                 <InputTagName { ...props } color={this.props.color}/>}
-              onSubmit={(name) => dispatch("CREATE_TAG", {
-                name,
-                color: this.props.color,
-                categoryID: params.categoryID,
+              onSubmit={(name) => dispatch("TAG", {
+                type: "CREATE",
+                value: {
+                  name,
+                  color: this.props.color,
+                  categoryID: params.categoryID,
+                }
               } as Partial<Props>)}
             />
           </Titlebar>
         }
         body={
-          <List
-            multiselect
-            onSelect={this.onSelect}
-            shortcuts={{
-              "DELETE": this.shortcutDidDelete,
-            }}
-          >
-            {this.props.tags.map((tag) => {
-              return (
-                <ListItem
-                  id={tag.id}
-                  title={tag.name}
-                  onClick={() => {
-                    history.push({
-                      pathname: path.reduce(routes.schema, {
-                        type: "tags",
-                        categoryID: params.categoryID,
-                        elementID: tag.id,
-                      })
-                    });
-                  }}
-                  primaryAction={
-                    <Swatch
-                      background={tag.color}
-                    />
-                  }
-                  timestamp={<Timestamp>{tag.created}</Timestamp>}
-                  key={tag.id}>
-                </ListItem>
-              );
-            })}
-          </List>
+          <SmartScroll>
+            <List
+              multiselect
+              onSelect={this.onSelect}
+              shortcuts={{
+                "DELETE": this.shortcutDidDelete,
+              }}
+            >
+              {this.props.tags.map((tag) => {
+                return (
+                  <ListItem
+                    id={tag.id}
+                    title={tag.name}
+                    onClick={() => {
+                      history.push({
+                        pathname: path.reduce(routes.schema, {
+                          type: "tags",
+                          categoryID: params.categoryID,
+                          elementID: tag.id,
+                        })
+                      });
+                    }}
+                    primaryAction={
+                      <Swatch
+                        background={tag.color}
+                      />
+                    }
+                    timestamp={<Timestamp>{tag.created}</Timestamp>}
+                    key={tag.id}>
+                  </ListItem>
+                );
+              })}
+            </List>
+          </SmartScroll>
         }
       />
     );
