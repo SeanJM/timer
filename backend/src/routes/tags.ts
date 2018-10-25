@@ -90,6 +90,14 @@ function createTag(req: TagPostRequest, res: Response, database: Database) {
 
   if (category) {
     category.appendChild(tag);
+
+    if (req.body.idList) {
+      req.body.idList.forEach((todoID) => {
+        const todo = category.querySelector<TodoElement>(`#${todoID}`);
+        todo.attributes.tags.push(tag.attributes.id);
+      });
+    }
+
     res.send(toTagResponse(tag));
     database.save();
   } else {
@@ -118,9 +126,9 @@ function onPost(req: TagPostRequest, res, database) {
   const validateQuery = new Validate({
     action: "create|delete|edit",
     "categoryID?": "string",
-    "color?": "string",
+    "color?": "string | null",
     "id?": "string",
-    "idList?": "string[]",
+    "idList?": "string[] | undefined",
     "name?": "string",
   });
 
