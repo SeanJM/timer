@@ -5,7 +5,7 @@ import { Icon , IconType } from "@frontend/components/icon";
 import path, { PathParams } from "@path";
 
 import {
-  RouterHistory,
+  History,
   withRouter,
   RouteComponentProps,
 } from "@frontend/components/router";
@@ -63,7 +63,7 @@ export class AppMenuView extends React.Component<AppMenuMappedProps, {}> {
 }
 
 interface AppMenuCategoriesItemProps {
-  history: RouterHistory;
+  history: History;
   to: string;
   label: string;
   isSelected: boolean;
