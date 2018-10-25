@@ -2,6 +2,7 @@ import React from "react";
 
 interface SmartScrollProps {
   className?: string;
+  footer?: JSX.Element;
 }
 
 interface SmartScrollState {
@@ -19,6 +20,9 @@ export class SmartScroll extends React.Component<SmartScrollProps, SmartScrollSt
       showScrollBar: false,
     };
   }
+
+  scrollNodeRef = (node) => { this.scrollNode = node; }
+  contentNodeRef = (node) => { this.contentNode = node; }
 
   startScrollOverflowChecker() {
     const contentHeight = this.contentNode.getBoundingClientRect().height;
@@ -51,12 +55,16 @@ export class SmartScroll extends React.Component<SmartScrollProps, SmartScrollSt
   }
 
   render() {
-    const { className } = this.props;
+    const { className, footer } = this.props;
     const { showScrollBar } = this.state;
     const classList = [ "smart-scroll" ];
 
     if (className) {
       classList.push(className);
+    }
+
+    if (footer) {
+      classList.push("smart-scroll--footer");
     }
 
     if (showScrollBar) {
@@ -65,11 +73,16 @@ export class SmartScroll extends React.Component<SmartScrollProps, SmartScrollSt
 
     return (
       <div
-        ref={(node) => { this.scrollNode = node; }}
         className={classList.join(" ")}>
         <div
-          ref={(node) => { this.contentNode = node; }}
-          className="smart-scroll_content">{this.props.children}</div>
+          ref={this.scrollNodeRef}
+          className="smart-scroll-scrollable"
+        >
+          <div
+            ref={this.contentNodeRef}
+            className="smart-scroll_content">{this.props.children}</div>
+        </div>
+        {footer ? <div className="smart-scroll_footer">{footer}</div> : null}
       </div>
     );
   }
