@@ -1,5 +1,4 @@
 import React from "react";
-import { ButtonConfirm } from "@frontend/components/button-confirm";
 import { Control } from "@frontend/components/control";
 import { dispatch } from "@frontend/action/";
 import { ListItem } from "@frontend/components/list";
@@ -18,7 +17,6 @@ interface TodoProps {
   priorityLength: number;
   search?: string;
   selected?: boolean;
-  showAlt: boolean;
   state: string;
   title: string;
 }
@@ -43,20 +41,6 @@ function TodoCheck(props: { checked: boolean, id: string, categoryID: string }) 
   );
 }
 
-function ButtonDelete(value: { id: string, categoryID: string }) {
-  return (
-    <ButtonConfirm
-      type="danger"
-      onClick={() => dispatch("TODO", {
-        type: "DELETE",
-        value
-      })}
-    >
-      Delete
-    </ButtonConfirm>
-  );
-}
-
 export function Todo(props: TodoProps) {
   const className = ["todo"];
 
@@ -68,7 +52,6 @@ export function Todo(props: TodoProps) {
     id,
     active,
     search,
-    showAlt,
     state,
     title
   } = props;
@@ -77,12 +60,12 @@ export function Todo(props: TodoProps) {
 
   return (
     <ListItem
+      id={id}
       active={active}
       selected={selected}
       passive={state === "complete"}
       title={<TodoTitle search={search}>{title}</TodoTitle>}
       timestamp={<Timestamp>{created}</Timestamp>}
-      showAlt={showAlt}
       onClick={onClick}
 
       secondaryAction={
@@ -101,8 +84,6 @@ export function Todo(props: TodoProps) {
           />
         </Control>
       }
-
-      altAction={<ButtonDelete id={id} categoryID={categoryID}/>}
     >
     </ListItem>
   );
