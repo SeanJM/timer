@@ -6,14 +6,14 @@ import { withStore, StoreState, StoreForm, StoreFormInput } from "@store";
 
 import { Button } from "@components/button";
 import { CategorySortBy, CategoryFilterBy, FilterTagTypes } from "@types";
-import { ContextMenuFilterConnect, ContextMenuSort } from "./context-menu";
+import { ContextMenuSort } from "./context-menu";
 import { contextMenuPush } from "@components/context-menu";
 import { Control } from "@components/control";
 import { dispatch } from "@frontend/action";
 import { emptyForm } from "@frontend/action/form";
 import { Icon } from "@components/icon";
 import { InputText } from "@components/input";
-import { List, ListSelectEvent } from "@components/list";
+import { List } from "@components/list";
 import { RouteComponentProps } from "@components/router";
 import { routes } from "@frontend/routes";
 import { SmartScroll } from "@components/smart-scroll";
@@ -28,7 +28,7 @@ import ShortCut from "@frontend/scripts/shortcut";
 
 const FORM_ID = generateHash();
 const CONTEXT_MENU_SORT = generateHash();
-const CONTEXT_MENU_FILTER = generateHash();
+const DIALOG_FILTER = generateHash();
 const TODO_DELETE_ID = generateHash();
 
 interface TodoParams {
@@ -50,7 +50,6 @@ interface TodoListInProps extends Pick<RouteComponentProps, "location" | "histor
 interface TodoListOutProps extends TodoListInProps {
   categoryID: any;
   form: StoreForm;
-  showAlt: boolean;
   name: string;
   priorityLength: number;
   sortBy: CategorySortBy | "";
@@ -83,8 +82,10 @@ function applyView(query: string, todo: TodoResponse) {
     return isComplete(todo);
   } else if (query === "incomplete") {
     return isIncomplete(todo);
+  } else if (query === "all") {
+    return true;
   }
-  return true;
+  return false;
 }
 
 function applyFilter(filter: FilterResponse | null, todo: TodoResponse) {
@@ -119,7 +120,7 @@ function mapStateToProps(state: StoreState, props: TodoListInProps): TodoListOut
     path.params(props.location.pathname, routes.pathname);
 
   const filter = category &&
-    category.filters.find((a) => a.id === category.filterBy);
+    category.filters.find((a) => a.id === props.query.filterBy);
 
   const todos =
     category.todos.filter((todo) =>
@@ -133,7 +134,6 @@ function mapStateToProps(state: StoreState, props: TodoListInProps): TodoListOut
     priorityLength: state.todo.todoSettings.priorityLength,
     categoryID,
     form,
-    showAlt: state.shortcut === "ALT",
     tagFilters: filter && filter.tagFilters,
     name: category && category.name,
     sortBy: category && category.sortBy,
@@ -152,14 +152,16 @@ class TodoListView extends Component<TodoListOutProps, {}> {
   selected: string[];
 
   handleChange() {
-    const { filterBy, query, history } = this.props;
-    history.push({
+    const { query, history } = this.props;
+
+    const location = {
       query: {
         ...query,
-        filterBy,
         view: query.view || "incomplete",
       }
-    });
+    };
+
+    history.push(location);
   }
 
   componentDidUpdate() {
@@ -195,11 +197,13 @@ class TodoListView extends Component<TodoListOutProps, {}> {
     });
   }
 
-  openFilterMenu = () => {
-    dispatch("CONTEXT_MENU", {
+  openFilterDialog = () => {
+    dispatch("DIALOG", {
       type: "OPEN",
       value: {
-        id: CONTEXT_MENU_FILTER
+        type: "FILTERS",
+        id: DIALOG_FILTER,
+        categoryID: this.props.categoryID,
       }
     });
   }
@@ -226,7 +230,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
     });
   }
 
-  listDidSelect = (e: ListSelectEvent) => {
+  listDidSelect = (e: List.SelectEvent) => {
     const { history, categoryID } = this.props;
     this.selected = e.selected;
     history.push({
@@ -239,13 +243,14 @@ class TodoListView extends Component<TodoListOutProps, {}> {
   }
 
   listOnKeyDown = (e: ShortCut.Event) => {
+    const { categoryID } = this.props;
     if (e.name === "DELETE") {
       dispatch("ALERT", {
         type: "PUSH",
         value: {
           type: "TODO_DELETE",
           id: TODO_DELETE_ID,
-          categoryID: this.props.categoryID,
+          categoryID,
           idList: this.selected
         }
       });
@@ -253,7 +258,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
       dispatch("TODO", {
         type: "COMPLETE",
         value: {
-          categoryID: this.props.categoryID,
+          categoryID,
           idList: this.selected
         }
       });
@@ -261,8 +266,24 @@ class TodoListView extends Component<TodoListOutProps, {}> {
       dispatch("TODO", {
         type: "INCOMPLETE",
         value: {
-          categoryID: this.props.categoryID,
+          categoryID,
           idList: this.selected
+        }
+      });
+    } else if (e.name === "ADD") {
+      dispatch("TODO", {
+        type: "INCREASE_PRIORITY",
+        value: {
+          categoryID,
+          idList: this.selected,
+        }
+      });
+    } else if (e.name === "MINUS") {
+      dispatch("TODO", {
+        type: "DECREASE_PRIORITY",
+        value: {
+          categoryID,
+          idList: this.selected,
         }
       });
     }
@@ -303,7 +324,6 @@ class TodoListView extends Component<TodoListOutProps, {}> {
       categoryID,
       params,
       priorityLength,
-      showAlt,
       query,
     } = this.props;
 
@@ -334,7 +354,7 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                 <Button
                   icon="filter"
                   toggle={!!this.props.filterBy}
-                  onClick={this.openFilterMenu}
+                  onClick={this.openFilterDialog}
                 />
                 <Button
                   icon="sort"
@@ -367,8 +387,8 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                 "DELETE": this.listOnKeyDown,
                 "D": this.listOnKeyDown,
                 "U": this.listOnKeyDown,
-                "+": this.listOnKeyDown,
-                "-": this.listOnKeyDown
+                "ADD": this.listOnKeyDown,
+                "MINUS": this.listOnKeyDown
               }}
             >
               {this.props.filteredTodos
@@ -384,7 +404,6 @@ class TodoListView extends Component<TodoListOutProps, {}> {
                     priority={todo.priority}
                     priorityLength={priorityLength}
                     search={query.search}
-                    showAlt={showAlt}
                     state={todo.state}
                     title={todo.name}
                   />
@@ -406,7 +425,6 @@ class TodoListView extends Component<TodoListOutProps, {}> {
 
 contextMenuPush({
   [CONTEXT_MENU_SORT]: ContextMenuSort,
-  [CONTEXT_MENU_FILTER]: ContextMenuFilterConnect,
 });
 
 export const TodoListConnect = withStore(TodoListView, mapStateToProps)();
